@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Café Citoyen
+    Copyright (C) 2012 Cédric Houbart (cedric@scil.com)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+
+
+    <!-- DIMENSIONS -->
+    <dimen name="ticket_title">18dip</dimen>
+    <dimen name="iconProduct">30dip</dimen>
+    <dimen name="ticket_subtitle">18dip</dimen>
+    <dimen name="title_margin">8dip</dimen>
+    <dimen name="title_topmargin">15dip</dimen>
+    <dimen name="ticketTitleBorder">8dip</dimen>
+    <dimen name="arrowHeight">60dip</dimen>
+    <dimen name="alignmentTextProductQuantity">60dip</dimen>
+    <dimen name="formClient">15dip</dimen>
+
+    <dimen name="ticketSubtitleBorder">4dip</dimen>
+    <dimen name="contentMargin">5dip</dimen>
+    <dimen name="btnSpacing">12.8dip</dimen>
+    <dimen name="halfBtnSpacing">6.4dip</dimen>
+    <dimen name="loginBtnWidth">120dip</dimen>
+    <dimen name="loginBtnHeight">96dip</dimen>
+    <dimen name="smallBtnWidth">40dip</dimen>
+    <dimen name="smallBtnHeight">40dip</dimen>
+    <dimen name="supersmallBtnWidth">28dip</dimen>
+    <dimen name="supersmallBtnHeight">28dip</dimen>
+    <dimen name="btnWidth">64dip</dimen>
+    <dimen name="btnHeight">64dip</dimen>
+    <dimen name="bigBtnWidth">80dip</dimen>
+    <dimen name="bigBtnHeight">80dip</dimen>
+    <dimen name="btnCornerRadius">8dip</dimen>
+    <dimen name="ticketLineHeight">50dip</dimen>
+
+    <dimen name="ticketInputHeader">85dip</dimen>
+    <dimen name="paymentHeader">60dip</dimen>
+    <dimen name="closeCashPadding">45dip</dimen>
+    <dimen name="ticketFooter">50dip</dimen>
+    <dimen name="productGridViewVerticalSpacing">20dip</dimen>
+
+    <dimen name="categorySelectorWidth">80dip</dimen>
+    <dimen name="categorySelectorHeight">100dip</dimen>
+
+    <dimen name="popupGeneralPadding">20dp</dimen>
+    <dimen name="popupVerticalSpacing">10dp</dimen>
+    <dimen name="popupVerticalSpacingSmall">8dp</dimen>
+    <dimen name="popupTwoColumnsSpacing">50dp</dimen>
+    <dimen name="popupEditTextHeight">25dp</dimen>
+
+    <dimen name="scannedProductLineHeight">15dp</dimen>
+    <dimen name="scannedProductListHeight">200dp</dimen>
+
+    <dimen name="spinnerMinWidth">75dp</dimen>
+    <dimen name="tariffMinWidth">100dp</dimen>
+    <dimen name="tariffMaxWidth">300dp</dimen>
+
+    <dimen name="customerSelectListHeight">500dp</dimen>
+
+    <dimen name="customerInfoWidth">700dp</dimen>
+    <dimen name="customerInfoHistoryWidth">200dp</dimen>
+    <dimen name="customerInfoHistoryHeight">500dp</dimen>
+
+    <!-- Text size -->
+    <dimen name="textSmall">13sp</dimen>
+    <dimen name="textMedium">16sp</dimen>
+    <dimen name="textLarge">20sp</dimen>
+
+    <dimen name="textMediumSpacing">5sp</dimen>
+
+
+    <!-- Base Application Theme -->
+    <style name="POSTechTheme" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Material colors -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+
+        <!-- Use normal resource here -->
+        <item name="android:windowBackground">@color/colorBackground</item>
+
+        <!-- Toolbar -->
+        <item name="toolbarStyle">@style/Widget.POSTech.Toolbar</item>
+        <item name="popupMenuStyle">@style/Widget.POSTech.PopupMenu</item>
+
+    </style>
+
+    <!-- Toolbar style -->
+    <style name="Widget.POSTech.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">@android:color/white</item>
+        <item name="navigationIconTint">@android:color/white</item>
+    </style>
+
+    <!-- Action Menu Items -->
+    <style name="POSTechActionMenuItemText" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="SmallHintText" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">10sp</item> <!-- You can tweak to 8sp or 12sp -->
+        <item name="android:textColor">#808080</item> <!-- Optional: lighter hint color -->
+    </style>
+    <style name="TextAppearance.MyHint.Small" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">?colorOnSurfaceVariant</item>
+    </style>
+
+
+    <style name="Widget.POSTech.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:background">@color/colorSecondPrimary</item>
+        <item name="android:popupBackground">@drawable/custom_popupmenu_background</item>
+<!--        <item name="titleTextColor">@android:color/white</item>-->
+<!--        <item name="subtitleTextColor">@android:color/white</item>-->
+<!--        <item name="navigationIconTint">@android:color/white</item>-->
+<!--        <item name="android:textColor">@color/popup_outer_txt</item> &lt;!&ndash; White &ndash;&gt;-->
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="android:textAppearance">@style/POSTech.PopupMenu.Text</item>
+    </style>
+
+    <style name="POSTech.PopupMenu.Text" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/popup_outer_txt</item> <!-- #FFFFFF -->
+    </style>
+
+
+
+
+
+    <style name="TextAppearance.POSTech.Hint" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+
+    <!-- Buttons -->
+    <style name="button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/btn_action</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@color/btn_action_txt</item>
+    </style>
+
+    <style name="buttonImportant" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@drawable/btn_important</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@color/btn_action_txt</item>
+    </style>
+
+    <style name="buttonInput" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@drawable/btn_input</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@color/btn_input_txt</item>
+    </style>
+
+    <style name="btnTicket" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@drawable/btn_ticket_line_item</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="btnTicket.btn_add" parent="btnTicket">
+        <item name="android:padding">13dp</item>
+    </style>
+
+    <style name="btnTicket.btn_subtract" parent="btnTicket.btn_add" />
+
+    <style name="numButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">#34b5e9</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="Widget.POSTech.Button.Coin" parent="Widget.Material3.Button">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingVertical">8dp</item>
+    </style>
+
+    <style name="Widget.POSTech.TextInput.Dense" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+    </style>
+
+    <style name="list">
+        <item name="android:background">@color/content1_bg</item>
+        <item name="android:cacheColorHint">@color/content1_bg</item>
+    </style>
+
+    <style name="ticketLineList">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:cacheColorHint">@color/content1_bg</item>
+    </style>
+    <style name="numButton.Important" parent="numButton">
+        <item name="backgroundTint">#ff8800</item>
+    </style>
+
+    <style name="numButton.Danger" parent="numButton">
+        <item name="backgroundTint">#484848</item>
+    </style>
+
+
+
+
+    <!--    &lt;!&ndash; STYLES &ndash;&gt;-->
+<!--    &lt;!&ndash; Base Application Theme &ndash;&gt;-->
+<!--    <style name="POSTechTheme" parent="">-->
+<!--        <item name="android:textSize">@dimen/textMedium</item>-->
+<!--        <item name="android:windowBackground">@android:color/white</item>-->
+<!--        <item name="android:actionBarStyle">@style/actionBarTheme</item>-->
+<!--        <item name="android:actionOverflowButtonStyle">-->
+<!--            @android:style/Widget.Holo.ActionButton.Overflow-->
+<!--        </item>-->
+<!--        <item name="android:popupMenuStyle">@style/actionBarTheme.popupMenu</item>-->
+<!--        <item name="android:actionMenuTextAppearance">-->
+<!--            @style/actionBarTheme.actionTextAppearance-->
+<!--        </item>-->
+<!--        <item name="android:textAppearanceSmallPopupMenu">-->
+<!--            @style/actionBarTheme.popupMenu.TextAppearance.Small-->
+<!--        </item>-->
+<!--        <item name="android:textAppearanceLargePopupMenu">-->
+<!--            @style/actionBarTheme.popupMenu.TextAppearance.Large-->
+<!--        </item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Base ActionBar Theme &ndash;&gt;-->
+<!--    <style name="actionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">-->
+<!--        <item name="android:background">@color/accent1</item>-->
+<!--        <item name="android:displayOptions">useLogo|showHome</item>-->
+<!--        <item name="android:titleTextStyle">@style/actionBarTitleText</item>-->
+<!--        &lt;!&ndash; Hides actionbar text &ndash;&gt;-->
+<!--        <item name="android:icon">@drawable/ab_logo</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; ActionBar title text &ndash;&gt;-->
+<!--    <style name="actionBarTitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">-->
+<!--        <item name="android:textColor">@drawable/txt_action_menu</item>-->
+<!--    </style>-->
+
+
+<!--    <style name="actionBarTheme.actionTextAppearance" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Menu">-->
+<!--        <item name="android:textStyle">normal</item>-->
+<!--        <item name="android:textSize">12sp</item>-->
+<!--        <item name="android:textAllCaps">false</item>-->
+<!--        <item name="android:textColor">@drawable/txt_action_menu</item>-->
+<!--    </style>-->
+
+<!--    <style name="actionBarTheme.popupMenu" parent="@android:style/Widget.Holo.Light.PopupMenu">-->
+<!--        &lt;!&ndash; Courtesy of http://jgilfelt.github.io/android-actionbarstylegenerator/ &ndash;&gt;-->
+<!--        <item name="android:popupBackground">@drawable/menu_dropdown_panel</item>-->
+<!--    </style>-->
+
+<!--    <style name="actionBarTheme.popupMenu.TextAppearance.Small" parent="@android:style/TextAppearance.Holo.Widget.PopupMenu.Small">-->
+<!--        <item name="android:textColor">@drawable/txt_action_menu</item>-->
+<!--    </style>-->
+
+<!--    <style name="actionBarTheme.popupMenu.TextAppearance.Large" parent="@android:style/TextAppearance.Holo.Widget.PopupMenu.Large">-->
+<!--        <item name="android:textColor">@drawable/txt_action_menu</item>-->
+<!--    </style>-->
+
+<!--    <style name="list">-->
+<!--        <item name="android:background">@color/content1_bg</item>-->
+<!--        <item name="android:cacheColorHint">@color/content1_bg</item>-->
+<!--    </style>-->
+
+<!--    <style name="ticketLineList">-->
+<!--        <item name="android:background">@android:color/transparent</item>-->
+<!--        <item name="android:cacheColorHint">@color/content1_bg</item>-->
+<!--    </style>-->
+
+<!--    <style name="button">-->
+<!--        <item name="android:background">@drawable/btn_action</item>-->
+<!--        <item name="android:padding">@dimen/contentMargin</item>-->
+<!--        <item name="android:textColor">@color/btn_action_txt</item>-->
+<!--    </style>-->
+
+<!--    <style name="buttonImportant">-->
+<!--        <item name="android:background">@drawable/btn_important</item>-->
+<!--        <item name="android:padding">@dimen/contentMargin</item>-->
+<!--        <item name="android:textColor">@color/btn_action_txt</item>-->
+<!--    </style>-->
+
+<!--    <style name="buttonInput">-->
+<!--        <item name="android:background">@drawable/btn_input</item>-->
+<!--        <item name="android:padding">@dimen/contentMargin</item>-->
+<!--        <item name="android:textColor">@color/btn_input_txt</item>-->
+<!--    </style>-->
+
+<!--    <style name="btnTicket">-->
+<!--        <item name="android:background">@drawable/btn_ticket_line_item</item>-->
+<!--        <item name="android:padding">@dimen/contentMargin</item>-->
+<!--        <item name="android:textColor">@android:color/white</item>-->
+<!--    </style>-->
+
+<!--    <style name="btnTicket.btn_add" parent="btnTicket">-->
+<!--        <item name="android:padding">13dip</item>-->
+<!--        <item name="android:scaleType">fitCenter</item>-->
+<!--    </style>-->
+
+<!--    <style name="btnTicket.btn_subtract" parent="btnTicket.btn_add" />-->
+
+<!--    <style name="numButton">-->
+<!--        <item name="android:background">#34b5e9</item>-->
+<!--        <item name="android:textSize">22dip</item>-->
+<!--        <item name="android:textColor">@android:color/white</item>-->
+<!--    </style>-->
+
+    <dimen name="numBtnWidth">@dimen/bigBtnWidth</dimen>
+    <dimen name="numBtnHeight">55dip</dimen>
+
+    <!-- Used in category and product items -->
+<!--    <style name="itemLabel">-->
+<!--        <item name="android:layout_width">match_parent</item>-->
+<!--        <item name="android:layout_height">wrap_content</item>-->
+<!--        <item name="android:gravity">center</item>-->
+<!--        <item name="android:lines">2</item>-->
+<!--        <item name="android:text">Placeholder text</item>-->
+<!--        <item name="android:textSize">@dimen/textSmall</item>-->
+<!--        <item name="android:textColor">@color/content1_txt</item>-->
+<!--    </style>-->
+
+<!--    &lt;!&ndash; Popup Style &ndash;&gt;-->
+<!--    <style name="btnPopup" parent="@android:style/Widget.Button">-->
+<!--        <item name="android:layout_width">@dimen/bigBtnWidth</item>-->
+<!--        <item name="android:layout_height">35dp</item>-->
+<!--        <item name="android:textSize">15sp</item>-->
+<!--        <item name="android:textAllCaps">true</item>-->
+<!--        <item name="android:gravity">center</item>-->
+<!--        <item name="android:textColor">@color/accent1_txt</item>-->
+<!--    </style>-->
+
+<!--    <style name="btnPopup.positive" parent="@style/btnPopup">-->
+<!--        <item name="android:background">@drawable/btn_positive</item>-->
+<!--    </style>-->
+
+<!--    <style name="btnPopup.negative" parent="@style/btnPopup">-->
+<!--        <item name="android:background">@drawable/btn_negative</item>-->
+<!--    </style>-->
+<!--    <style name="popup_header">-->
+<!--        <item name="android:layout_width">match_parent</item>-->
+<!--        <item name="android:layout_height">wrap_content</item>-->
+<!--        <item name="android:padding">@dimen/popupGeneralPadding</item>-->
+<!--        <item name="android:textAllCaps">true</item>-->
+<!--        <item name="android:textColor">@color/popup_outer_txt</item>-->
+<!--        <item name="android:layout_alignParentTop">true</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--    </style>-->
+
+<!--    <style name="popup_window" parent="android:Theme.Holo.Light.Dialog.NoActionBar.MinWidth">-->
+<!--        <item name="android:windowMinWidthMajor">70%</item>-->
+<!--    </style>-->
+<!--    <style name="tabWidget">-->
+<!--        <item name="android:background">@color/popup_outer_bg</item>-->
+<!--        <item name="android:divider">@android:color/white</item>-->
+<!--        <item name="android:fadingEdge">none</item>-->
+<!--        <item name="android:minWidth">300dp</item>-->
+<!--        <item name="android:showDividers">middle|end</item>-->
+<!--    </style>-->
+
+
+
+
+
+    <!-- Material 3 Popup Button Base -->
+    <style name="btnPopup" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_width">@dimen/bigBtnWidth</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+<!--        <item name="android:paddingHorizontal">16dp</item>-->
+<!--        <item name="android:paddingVertical">8dp</item>-->
+
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+
+
+    </style>
+
+    <!-- Material 3 Positive Button -->
+    <style name="btnPopup.positive" parent="btnPopup">
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Material 3 Negative Button -->
+    <style name="btnPopup.negative" parent="btnPopup">
+        <item name="android:backgroundTint">?attr/colorError</item>
+    </style>
+
+    <!-- Material 3 Styled Popup Header -->
+    <style name="popup_header" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/popupGeneralPadding</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Material 3 Themed Dialog Window -->
+    <style name="popup_window" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:windowMinWidthMajor">70%</item>
+        <item name="android:background">?attr/colorSurfaceContainerHighest</item>
+    </style>
+
+    <!-- Optional: Tab Widget Styled with Material Colors -->
+    <style name="tabWidget">
+        <item name="android:background">?attr/colorSurfaceVariant</item>
+        <item name="android:divider">?attr/colorOutline</item>
+        <item name="android:minWidth">300dp</item>
+        <item name="android:showDividers">middle|end</item>
+    </style>
+
+
+
+
+    <style name="itemLabel" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+
+</resources>

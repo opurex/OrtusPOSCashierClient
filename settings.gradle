@@ -1,0 +1,3 @@
+rootProject.name = 'OrtusPOS'
+
+include ':app', ':mpesa-android-sdk:mpesa'

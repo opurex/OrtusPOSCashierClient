@@ -1,0 +1,50 @@
+# OOCom Bluetooth Printer Setup
+
+## Quick Setup Guide
+
+1. **Pair your OOCom printer** with your Android device through Bluetooth settings
+2. **Open OrtusPOS** and go to Settings > Printers
+3. **Select "OCPP M083"** as the printer driver
+4. **Tap "Select Bluetooth Printer"** and choose your OOCom printer from the list
+5. **Test the connection** using the Device Features screen
+
+## Detailed Instructions
+
+### Step 1: Pair Your Printer
+- Turn on your OOCom printer
+- Put it in pairing mode (check manual)
+- Go to Android Settings > Bluetooth
+- Tap your printer when it appears in the list
+- Enter PIN if prompted (usually 0000)
+
+### Step 2: Configure in OrtusPOS
+- Open OrtusPOS
+- Tap the menu button (three lines)
+- Tap "Settings"
+- Tap "Printers"
+- Select "OCPP M083" from the driver dropdown
+- Tap "Select Bluetooth Printer"
+- Choose your printer from the list
+
+### Step 3: Test Connection
+- Go back to the main menu
+- Tap "Device Features"
+- Tap "OCPP M083 Test"
+- Your printer should print a test page
+
+## Troubleshooting
+
+**Printer not found:**
+- Make sure it's paired in Android Bluetooth settings
+- Restart Bluetooth on both devices
+- Try entering the MAC address manually
+
+**Print quality issues:**
+- Ensure "OCPP M083" driver is selected (not generic)
+- Check printer battery level
+- Clean the print head
+
+**Connection problems:**
+- Make sure no other app is using the printer
+- Forget and re-pair the device
+- Restart both devices

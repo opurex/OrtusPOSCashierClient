@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+          android:versionCode="8002006"
+          android:versionName="8.2.6">
+
+    <!-- Request legacy Bluetooth permissions -->
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+
+    <!-- Request Bluetooth permissions for Android 12 and newer -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+
+    <!-- Needed only if your app looks for Bluetooth devices.
+         If your app doesn't use Bluetooth scan results to derive physical
+         location information, you can strongly assert that your app
+         doesn't derive physical location. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- Android 12+ specific -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
+
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="true" />
+
+
+
+
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+<!--    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>-->
+<!--    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>-->
+    <application android:name="com.opurex.ortus.client.OrtusPOS"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="false"
+        tools:targetApi="24"
+
+        android:allowBackup="true"
+            android:icon="@drawable/launcher"
+            android:label="@string/app_name"
+            android:theme="@style/POSTechTheme">
+        <activity android:name=".LoginActivity"
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="Start"
+                  android:launchMode="singleTask"/>
+        <activity android:name="Password"/>
+        <activity android:name="OpenCash"/>
+        <activity android:name=".RestaurantTicketSelect"/>
+        <activity
+                android:name="Transaction"
+                android:windowSoftInputMode="adjustNothing"/>
+        <activity android:name="CompositionInput"/>
+        <activity android:name="KeypadInput"/>
+        <activity android:name="TariffAreaSelect"/>
+        <activity android:name="ReceiptSelect"/>
+        <activity android:name="ZSelect"/>
+        <activity android:name="CloseCash"/>
+        <activity android:name="CloseCashCount"/>
+        <activity
+                android:name=".Configure"
+                android:theme="@android:style/Theme.Holo"/>
+        <activity
+                android:name="Debug"
+                android:theme="@android:style/Theme.Holo"/>
+        <activity android:name=".activities.test.MPopActivity"
+                  android:theme="@android:style/Theme.Holo"/>
+        <activity android:name=".activities.POSDeviceFeatures"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
+          <intent-filter>
+            <action android:name="opurex.action.PosDeviceFeatures"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+          </intent-filter>
+        </activity>
+        <service android:name=".drivers.DeviceService"/>
+
+        <activity android:name=".activities.test.MpesaTestActivity"
+            />
+
+        <activity android:name=".activities.BluetoothPrinterSelectionActivity"
+            android:exported="false"
+            android:label="Select Bluetooth Printer" />
+        <activity android:name=".activities.DeviceListActivity"
+            android:exported="false"
+            android:label="@string/select_device" />
+        <activity android:name=".activities.OocomPrinterHelpActivity"
+            android:exported="true"
+            android:label="OOCom Printer Help" >
+            <intent-filter>
+                <action android:name="com.opurex.ortus.client.OOCOM_PRINTER_HELP"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <service android:name=".drivers.DeviceService"/>
+
+        <!-- M-Pesa Callback Receiver -->
+        <receiver android:name=".receivers.MpesaCallbackReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.opurex.ortus.client.MPESA_CALLBACK"/>
+            </intent-filter>
+        </receiver>
+    </application>
+
+
+</manifest>

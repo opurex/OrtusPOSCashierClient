@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="M-Pesa Integration Test"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/test_mpesa_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="How to Test M-Pesa Integration"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/simulate_success_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Simulate Successful Payment"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/simulate_failure_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Simulate Failed Payment"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="To test actual M-Pesa integration:\n1. Configure M-Pesa settings in Configuration\n2. Create a transaction\n3. Select M-Pesa as payment method\n4. Complete payment on your phone\n\nTo simulate callbacks, use the buttons above."
+        android:textSize="14sp"
+        android:layout_marginBottom="24dp" />
+
+</LinearLayout>

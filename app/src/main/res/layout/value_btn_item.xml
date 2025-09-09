@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Upgraded Material Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/value_button"
+        android:layout_width="@dimen/bigBtnWidth"
+        android:layout_height="@dimen/bigBtnHeight"
+        android:padding="@dimen/contentMargin"
+        android:gravity="bottom|center_horizontal"
+        app:cornerRadius="12dp"
+        app:iconGravity="textStart"
+        style="@style/Widget.Material3.Button"
+        android:text="@string/ticket_total"
+        />
+
+    <!-- Upgraded TextInput for count -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxCornerRadiusBottomEnd="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:inputType="number"
+            android:lines="1"
+            android:textSize="18sp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</merge>

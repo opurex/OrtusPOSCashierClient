@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- AppBarLayout wrapper is REQUIRED for the toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:title="@string/app_name"
+            app:titleTextColor="#0E010F"
+            app:navigationIcon="@drawable/ab_logo"
+            app:menu="@menu/ab_ticket_input"
+            app:popupTheme="@style/Widget.POSTech.PopupMenu"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        app:menu="@menu/ab_ticket_input"
+        app:itemTextColor="@color/colorOnPrimary"
+        app:itemIconTint="@color/colorOnPrimary"/>
+    <!-- ViewPager2 with AppBar scrolling behavior -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/transaction_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:clipToPadding="false"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:overScrollMode="never" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

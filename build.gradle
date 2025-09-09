@@ -1,0 +1,37 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        // Add the jitpack repository URL
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.11.1'
+    }
+}
+
+
+
+
+// It's common practice to define repositories for all modules in an allprojects block
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        //noinspection JcenterRepositoryObsolete
+        jcenter()  // Optional, but some older deps need it
+        maven { url 'https://jitpack.io' }
+
+    }
+}
+
+// Optional: A common task to clean the project
+// In your root build.gradle
+buildscript {
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.11.1' // This line
+    }
+}
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,24 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container_catalog"
+        android:layout_width="0dp"
+        android:layout_weight="0.65"
+        android:layout_height="match_parent" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="?android:attr/listDivider" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container_ticket"
+        android:layout_width="0dp"
+        android:layout_weight="0.35"
+        android:layout_height="match_parent" />
+</LinearLayout>

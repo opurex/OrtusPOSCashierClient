@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!-- Row 1 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key1"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key2"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="2" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key3"
+                style="@style/numButton"
+                android:text="3" />
+        </TableRow>
+
+        <!-- Row 2 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key4"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="4" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key5"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="5" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key6"
+                style="@style/numButton"
+                android:text="6" />
+        </TableRow>
+
+        <!-- Row 3 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key7"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="7" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key8"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="8" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key9"
+                style="@style/numButton"
+                android:text="9" />
+        </TableRow>
+
+        <!-- Row 4 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key0"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/keyDot"
+                style="@style/numButton"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="." />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key00"
+                style="@style/numButton"
+                android:text="00"
+                android:onClick="clear" />
+        </TableRow>
+
+        <!-- Row 5 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/keyErase"
+                style="@style/numButton.Danger"
+                android:layout_marginEnd="@dimen/btnSpacing"
+                android:text="X"
+                android:onClick="correct" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/keyEnter"
+                style="@style/numButton.Important"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_weight="2"
+                android:text="PAY" />
+        </TableRow>
+    </TableLayout>
+</merge>
