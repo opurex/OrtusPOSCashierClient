@@ -118,6 +118,10 @@ public class NumKeyboard extends TableLayout {
         this.innerValue = "";
     }
 
+    public void reset() {
+        this.innerValue = "";
+    }
+
     public void correct() {
         if (this.innerValue.length() > 0) {
             this.innerValue = this.innerValue.substring(0,

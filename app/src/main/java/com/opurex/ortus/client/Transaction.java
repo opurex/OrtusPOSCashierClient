@@ -57,6 +57,8 @@ import com.opurex.ortus.client.models.User;
 import com.opurex.ortus.client.utils.BarcodeCheck;
 import com.opurex.ortus.client.utils.Error;
 import com.opurex.ortus.client.utils.OpurexConfiguration;
+import com.opurex.ortus.client.utils.ScaleManager;
+import com.opurex.ortus.client.utils.BluetoothScaleHelper;
 import com.opurex.ortus.client.utils.exception.NotFoundException;
 
 import java.io.IOError;
@@ -101,6 +103,7 @@ public class Transaction extends POSConnectedTrackedActivity
     private String barcode = "";
     private long lastBarCodeTime;
     private CustomerInfoDialog customerInfoDialog;
+    private ScaleManager scaleManager;
 
 
     private static final TransPage[] PAGES = new TransPage[]{
@@ -185,6 +188,9 @@ public class Transaction extends POSConnectedTrackedActivity
         mPager.setOffscreenPageLimit(PAGES.length);
         mPager.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
         mPager.registerOnPageChangeCallback(pageChangeCallback);
+        
+        // Initialize the scale manager
+        initializeScaleManager();
 
     }
 
@@ -267,6 +273,45 @@ public class Transaction extends POSConnectedTrackedActivity
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
+    }
+    
+    private void initializeScaleManager() {
+        scaleManager = new ScaleManager(this);
+        scaleManager.setScaleWeightListener(new ScaleManager.ScaleWeightListener() {
+            @Override
+            public void onWeightReceived(double weight, String unit) {
+                // Handle weight received from scale
+                Log.d("Transaction", "Weight received: " + weight + " " + unit);
+                // We'll implement the actual handling when we modify the scale dialog
+            }
+            
+            @Override
+            public void onScaleConnected() {
+                Log.d("Transaction", "Scale connected");
+                runOnUiThread(() -> {
+                    Toast.makeText(Transaction.this, "Scale connected", Toast.LENGTH_SHORT).show();
+                });
+            }
+            
+            @Override
+            public void onScaleDisconnected() {
+                Log.d("Transaction", "Scale disconnected");
+                runOnUiThread(() -> {
+                    Toast.makeText(Transaction.this, "Scale disconnected", Toast.LENGTH_SHORT).show();
+                });
+            }
+            
+            @Override
+            public void onScaleError(String errorMessage) {
+                Log.e("Transaction", "Scale error: " + errorMessage);
+                runOnUiThread(() -> {
+                    Toast.makeText(Transaction.this, "Scale error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+        
+        // Try to connect to the scale
+        scaleManager.initializeScale();
     }
 
     @Override
@@ -914,8 +959,15 @@ public class Transaction extends POSConnectedTrackedActivity
         // If the product is scaled, asks the weight
         ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct);
         dial.setDialogListener(this);
-        dial.show(getSupportFragmentManager
-                (), ProductScaleDialog.TAG);
+        
+        // If we have a connected scale, set up the communication
+        if (scaleManager != null && scaleManager.isConnected()) {
+            // In a real implementation, we would pass the scale manager to the dialog
+            // For now, we'll just show a toast to indicate the scale is connected
+            Toast.makeText(this, "Scale connected - place item on scale", Toast.LENGTH_SHORT).show();
+        }
+        
+        dial.show(getSupportFragmentManager(), ProductScaleDialog.TAG);
     }
 
     // Only suitable for adding one product at a time because updateView is heavy
@@ -1241,6 +1293,12 @@ public class Transaction extends POSConnectedTrackedActivity
         super.onDestroy();
         if (mPager != null) {
             mPager.unregisterOnPageChangeCallback(pageChangeCallback);
+        }
+        
+        // Clean up the scale manager
+        if (scaleManager != null) {
+            scaleManager.cleanup();
+            scaleManager = null;
         }
     }
 

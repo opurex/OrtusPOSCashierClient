@@ -125,8 +125,12 @@ public class Product implements Serializable, Item {
         return Type.Product;
     }
 
-    private double getPrice() {
+    public double getPrice() {
         return CalculPrice.round(this.price);
+    }
+
+    public void setScaled(boolean scaled) {
+        this.scaled = scaled;
     }
 
 

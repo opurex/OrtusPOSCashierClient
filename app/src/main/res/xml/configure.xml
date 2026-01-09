@@ -252,6 +252,24 @@
 
 	</PreferenceScreen>
 
+	<PreferenceScreen
+		android:title="Scale Configuration">
+
+		<Preference
+			android:key="select_bluetooth_scale"
+			android:title="Select Bluetooth Scale"
+			android:summary="Scan and select a Bluetooth scale from paired devices">
+		</Preference>
+
+		<EditTextPreference
+			android:defaultValue=""
+			android:key="scale_address"
+			android:singleLine="true"
+			android:summary="MAC address of the selected Bluetooth scale"
+			android:title="Scale MAC Address" />
+
+	</PreferenceScreen>
+
 
 </PreferenceScreen>
 

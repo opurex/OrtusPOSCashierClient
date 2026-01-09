@@ -91,30 +91,30 @@ public class PaymentModeValueBtnItem extends LinearLayout implements TextWatcher
         this.input.removeTextChangedListener(this);
         this.input.setText(Integer.toString(this.count));
         this.input.addTextChangedListener(this);
-        long val = Math.round(this.value.getValue() * 100);
-        if (val == 5000) {
+        double val = this.value.getValue();
+        if (val == 5000.0) {
             this.button.setBackgroundResource(R.drawable.currency50);
-        } else if (val == 2000) {
+        } else if (val == 2000.0) {
             this.button.setBackgroundResource(R.drawable.currency20);
-        } else if (val == 1000) {
+        } else if (val == 1000.0) {
             this.button.setBackgroundResource(R.drawable.currency10);
-        } else if (val == 500) {
+        } else if (val == 500.0) {
             this.button.setBackgroundResource(R.drawable.currency5);
-        } else if (val == 200) {
+        } else if (val == 200.0) {
             this.button.setBackgroundResource(R.drawable.currency2);
-        } else if (val == 100) {
+        } else if (val == 100.0) {
             this.button.setBackgroundResource(R.drawable.currency1);
-        } else if (val == 50) {
+        } else if (val == 50.0) {
             this.button.setBackgroundResource(R.drawable.currency05);
-        } else if (val == 20) {
+        } else if (val == 20.0) {
             this.button.setBackgroundResource(R.drawable.currency02);
-        } else if (val == 10) {
+        } else if (val == 10.0) {
             this.button.setBackgroundResource(R.drawable.currency01);
-        } else if (val == 5) {
+        } else if (val == 5.0) {
             this.button.setBackgroundResource(R.drawable.currency005);
-        } else if (val == 2) {
+        } else if (val == 2.0) {
             this.button.setBackgroundResource(R.drawable.currency002);
-        } else if (val == 1) {
+        } else if (val == 1.0) {
             this.button.setBackgroundResource(R.drawable.currency001);
         } else {
             this.button.setBackground(null);

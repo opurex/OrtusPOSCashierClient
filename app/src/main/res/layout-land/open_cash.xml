@@ -28,49 +28,55 @@
               android:layout_centerHorizontal="true"
               android:text="@string/cash_not_opened" />
 
-    <LinearLayout android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_alignParentLeft="true"
-                  android:layout_weight="5"
-                  android:layout_marginLeft="@dimen/contentMargin"
-                  android:layout_marginRight="@dimen/contentMargin">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/contentMargin"
+        android:layout_marginRight="@dimen/contentMargin"
+        android:layout_weight="5"
+        android:orientation="horizontal">
         <!-- Value buttons -->
-        <GridView android:id="@+id/open_cash_values"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="1"
-                  android:columnWidth="@dimen/bigBtnWidth"
-                  android:horizontalSpacing="@dimen/btnSpacing"
-                  android:verticalSpacing="@dimen/btnSpacing"
-                  android:numColumns="4"
-                  android:stretchMode="spacingWidthUniform" />
+        <GridView
+            android:id="@+id/open_cash_values"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:columnWidth="@dimen/bigBtnWidth"
+            android:horizontalSpacing="@dimen/btnSpacing"
+            android:numColumns="4"
+            android:stretchMode="spacingWidthUniform"
+            android:verticalSpacing="@dimen/btnSpacing" />
 
         <!-- Amount -->
-        <LinearLayout android:orientation="vertical"
-                      android:layout_width="wrap_content"
-                      android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cash_amount"
-                android:gravity="center" />
-            <EditText android:id="@+id/open_cash_amount"
+                android:gravity="center"
+                android:text="@string/cash_amount" />
+
+            <EditText
+                android:id="@+id/open_cash_amount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:numeric="decimal"
+                android:gravity="right"
                 android:lines="1"
-                android:textSize="18dip"
-                android:gravity="right" />
+                android:numeric="decimal"
+                android:textSize="18dip" />
 
             <!-- Keyboard -->
             <com.opurex.ortus.client.widgets.NumKeyboard
                 android:id="@+id/numkeyboard"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="@dimen/title_topmargin"
-                    android:layout_marginTop="@dimen/contentMargin" />
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/contentMargin"
+                android:layout_marginBottom="@dimen/title_topmargin" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

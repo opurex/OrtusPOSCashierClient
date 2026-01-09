@@ -58,6 +58,14 @@ public class Stock implements Serializable {
         return this.max != null;
     }
 
+    public void setSecurity(double security) {
+        this.security = security;
+    }
+
+    public void setMaxLevel(double max) {
+        this.max = max;
+    }
+
     public static Stock fromJSON(JSONObject o) throws JSONException {
         String productId = o.getString("productId");
         Double quantity = null;

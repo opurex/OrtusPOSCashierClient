@@ -106,6 +106,7 @@
     <string name="print_done">Printing done</string>
     <string name="scaled_products_info">Enter the weight in Kg:</string>
     <string name="scaled_products_cancel">Cancel</string>
+    <string name="kg_unit">kg</string>
     <string name="ticket_total_label">Total</string>
 
     <string name="menu_print_enabled">Printing enabled</string>

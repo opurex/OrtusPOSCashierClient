@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,6 +39,7 @@ import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.opurex.ortus.client.activities.BluetoothPrinterSelectionActivity;
+import com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity;
 import com.opurex.ortus.client.data.CashArchive;
 import com.opurex.ortus.client.data.Data;
 import com.opurex.ortus.client.data.DataSavable.AbstractJsonDataSavable;
@@ -46,6 +48,7 @@ import com.opurex.ortus.client.drivers.mpop.MPopPort;
 import com.opurex.ortus.client.utils.*;
 import com.opurex.ortus.client.utils.file.ExternalFile;
 import com.opurex.ortus.client.utils.file.InternalFile;
+import com.opurex.ortus.client.utils.DatabaseExportUtil;
 
 import static org.apache.commons.io.IOUtils.copy;
 
@@ -78,10 +81,17 @@ public class Configure extends PreferenceActivity
 //    private static final String DEMO_USER =  "prexra";; // set not null to enable demo
 //    private static final String DEMO_PASSWORD = "Prexra789?";
 //    private static final String DEMO_CASHREGISTER = "CashRegister";
-    private static final String DEFAULT_HOST = "wambugumountainviewgroceries.ortuspos.com";
-    private static final String DEFAULT_USER = "WambuguMountainViewGroceries";
-    private static final String DEFAULT_PASSWORD = "#@?Wambugu?#MountainViewGroceries2025?>";
+    private static final String DEFAULT_HOST = "demopos.ortuspos.com";
+    private static final String DEFAULT_USER = "DemoOrtusPOS";
+//    private static final String DEFAULT_PASSWORD = "DemoOrtusPOS2025?";
+    private static final String DEFAULT_PASSWORD = "admin2026?";
+//
     private static final String DEFAULT_CASHREGISTER = "Grocery";
+
+//    private static final String DEFAULT_HOST = "wambugumountainviewgroceries.ortuspos.com";
+//    private static final String DEFAULT_USER = "WambuguMountainViewGroceries";
+//    private static final String DEFAULT_PASSWORD = "#@?Wambugu?#MountainViewGroceries2025?>";
+//    private static final String DEFAULT_CASHREGISTER = "GroceryOpen";
     private static final int DEFAULT_PRINTER_CONNECT_TRY = 3;
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
@@ -142,6 +152,18 @@ public class Configure extends PreferenceActivity
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     launchBluetoothPrinterSelection(2);
+                    return true;
+                }
+            });
+        }
+        
+        // Add click listener for Bluetooth scale selection
+        Preference selectBluetoothScale = this.findPreference("select_bluetooth_scale");
+        if (selectBluetoothScale != null) {
+            selectBluetoothScale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    launchBluetoothScaleSelection();
                     return true;
                 }
             });
@@ -453,7 +475,7 @@ public class Configure extends PreferenceActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_EXPORT_ID:
-                export();
+                showExportOptionsDialog();
                 break;
             case MENU_IMPORT_ID:
                 // Get properties file
@@ -540,7 +562,37 @@ public class Configure extends PreferenceActivity
         return true;
     }
 
-    private void export() {
+    private static final int PERMISSION_REQUEST_CODE = 1001;
+
+    /**
+     * Shows a dialog to let user choose what to export
+     */
+    private void showExportOptionsDialog() {
+        String[] options = {"Export Configuration Only", "Export Database Only", "Export Both"};
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle("Export Options")
+               .setItems(options, (dialog, which) -> {
+                   switch (which) {
+                       case 0: // Export Configuration Only
+                           exportConfiguration();
+                           break;
+                       case 1: // Export Database Only
+                           exportDatabaseWithPermissionCheck();
+                           break;
+                       case 2: // Export Both
+                           exportConfiguration();
+                           exportDatabaseWithPermissionCheck();
+                           break;
+                   }
+               })
+               .setNegativeButton("Cancel", null)
+               .show();
+    }
+
+    /**
+     * Exports the configuration data (JSON and cash archive)
+     */
+    private void exportConfiguration() {
         Data.export(AbstractJsonDataSavable.getStaticDirectory());
         try {
             File file = new InternalFile(CashArchive.getDir(), com.opurex.ortus.client.utils.file.File.DIRECTORY);
@@ -549,8 +601,45 @@ public class Configure extends PreferenceActivity
                 copy(new FileInputStream(new InternalFile(CashArchive.getDir(), filename)),
                         new FileOutputStream(new ExternalFile(CashArchive.getDir(), filename)));
             }
+            Toast.makeText(this, "Configuration exported successfully", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(this, "Error exporting configuration: " + e.getMessage(), 
+                Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Exports the database with proper permission checks
+     */
+    private void exportDatabaseWithPermissionCheck() {
+        if (DatabaseExportUtil.hasStoragePermission(this)) {
+            DatabaseExportUtil.exportDatabase(this);
+        } else {
+            DatabaseExportUtil.requestStoragePermission(this, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    private void export() {
+        // For backward compatibility, export both by default
+        exportConfiguration();
+        exportDatabaseWithPermissionCheck();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted, proceed with database export
+                    DatabaseExportUtil.exportDatabase(this);
+                } else {
+                    // Permission denied, show message
+                    Toast.makeText(this, "Storage permission is required to export database", 
+                        Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 
@@ -608,6 +697,11 @@ public class Configure extends PreferenceActivity
         return prefs.getString("mpesa_test_phone", "0745423421");
     }
 
+    public static String getScaleAddress(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("scale_address", "");
+    }
+
     private static void set(Context ctx, String label, String value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         prefs.edit()
@@ -626,6 +720,7 @@ public class Configure extends PreferenceActivity
     private static final int REQUEST_SELECT_BLUETOOTH_PRINTER = 1001;
     private static final int REQUEST_SELECT_BLUETOOTH_PRINTER1 = 1002;
     private static final int REQUEST_SELECT_BLUETOOTH_PRINTER2 = 1003;
+    private static final int REQUEST_SELECT_BLUETOOTH_SCALE = 1004;
     
     private int currentPrinterIndex = 0;
     
@@ -648,38 +743,60 @@ public class Configure extends PreferenceActivity
         startActivityForResult(intent, requestCode);
     }
     
+    private void launchBluetoothScaleSelection() {
+        Intent intent = new Intent(this, com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.class);
+        startActivityForResult(intent, REQUEST_SELECT_BLUETOOTH_SCALE);
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         
         if (resultCode == RESULT_OK && data != null) {
-            String printerAddress = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_ADDRESS);
-            String printerName = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_NAME);
-            
-            if (printerAddress != null && !printerAddress.isEmpty()) {
-                // Update the printer address preference
-                String preferenceKey;
-                switch (currentPrinterIndex) {
-                    case 1:
-                        preferenceKey = "printer_address1";
-                        break;
-                    case 2:
-                        preferenceKey = "printer_address2";
-                        break;
-                    case 0:
-                    default:
-                        preferenceKey = "printer_address";
-                        break;
-                }
+            if (requestCode == REQUEST_SELECT_BLUETOOTH_SCALE) {
+                String scaleAddress = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_ADDRESS);
+                String scaleName = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
                 
-                Preference printerAddressPref = findPreference(preferenceKey);
-                if (printerAddressPref instanceof EditTextPreference) {
-                    ((EditTextPreference) printerAddressPref).setText(printerAddress);
+                if (scaleAddress != null && !scaleAddress.isEmpty()) {
+                    // Update the scale address preference
+                    Preference scaleAddressPref = findPreference("scale_address");
+                    if (scaleAddressPref instanceof EditTextPreference) {
+                        ((EditTextPreference) scaleAddressPref).setText(scaleAddress);
+                    }
+                    
+                    // Show a confirmation message
+                    Toast.makeText(this, "Selected scale: " + (scaleName != null ? scaleName : scaleAddress), 
+                        Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                String printerAddress = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_ADDRESS);
+                String printerName = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_NAME);
                 
-                // Show a confirmation message
-                Toast.makeText(this, "Selected printer: " + (printerName != null ? printerName : printerAddress), 
-                    Toast.LENGTH_SHORT).show();
+                if (printerAddress != null && !printerAddress.isEmpty()) {
+                    // Update the printer address preference
+                    String preferenceKey;
+                    switch (currentPrinterIndex) {
+                        case 1:
+                            preferenceKey = "printer_address1";
+                            break;
+                        case 2:
+                            preferenceKey = "printer_address2";
+                            break;
+                        case 0:
+                        default:
+                            preferenceKey = "printer_address";
+                            break;
+                    }
+                    
+                    Preference printerAddressPref = findPreference(preferenceKey);
+                    if (printerAddressPref instanceof EditTextPreference) {
+                        ((EditTextPreference) printerAddressPref).setText(printerAddress);
+                    }
+                    
+                    // Show a confirmation message
+                    Toast.makeText(this, "Selected printer: " + (printerName != null ? printerName : printerAddress), 
+                        Toast.LENGTH_SHORT).show();
+                }
             }
         }
         

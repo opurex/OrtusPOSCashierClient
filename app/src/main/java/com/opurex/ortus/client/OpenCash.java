@@ -22,9 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -85,32 +83,9 @@ public class OpenCash extends TrackedActivity
         }
         setContentView(R.layout.open_cash);
         this.totalAmount = (EditText) this.findViewById(R.id.open_cash_amount);
-        this.totalAmount.setFocusable(true);
-        this.totalAmount.setFocusableInTouchMode(true);
-        
-        // Handle keyboard input for total amount
-        this.totalAmount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    try {
-                        String text = totalAmount.getText().toString();
-                        if (!text.isEmpty()) {
-                            total = Double.parseDouble(text);
-                            updateAmount();
-                        }
-                    } catch (NumberFormatException e) {
-                        // Handle invalid input
-                        totalAmount.setText(String.format("%.2f", total));
-                    }
-                    totalAmount.clearFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
+        this.totalAmount.setFocusable(false);
         if (!cashier.hasPermission("button.openmoney")
-            || Data.Cash.currentCash(this).isClosed()) {
+                || Data.Cash.currentCash(this).isClosed()) {
             this.findViewById(R.id.numkeyboard).setVisibility(View.GONE);
             this.findViewById(R.id.open_cash_values).setVisibility(View.GONE);
         }
@@ -142,10 +117,6 @@ public class OpenCash extends TrackedActivity
             counts.set(i, state.getInt(COUNT_KEY + i, 0));
         }
         this.total = state.getDouble(AMOUNT_KEY, 0.0);
-        // Update the display with the restored total
-        if (this.totalAmount != null) {
-            this.totalAmount.setText(String.format("%.2f", this.total));
-        }
     }
 
 
@@ -176,8 +147,7 @@ public class OpenCash extends TrackedActivity
     /** From CoinCount.Listener */
     public void coinAdded(double amount, int newCount) {
         this.total += amount;
-        // Format to 2 decimal places
-        this.totalAmount.setText(String.format("%.2f", this.total));
+        this.totalAmount.setText(this.getString(R.string.ticket_total, this.total));
     }
     /** From CoinCount.Listener */
     public void countUpdated(double amount, int newCount) {
@@ -194,8 +164,7 @@ public class OpenCash extends TrackedActivity
             int count = this.coinButtons.getCount(i);
             this.total += v.getValue() * count;
         }
-        // Format to 2 decimal places
-        this.totalAmount.setText(String.format("%.2f", this.total));
+        this.totalAmount.setText(this.getString(R.string.ticket_total, this.total));
     }
 
     @Override
@@ -211,11 +180,8 @@ public class OpenCash extends TrackedActivity
                 break;
             case NumKeyboard.KEY_0:
                 if (focused != null) {
-                    String currentText = focused.getText().toString();
-                    if (!currentText.startsWith("0") || currentText.length() > 1) {
-                        focused.setText(currentText + "0");
-                    } else if (currentText.equals("0")) {
-                        focused.setText("0");
+                    if (!focused.getText().toString().startsWith("0")) {
+                        focused.setText(focused.getText().toString() + "0");
                     }
                 }
                 break;
@@ -266,41 +232,22 @@ public class OpenCash extends TrackedActivity
                 break;
             case NumKeyboard.KEY_00:
                 if (focused != null) {
-                    String currentText = focused.getText().toString();
-                    if (!currentText.startsWith("0") || currentText.length() > 1) {
-                        focused.setText(currentText + "00");
-                    } else if (currentText.equals("0")) {
-                        focused.setText("00");
+                    if (!focused.getText().toString().startsWith("0")) {
+                        focused.setText(focused.getText().toString() + "00");
                     }
                 }
                 break;
             case NumKeyboard.KEY_ERASE:
-                if (focused != null) {
-                    String currentText = focused.getText().toString();
-                    if (currentText.length() > 0) {
-                        focused.setText(currentText.substring(0, currentText.length() - 1));
-                    } else {
-                        focused.setText("");
-                    }
-                }
+                resetCashCount();
+                NumKeyboard kbd = (NumKeyboard) this.findViewById(R.id.numkeyboard);
+                kbd.reset();
+                this.updateAmount();
                 break;
             default:
                 break;
         }
-        
-        // Handle decimal point for amount field
-        if (focused != null && focused == this.totalAmount) {
-            String text = focused.getText().toString();
-            if (text.contains("..")) {
-                // Remove extra dots
-                focused.setText(text.replace("..", "."));
-            }
-        }
-        
-        // Handle leading zeros
         if (focused != null && focused.getText().toString().length() > 1
-                && focused.getText().toString().startsWith("0")
-                && !focused.getText().toString().startsWith("0.")) {
+                && focused.getText().toString().startsWith("0")) {
             focused.setText(focused.getText().toString().substring(1));
         }
         return true;
