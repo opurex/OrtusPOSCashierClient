@@ -253,6 +253,14 @@ public class Transaction extends POSConnectedTrackedActivity
                         break;
                 }
                 break;
+            case SCALE_SELECT:
+                if (resultCode == Activity.RESULT_OK) {
+                    scaleMacAddress = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_ADDRESS);
+                    if (scaleManager != null && scaleMacAddress != null) {
+                        scaleManager.connectToScale(scaleMacAddress);
+                    }
+                }
+                break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
@@ -275,32 +283,29 @@ public class Transaction extends POSConnectedTrackedActivity
         super.onSaveInstanceState(state);
     }
     
+    private String scaleMacAddress;
+
     private void initializeScaleManager() {
         scaleManager = new ScaleManager(this);
-        scaleManager.setScaleWeightListener(new ScaleManager.ScaleWeightListener() {
-            @Override
-            public void onWeightReceived(double weight, String unit) {
-                // Handle weight received from scale
-                Log.d("Transaction", "Weight received: " + weight + " " + unit);
-                // We'll implement the actual handling when we modify the scale dialog
-            }
-            
+        scaleManager.setConnectionStateListener(new ScaleManager.ConnectionStateListener() {
             @Override
             public void onScaleConnected() {
                 Log.d("Transaction", "Scale connected");
                 runOnUiThread(() -> {
                     Toast.makeText(Transaction.this, "Scale connected", Toast.LENGTH_SHORT).show();
+                    invalidateOptionsMenu();
                 });
             }
-            
+
             @Override
             public void onScaleDisconnected() {
                 Log.d("Transaction", "Scale disconnected");
                 runOnUiThread(() -> {
                     Toast.makeText(Transaction.this, "Scale disconnected", Toast.LENGTH_SHORT).show();
+                    invalidateOptionsMenu();
                 });
             }
-            
+
             @Override
             public void onScaleError(String errorMessage) {
                 Log.e("Transaction", "Scale error: " + errorMessage);
@@ -309,9 +314,6 @@ public class Transaction extends POSConnectedTrackedActivity
                 });
             }
         });
-        
-        // Try to connect to the scale
-        scaleManager.initializeScale();
     }
 
     @Override
@@ -691,6 +693,8 @@ public class Transaction extends POSConnectedTrackedActivity
             menu.findItem(R.id.ab_menu_close_session).setEnabled(true);
         }
 
+        getMenuInflater().inflate(R.menu.ab_scale_menu, menu);
+
         return true;
     }
 
@@ -718,6 +722,16 @@ public class Transaction extends POSConnectedTrackedActivity
 
         if (currentItem != TICKET_FRAG) {
             menu.findItem(R.id.ab_menu_divider).setEnabled(true);
+        }
+
+        MenuItem connectItem = menu.findItem(R.id.ab_menu_scale_connect);
+        MenuItem disconnectItem = menu.findItem(R.id.ab_menu_scale_disconnect);
+        if (scaleManager != null && scaleManager.isConnected()) {
+            connectItem.setVisible(false);
+            disconnectItem.setVisible(true);
+        } else {
+            connectItem.setVisible(true);
+            disconnectItem.setVisible(false);
         }
 
         return true;
@@ -805,6 +819,8 @@ public class Transaction extends POSConnectedTrackedActivity
 //        return true;
 //    }
 //
+        private static final int SCALE_SELECT = 5;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -866,6 +882,15 @@ public class Transaction extends POSConnectedTrackedActivity
             case R.id.ab_menu_close_session:
                 CloseCash.close(this);
                 break;
+            case R.id.ab_menu_scale_connect:
+                Intent intent = new Intent(this, com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.class);
+                startActivityForResult(intent, SCALE_SELECT);
+                return true;
+            case R.id.ab_menu_scale_disconnect:
+                if (scaleManager != null) {
+                    scaleManager.disconnect();
+                }
+                return true;
             default:
                 return false;
 
@@ -957,16 +982,8 @@ public class Transaction extends POSConnectedTrackedActivity
 
     void askForAScaledProduct(Product p, boolean isReturnProduct) {
         // If the product is scaled, asks the weight
-        ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct);
+        ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct, scaleManager);
         dial.setDialogListener(this);
-        
-        // If we have a connected scale, set up the communication
-        if (scaleManager != null && scaleManager.isConnected()) {
-            // In a real implementation, we would pass the scale manager to the dialog
-            // For now, we'll just show a toast to indicate the scale is connected
-            Toast.makeText(this, "Scale connected - place item on scale", Toast.LENGTH_SHORT).show();
-        }
-        
         dial.show(getSupportFragmentManager(), ProductScaleDialog.TAG);
     }
 

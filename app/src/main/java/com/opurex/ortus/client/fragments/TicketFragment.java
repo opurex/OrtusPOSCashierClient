@@ -38,7 +38,7 @@ import com.opurex.ortus.client.widgets.SessionTicketsAdapter;
 import com.opurex.ortus.client.widgets.TariffAreasAdapter;
 import com.opurex.ortus.client.widgets.TicketLinesAdapter;
 
-public class TicketFragment extends ViewPageFragment
+public class TicketFragment extends Fragment implements ProductScaleDialog.Listener {
         implements TicketLineEditListener,
         TicketLineEditDialog.Listener,
         CustomerInfoDialog.TicketListener {
@@ -430,13 +430,7 @@ public class TicketFragment extends ViewPageFragment
         Product p = l.getProduct();
         if (p.isScaled()) {
             ProductScaleDialog dial = ProductScaleDialog.newInstance(p, false);
-            dial.setDialogListener(new ProductScaleDialog.Listener() {
-                @Override
-                public void onPsdPositiveClick(Product p, double weight, boolean ignored) {
-                    mTicketData.adjustScale(l, weight);
-                    updateView();
-                }
-            });
+            dial.setTargetFragment(this, 0); // Set this fragment as the target
             dial.show(getParentFragmentManager(), ProductScaleDialog.TAG);
         }
     }
@@ -681,6 +675,15 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void onTicketRefund(Ticket ticket) {
         switchTicket(ticket.getRefundTicket());
+    }
+
+    @Override
+    public void onPsdPositiveClick(Product p, double weight, boolean isProductReturned) {
+        if (isProductReturned) {
+            mListener.addAScaledProductReturnToTicket(p, weight);
+        } else {
+            mListener.addAScaledProductToTicket(p, weight);
+        }
     }
 
     private class DataHandler extends Handler {

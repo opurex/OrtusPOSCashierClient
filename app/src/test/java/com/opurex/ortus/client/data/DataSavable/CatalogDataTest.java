@@ -1,7 +1,7 @@
 package com.opurex.ortus.client.data.DataSavable;
 
-import android.test.suitebuilder.annotation.MediumTest;
-import android.test.suitebuilder.annotation.SmallTest;
+import androidx.test.filters.MediumTest;
+import androidx.test.filters.SmallTest;
 import com.opurex.ortus.client.Constant;
 import com.opurex.ortus.client.models.Catalog;
 import com.opurex.ortus.client.utils.exception.DataCorruptedException;

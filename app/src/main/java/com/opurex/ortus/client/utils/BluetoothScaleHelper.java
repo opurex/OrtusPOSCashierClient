@@ -13,7 +13,7 @@ import com.example.scaler.AclasScaler;
 
 import java.util.Set;
 
-public class BluetoothScaleHelper {
+public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener {
     private static final String TAG = "BluetoothScaleHelper";
 
     private final Context context;
@@ -21,6 +21,7 @@ public class BluetoothScaleHelper {
     private AclasScaler aclasScaler;
     private ScaleDataListener scaleDataListener;
     private ConnectionStateListener connectionStateListener;
+    private ScanListener scanListener;
     private boolean isConnected = false;
     private String lastError = null;
 
@@ -34,6 +35,11 @@ public class BluetoothScaleHelper {
         void onConnected();
         void onDisconnected();
         void onError(String errorMessage);
+    }
+
+    public interface ScanListener {
+        void onDeviceFound(String name, String mac, String signal);
+        void onScanFinished();
     }
 
     public BluetoothScaleHelper(Context context) {
@@ -101,11 +107,44 @@ public class BluetoothScaleHelper {
                     }
                 }
             });
+
+            // Set up Bluetooth scanning listener
+            aclasScaler.setBluetoothListener(this);
+
         } catch (Exception e) {
             Log.e(TAG, "Failed to initialize Aclas scaler", e);
             lastError = "Failed to initialize scale: " + e.getMessage();
         }
     }
+
+    // --- Scan Methods ---
+    public void startScan() {
+        if (aclasScaler != null) {
+            aclasScaler.startScanBluetooth(true);
+        }
+    }
+
+    public void stopScan() {
+        if (aclasScaler != null) {
+            aclasScaler.startScanBluetooth(false);
+        }
+    }
+
+    @Override
+    public void onSearchBluetooth(String deviceInfo) {
+        if (deviceInfo != null && deviceInfo.contains(",") && scanListener != null) {
+            String[] parts = deviceInfo.split(",");
+            scanListener.onDeviceFound(parts[0], parts[1], parts[2]);
+        }
+    }
+
+    @Override
+    public void onSearchFinish() {
+        if (scanListener != null) {
+            scanListener.onScanFinished();
+        }
+    }
+    // --------------------
 
     public boolean isBluetoothSupported() {
         return bluetoothAdapter != null;
