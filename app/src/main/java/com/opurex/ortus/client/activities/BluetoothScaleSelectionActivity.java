@@ -204,6 +204,10 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
             }
         }
 
+        // Note: The Aclas SDK is designed to find specific Aclas scale devices
+        // It may not detect generic Bluetooth devices like speakers
+        // The scanning is specifically looking for Aclas scale devices
+
         // Register the scan listener to receive device discovery events
         bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
             @Override
