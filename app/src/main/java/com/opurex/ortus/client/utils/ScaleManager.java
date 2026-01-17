@@ -127,7 +127,26 @@ public class ScaleManager {
         this.scanListener = listener;
         // Propagate the listener down to the helper
         if (bluetoothScaleHelper != null) {
-            bluetoothScaleHelper.setScanListener(listener);
+            if (listener != null) {
+                // Wrap the ScaleManager.ScanListener in a BluetoothScaleHelper.ScanListener
+                bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
+                    @Override
+                    public void onDeviceFound(String name, String mac, String signal) {
+                        if (scanListener != null) {
+                            scanListener.onDeviceFound(name, mac, signal);
+                        }
+                    }
+
+                    @Override
+                    public void onScanFinished() {
+                        if (scanListener != null) {
+                            scanListener.onScanFinished();
+                        }
+                    }
+                });
+            } else {
+                bluetoothScaleHelper.setScanListener(null);
+            }
         }
     }
 
