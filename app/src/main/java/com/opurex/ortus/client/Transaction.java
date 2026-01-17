@@ -256,8 +256,27 @@ public class Transaction extends POSConnectedTrackedActivity
             case SCALE_SELECT:
                 if (resultCode == Activity.RESULT_OK) {
                     scaleMacAddress = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_ADDRESS);
+                    String scaleName = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
+
                     if (scaleManager != null && scaleMacAddress != null) {
-                        scaleManager.connectToScale(scaleMacAddress);
+                        // Check if this is a virtual scale connection
+                        if (scaleMacAddress.equals("VIRTUAL:AC:LAS:SC:AL:E0")) {
+                            // Initialize virtual scale testing
+                            scaleManager.initializeVirtualScaleTesting();
+                            // Connect to virtual scale
+                            boolean connected = scaleManager.connectToVirtualScale();
+
+                            if (connected) {
+                                Log.d("Transaction", "Connected to virtual scale");
+                                Toast.makeText(this, "Connected to virtual scale", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.e("Transaction", "Failed to connect to virtual scale");
+                                Toast.makeText(this, "Failed to connect to virtual scale", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // Regular Bluetooth scale connection
+                            scaleManager.connectToScale(scaleMacAddress);
+                        }
                     }
                 }
                 break;

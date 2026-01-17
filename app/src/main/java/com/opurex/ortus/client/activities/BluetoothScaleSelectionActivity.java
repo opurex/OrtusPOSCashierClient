@@ -73,6 +73,20 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
         scanButton = findViewById(R.id.scan_button);
         cancelButton = findViewById(R.id.cancel_button);
 
+        // Add a button for virtual scale
+        Button virtualScaleButton = findViewById(R.id.virtual_scale_button);
+        if (virtualScaleButton != null) {
+            virtualScaleButton.setVisibility(View.VISIBLE);
+            virtualScaleButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    connectToVirtualScale();
+                }
+            });
+        } else {
+            Log.w("BluetoothScaleSelection", "Virtual scale button not found in layout");
+        }
+
         availableDevices = new ArrayList<>();
         deviceListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
         deviceListView.setAdapter(deviceListAdapter);
@@ -263,6 +277,31 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
         bluetoothScaleHelper.stopScan();
         progressBar.setVisibility(View.GONE);
         scanButton.setEnabled(true);
+    }
+
+    private void connectToVirtualScale() {
+        // Initialize virtual scale testing
+        ScaleManager tempScaleManager = new ScaleManager(this);
+        tempScaleManager.initializeVirtualScaleTesting();
+
+        // Connect to virtual scale
+        boolean connected = tempScaleManager.connectToVirtualScale();
+
+        if (connected) {
+            // Simulate finding a virtual scale device
+            String virtualDeviceName = "Virtual Aclas Scale";
+            String virtualDeviceAddress = "VIRTUAL:AC:LAS:SC:AL:E0";
+
+            // Return the virtual device as if it was selected
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(EXTRA_SCALE_ADDRESS, virtualDeviceAddress);
+            resultIntent.putExtra(EXTRA_SCALE_NAME, virtualDeviceName);
+
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
+        } else {
+            Toast.makeText(this, "Failed to connect to virtual scale", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
