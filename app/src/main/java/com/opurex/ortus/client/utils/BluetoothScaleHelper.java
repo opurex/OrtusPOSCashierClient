@@ -245,6 +245,10 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
         this.connectionStateListener = listener;
     }
 
+    public void setScanListener(ScanListener listener) {
+        this.scanListener = listener;
+    }
+
     public void cleanup() {
         disconnect();
         if (aclasScaler != null) {
