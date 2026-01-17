@@ -72,30 +72,29 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
         statusText = findViewById(R.id.status_text);
         scanButton = findViewById(R.id.scan_button);
         cancelButton = findViewById(R.id.cancel_button);
-        
+
         availableDevices = new ArrayList<>();
         deviceListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
         deviceListView.setAdapter(deviceListAdapter);
-        
+
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectDevice(position);
             }
         });
-        
+
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Launch the new DeviceListActivity for scanning
-                Intent intent = new Intent(BluetoothScaleSelectionActivity.this, DeviceListActivity.class);
-                startActivityForResult(intent, REQUEST_SCAN_DEVICES);
+                startScanning();
             }
         });
-        
+
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopScanning();
                 setResult(Activity.RESULT_CANCELED);
                 finish();
             }
@@ -103,22 +102,21 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
     }
     
     private void initBluetoothScaleHelper() {
-        bluetoothScaleHelper = new BluetoothScaleHelper(this);
-        
-        // Note: The new BluetoothScaleHelper doesn't have isBluetoothSupported() or isBluetoothEnabled() methods
-        // We'll check these manually
+        // Check if Bluetooth is supported and enabled
         android.bluetooth.BluetoothAdapter bluetoothAdapter = android.bluetooth.BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
-        
+
         if (!bluetoothAdapter.isEnabled()) {
             Toast.makeText(this, "Please enable Bluetooth and try again", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
+
+        bluetoothScaleHelper = new BluetoothScaleHelper(this);
     }
     
     private void loadPairedDevices() {
@@ -175,11 +173,11 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        
+
         if (requestCode == REQUEST_SCAN_DEVICES && resultCode == RESULT_OK && data != null) {
             String deviceAddress = data.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
             String deviceName = data.getStringExtra(DeviceListActivity.EXTRA_DEVICE_NAME);
-            
+
             if (deviceAddress != null && !deviceAddress.isEmpty()) {
                 // Create a mock BluetoothDevice for our list
                 // In a real implementation, we would need to create a proper BluetoothDevice
@@ -187,9 +185,89 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(EXTRA_SCALE_ADDRESS, deviceAddress);
                 resultIntent.putExtra(EXTRA_SCALE_NAME, deviceName != null ? deviceName : "");
-                
+
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
+            }
+        }
+    }
+
+    private void startScanning() {
+        // Check if we have the required permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT},
+                    1002);
+                return;
+            }
+        }
+
+        // Register the scan listener to receive device discovery events
+        bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
+            @Override
+            public void onDeviceFound(String name, String mac, String signal) {
+                runOnUiThread(() -> {
+                    // Create a temporary BluetoothDevice object to add to our list
+                    // Since we can't create BluetoothDevice directly, we'll store the info differently
+                    String deviceInfo = name + " (" + mac + ") - Signal: " + signal;
+
+                    // Check if device is already in the list to avoid duplicates
+                    if (!deviceListAdapter.contains(deviceInfo)) {
+                        deviceListAdapter.add(deviceInfo);
+                        deviceListAdapter.notifyDataSetChanged();
+
+                        // Store the actual device info for later use
+                        // We'll use a simple approach: parse the MAC from the string
+                        // In a production app, you'd want a better mapping
+                        statusText.setText("Found device: " + name);
+                    }
+                });
+            }
+
+            @Override
+            public void onScanFinished() {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.GONE);
+                    scanButton.setEnabled(true);
+                    statusText.setText("Scan finished. Select a device from the list.");
+                });
+            }
+        });
+
+        // Clear the device list and start scanning
+        deviceListAdapter.clear();
+        deviceListAdapter.notifyDataSetChanged();
+        progressBar.setVisibility(View.VISIBLE);
+        scanButton.setEnabled(false);
+        statusText.setText("Scanning for Bluetooth scales...");
+
+        // Start the actual scan
+        bluetoothScaleHelper.startScan();
+    }
+
+    private void stopScanning() {
+        bluetoothScaleHelper.stopScan();
+        progressBar.setVisibility(View.GONE);
+        scanButton.setEnabled(true);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1002) {
+            boolean allGranted = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+            if (allGranted) {
+                startScanning();
+            } else {
+                Toast.makeText(this, "Bluetooth permissions are required for scanning", Toast.LENGTH_SHORT).show();
             }
         }
     }
