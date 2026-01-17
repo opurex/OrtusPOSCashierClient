@@ -682,9 +682,9 @@ public class TicketFragment extends ViewPageFragment implements
     @Override
     public void onPsdPositiveClick(Product p, double weight, boolean isProductReturned) {
         if (isProductReturned) {
-            mListener.addAScaledProductReturnToTicket(p, weight);  Cannot resolve method 'addAScaledProductReturnToTicket' in 'Listener'
+            mListener.addAScaledProductReturnToTicket(p, weight); // Cannot resolve method 'addAScaledProductReturnToTicket' in 'Listener'
         } else {
-            mListener.addAScaledProductToTicket(p, weight); Cannot resolve method 'addAScaledProductToTicket' in 'Listener'
+            mListener.addAScaledProductToTicket(p, weight);// Cannot resolve method 'addAScaledProductToTicket' in 'Listener'
         }
     }
 

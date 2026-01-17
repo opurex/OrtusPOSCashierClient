@@ -2,6 +2,8 @@ package com.opurex.ortus.client.utils;
 
 import android.content.Context;
 
+import com.opurex.ortus.client.models.Product;
+
 public class ScaleManager {
 
     private BluetoothScaleHelper bluetoothScaleHelper;
