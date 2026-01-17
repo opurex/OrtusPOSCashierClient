@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ import com.google.android.material.button.MaterialButton;
 import com.opurex.ortus.client.R;
 import com.opurex.ortus.client.utils.BluetoothScaleHelper;
 import com.opurex.ortus.client.utils.BluetoothPrinterHelper;
+import com.opurex.ortus.client.utils.ScaleManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,11 +134,17 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
 
         bluetoothScaleHelper = new BluetoothScaleHelper(this);
     }
-    
+
     private void loadPairedDevices() {
+        if (bluetoothScaleHelper == null) {
+            // Skip loading paired devices if Bluetooth is not available
+            statusText.setText("Bluetooth not available. Please enable Bluetooth to see paired devices.");
+            return;
+        }
+
         Set<BluetoothDevice> pairedDevices = bluetoothScaleHelper.getPairedDevices();
         updateDeviceList(new ArrayList<>(pairedDevices));
-        
+
         if (pairedDevices.isEmpty()) {
             statusText.setText("No paired devices found. Please pair your scale in Bluetooth settings.");
         } else {
@@ -153,6 +161,16 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
     private void updateDeviceListDisplay() {
         List<String> deviceNames = new ArrayList<>();
         for (BluetoothDevice device : availableDevices) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             deviceNames.add(BluetoothPrinterHelper.formatDeviceInfo(this, device));
         }
         
