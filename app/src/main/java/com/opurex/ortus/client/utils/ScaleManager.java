@@ -153,4 +153,37 @@ public class ScaleManager {
     public void cleanup() {
         bluetoothScaleHelper.cleanup();
     }
+
+    /**
+     * Initialize the scale and check if Bluetooth is supported
+     */
+    public boolean initializeScale() {
+        return bluetoothScaleHelper.isBluetoothSupported();
+    }
+
+    /**
+     * Calculate the price based on product price and weight
+     */
+    public double calculatePrice(Product product, double weight) {
+        if (product != null) {
+            return product.getPrice() * weight;
+        }
+        return 0.0;
+    }
+
+    /**
+     * Calculate and format the price as a string
+     */
+    public String calculatePriceString(Product product, double weight) {
+        double price = calculatePrice(product, weight);
+        // Format to 2 decimal places
+        return String.format("%.2f", price);
+    }
+
+    /**
+     * Get the last error from the Bluetooth scale helper
+     */
+    public String getLastError() {
+        return bluetoothScaleHelper.getLastError();
+    }
 }
