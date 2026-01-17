@@ -276,6 +276,19 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
         }
     }
 
+    // Getters for the listeners to support virtual scale testing
+    public ScaleDataListener getScaleDataListener() {
+        return scaleDataListener;
+    }
+
+    public ConnectionStateListener getConnectionStateListener() {
+        return connectionStateListener;
+    }
+
+    public ScanListener getScanListener() {
+        return scanListener;
+    }
+
     // Methods for scale operations
     public void zeroScale() {
         if (aclasScaler != null && isConnected) {

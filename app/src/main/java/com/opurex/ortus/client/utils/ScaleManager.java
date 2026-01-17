@@ -188,4 +188,70 @@ public class ScaleManager {
     public String getLastError() {
         return bluetoothScaleHelper.getLastError();
     }
+
+    // Virtual scale testing support
+    private VirtualScaleTestUtility virtualScaleTestUtility;
+    private boolean useVirtualScale = false;
+
+    /**
+     * Initialize virtual scale testing utility
+     */
+    public void initializeVirtualScaleTesting() {
+        virtualScaleTestUtility = new VirtualScaleTestUtility(context);
+        virtualScaleTestUtility.initializeVirtualScale(bluetoothScaleHelper);
+        useVirtualScale = true;
+    }
+
+    /**
+     * Start virtual scale scanning
+     */
+    public void startVirtualScaleScan() {
+        if (virtualScaleTestUtility != null) {
+            virtualScaleTestUtility.startVirtualScan();
+        }
+    }
+
+    /**
+     * Connect to virtual scale
+     */
+    public boolean connectToVirtualScale() {
+        if (virtualScaleTestUtility != null) {
+            return virtualScaleTestUtility.connectToVirtualScale();
+        }
+        return false;
+    }
+
+    /**
+     * Add weight to virtual scale for testing
+     */
+    public void addWeightToVirtualScale(double weight) {
+        if (virtualScaleTestUtility != null) {
+            virtualScaleTestUtility.addWeightToVirtualScale(weight);
+        }
+    }
+
+    /**
+     * Zero the virtual scale
+     */
+    public void zeroVirtualScale() {
+        if (virtualScaleTestUtility != null) {
+            virtualScaleTestUtility.zeroVirtualScale();
+        }
+    }
+
+    /**
+     * Tare the virtual scale
+     */
+    public void tareVirtualScale() {
+        if (virtualScaleTestUtility != null) {
+            virtualScaleTestUtility.tareVirtualScale();
+        }
+    }
+
+    /**
+     * Check if using virtual scale
+     */
+    public boolean isUsingVirtualScale() {
+        return useVirtualScale;
+    }
 }

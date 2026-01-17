@@ -78,4 +78,53 @@ public class BluetoothScaleTester {
         
         Log.d(TAG, "Error handling test completed");
     }
+
+    /**
+     * Test virtual scale functionality
+     */
+    public void testVirtualScale() {
+        Log.d(TAG, "Starting virtual scale test");
+
+        // Initialize virtual scale testing
+        scaleManager.initializeVirtualScaleTesting();
+        Log.d(TAG, "Virtual scale testing initialized");
+
+        // Test virtual scan
+        scaleManager.startVirtualScaleScan();
+        Log.d(TAG, "Virtual scan started");
+
+        // Wait a bit and then connect
+        try {
+            Thread.sleep(2000); // Wait for scan to complete
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Sleep interrupted", e);
+        }
+
+        // Connect to virtual scale
+        boolean connected = scaleManager.connectToVirtualScale();
+        Log.d(TAG, "Virtual scale connected: " + connected);
+
+        if (connected) {
+            // Test adding weight
+            scaleManager.addWeightToVirtualScale(1.5);
+            Log.d(TAG, "Added 1.5kg to virtual scale");
+
+            try {
+                Thread.sleep(1000); // Wait for weight to be registered
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Sleep interrupted", e);
+            }
+
+            // Test zeroing
+            scaleManager.zeroVirtualScale();
+            Log.d(TAG, "Virtual scale zeroed");
+
+            // Test taring
+            scaleManager.addWeightToVirtualScale(0.5); // Add some weight first
+            scaleManager.tareVirtualScale();
+            Log.d(TAG, "Virtual scale tared");
+        }
+
+        Log.d(TAG, "Virtual scale test completed");
+    }
 }
