@@ -214,7 +214,15 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
                     String deviceInfo = name + " (" + mac + ") - Signal: " + signal;
 
                     // Check if device is already in the list to avoid duplicates
-                    if (!deviceListAdapter.contains(deviceInfo)) {
+                    boolean deviceExists = false;
+                    for (int i = 0; i < deviceListAdapter.getCount(); i++) {
+                        if (deviceListAdapter.getItem(i).equals(deviceInfo)) {
+                            deviceExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!deviceExists) {
                         deviceListAdapter.add(deviceInfo);
                         deviceListAdapter.notifyDataSetChanged();
 
