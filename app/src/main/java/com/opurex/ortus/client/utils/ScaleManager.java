@@ -6,6 +6,7 @@ import com.opurex.ortus.client.models.Product;
 
 public class ScaleManager {
 
+    private Context context;
     private BluetoothScaleHelper bluetoothScaleHelper;
     private ScaleWeightListener scaleWeightListener;
     private ConnectionStateListener connectionStateListener;
@@ -27,6 +28,7 @@ public class ScaleManager {
     }
 
     public ScaleManager(Context context) {
+        this.context = context;
         this.bluetoothScaleHelper = new BluetoothScaleHelper(context);
         this.bluetoothScaleHelper.setScaleDataListener(new BluetoothScaleHelper.ScaleDataListener() {
             @Override
@@ -197,7 +199,7 @@ public class ScaleManager {
      * Initialize virtual scale testing utility
      */
     public void initializeVirtualScaleTesting() {
-        virtualScaleTestUtility = new VirtualScaleTestUtility(context);
+        virtualScaleTestUtility = new VirtualScaleTestUtility(context); Cannot resolve symbol 'context'
         virtualScaleTestUtility.initializeVirtualScale(bluetoothScaleHelper);
         useVirtualScale = true;
     }
