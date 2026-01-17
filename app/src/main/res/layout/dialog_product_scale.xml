@@ -3,14 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:importantForAccessibility="yes">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/scaled_products_info"
         android:textSize="16sp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/scale_status_display"
@@ -21,7 +23,8 @@
         android:textStyle="bold"
         android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:textColor="@android:color/holo_red_dark" />
+        android:textColor="@android:color/holo_red_dark"
+        android:contentDescription="Scale connection status" />
 
     <TextView
         android:id="@+id/scale_weight_display"
@@ -31,7 +34,8 @@
         android:textSize="14sp"
         android:textStyle="italic"
         android:layout_marginBottom="16dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:contentDescription="Current weight reading from scale" />
 
     <EditText
         android:id="@+id/scale_input"
@@ -39,7 +43,8 @@
         android:layout_height="wrap_content"
         android:hint="Enter weight in kg"
         android:inputType="numberDecimal"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Manual weight input field" />
 
     <TextView
         android:id="@+id/scale_price_display"
@@ -49,13 +54,15 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:contentDescription="Calculated price based on weight" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        android:importantForAccessibility="yes">
 
         <Button
             android:id="@+id/scale_zero_button"
@@ -64,7 +71,8 @@
             android:layout_weight="1"
             android:text="Zero Scale"
             android:layout_marginEnd="8dp"
-            android:enabled="false" />
+            android:enabled="false"
+            android:contentDescription="Zero the scale to reset to zero weight" />
 
         <Button
             android:id="@+id/scale_tare_button"
@@ -73,7 +81,8 @@
             android:layout_weight="1"
             android:text="Tare Scale"
             android:layout_marginStart="8dp"
-            android:enabled="false" />
+            android:enabled="false"
+            android:contentDescription="Tare the scale to remove container weight" />
 
     </LinearLayout>
 
