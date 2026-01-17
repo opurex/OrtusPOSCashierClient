@@ -103,6 +103,9 @@
         <activity android:name=".activities.BluetoothPrinterSelectionActivity"
             android:exported="false"
             android:label="Select Bluetooth Printer" />
+        <activity android:name=".activities.BluetoothScaleSelectionActivity"
+            android:exported="false"
+            android:label="Select Bluetooth Scale" />
         <activity android:name=".activities.DeviceListActivity"
             android:exported="false"
             android:label="@string/select_device" />
