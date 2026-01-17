@@ -40,6 +40,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     private Button tareButton;
 
     private ScaleManager scaleManager;
+    private ScaleManager externalScaleManager; // External ScaleManager passed from caller
     private boolean isScaleConnected = false;
 
     public interface Listener {
@@ -55,15 +56,33 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         return dialog;
     }
 
+    // Overloaded method to accept external ScaleManager
+    public static ProductScaleDialog newInstance(Product p, boolean isProductReturn, ScaleManager scaleManager) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_PRODUCT, p);
+        args.putBoolean(ARG_IS_RETURN, isProductReturn);
+        ProductScaleDialog dialog = new ProductScaleDialog();
+        dialog.setArguments(args);
+        dialog.externalScaleManager = scaleManager; // Store the external ScaleManager
+        return dialog;
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        // Set the listener from the parent fragment
-        if (getTargetFragment() instanceof Listener) {
-            mListener = (Listener) getTargetFragment();
-        } else {
-            throw new ClassCastException("Calling fragment must implement ProductScaleDialog.Listener");
+        // Set the listener from the parent fragment if no external listener is set
+        if (mListener == null) { // Only set target fragment as listener if no external listener is set
+            if (getTargetFragment() instanceof Listener) {
+                mListener = (Listener) getTargetFragment();
+            } else {
+                throw new ClassCastException("Calling fragment must implement ProductScaleDialog.Listener");
+            }
         }
+    }
+
+    // Method to set an external listener (used when called from Transaction)
+    public void setDialogListener(Listener listener) {
+        this.mListener = listener;
     }
 
     @Override
@@ -73,8 +92,13 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
             mProd = (Product) getArguments().getSerializable(ARG_PRODUCT);
             mIsProductReturn = getArguments().getBoolean(ARG_IS_RETURN);
         }
-        // The dialog is responsible for creating its own ScaleManager
-        scaleManager = new ScaleManager(requireContext());
+        // Use external ScaleManager if provided, otherwise create a new one
+        if (externalScaleManager != null) {
+            scaleManager = externalScaleManager;
+        } else {
+            // The dialog is responsible for creating its own ScaleManager
+            scaleManager = new ScaleManager(requireContext());
+        }
     }
 
     @NonNull

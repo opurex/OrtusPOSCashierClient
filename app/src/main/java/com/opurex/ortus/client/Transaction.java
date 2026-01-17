@@ -1002,7 +1002,8 @@ public class Transaction extends POSConnectedTrackedActivity
 //        disposeTicketFragment(ticket);
     }
 
-    private void addAScaledProductToTicket(Product p, double weight) {
+    @Override
+    public void addAScaledProductToTicket(Product p, double weight) {
         TicketFragment ticket = getTicketFragment();
         ticket.addScaledProduct(p, weight);
         ticket.scrollDown();
@@ -1017,7 +1018,8 @@ public class Transaction extends POSConnectedTrackedActivity
 //        disposeTicketFragment(ticket);
     }
 
-    private void addAScaledProductReturnToTicket(Product p, double weight) {
+    @Override
+    public void addAScaledProductReturnToTicket(Product p, double weight) {
         TicketFragment ticket = getTicketFragment();
         ticket.addScaledProductReturn(p, weight);
         ticket.scrollDown();

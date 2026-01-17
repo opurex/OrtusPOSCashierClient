@@ -38,8 +38,8 @@ import com.opurex.ortus.client.widgets.SessionTicketsAdapter;
 import com.opurex.ortus.client.widgets.TariffAreasAdapter;
 import com.opurex.ortus.client.widgets.TicketLinesAdapter;
 
-public class TicketFragment extends Fragment implements ProductScaleDialog.Listener {
-        implements TicketLineEditListener,
+public class TicketFragment extends ViewPageFragment implements
+        ProductScaleDialog.Listener , TicketLineEditListener,
         TicketLineEditDialog.Listener,
         CustomerInfoDialog.TicketListener {
 
@@ -47,6 +47,8 @@ public class TicketFragment extends Fragment implements ProductScaleDialog.Liste
         void onTfCheckInClick();
         void onTFTicketChanged();
         void onTfCheckOutClick();
+        void addAScaledProductToTicket(Product p, double weight);
+        void addAScaledProductReturnToTicket(Product p, double weight);
     }
 
     public interface HandlerCallback {
@@ -680,9 +682,9 @@ public class TicketFragment extends Fragment implements ProductScaleDialog.Liste
     @Override
     public void onPsdPositiveClick(Product p, double weight, boolean isProductReturned) {
         if (isProductReturned) {
-            mListener.addAScaledProductReturnToTicket(p, weight);
+            mListener.addAScaledProductReturnToTicket(p, weight);  Cannot resolve method 'addAScaledProductReturnToTicket' in 'Listener'
         } else {
-            mListener.addAScaledProductToTicket(p, weight);
+            mListener.addAScaledProductToTicket(p, weight); Cannot resolve method 'addAScaledProductToTicket' in 'Listener'
         }
     }
 
