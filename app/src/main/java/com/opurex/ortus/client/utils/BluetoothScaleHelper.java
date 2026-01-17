@@ -189,9 +189,28 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
         }
 
         try {
-            // For already paired devices, pass empty string
-            // For new devices, pass the MAC address
-            int result = aclasScaler.AclasConnect(macAddress != null ? macAddress : "");
+            // According to original SDK documentation:
+            // For newly paired devices, pass the MAC address
+            // For reconnection to already paired devices, pass empty string ""
+            String connectionParam = "";
+            if (macAddress != null && !macAddress.isEmpty()) {
+                // Check if device is already paired
+                Set<android.bluetooth.BluetoothDevice> pairedDevices = getPairedDevices();
+                boolean isAlreadyPaired = false;
+
+                for (android.bluetooth.BluetoothDevice device : pairedDevices) {
+                    if (device.getAddress().equalsIgnoreCase(macAddress)) {
+                        isAlreadyPaired = true;
+                        break;
+                    }
+                }
+
+                // If device is already paired, pass empty string for reconnection
+                // If it's a new connection to unpaired device, pass the MAC address
+                connectionParam = isAlreadyPaired ? "" : macAddress;
+            }
+
+            int result = aclasScaler.AclasConnect(connectionParam);
             if (result == 0) {
                 isConnected = true;
                 lastError = null;
