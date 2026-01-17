@@ -27,7 +27,8 @@ public class VirtualScaleSimulator {
     private Random random;
     
     // Simulation parameters
-    private double currentWeight = 0.0;
+    private double currentNetWeight = 0.0;  // Actual weight on the scale
+    private double currentTareWeight = 0.0; // Tare weight (container weight)
     private String currentUnit = "kg";
     private boolean isStable = true;
     
@@ -136,31 +137,31 @@ public class VirtualScaleSimulator {
         if (!isConnected) return;
         
         // Send initial weight
-        sendWeightData(currentWeight, currentUnit);
-        
+        sendWeightData(currentNetWeight, currentUnit);
+
         // Schedule periodic weight updates
         handler.postDelayed(weightUpdateRunnable, 1000); // Update every second
     }
-    
+
     private Runnable weightUpdateRunnable = new Runnable() {
         @Override
         public void run() {
             if (!isConnected) return;
-            
+
             // Simulate slight variations in weight (realistic behavior)
             if (isStable) {
                 // Small random fluctuations around current weight
                 double fluctuation = (random.nextDouble() - 0.5) * 0.01; // ±0.005 variation
-                currentWeight = Math.max(0, currentWeight + fluctuation);
+                currentNetWeight = Math.max(0, currentNetWeight + fluctuation);
             } else {
                 // More significant variations when unstable
                 double fluctuation = (random.nextDouble() - 0.5) * 0.1; // ±0.05 variation
-                currentWeight = Math.max(0, currentWeight + fluctuation);
+                currentNetWeight = Math.max(0, currentNetWeight + fluctuation);
             }
-            
+
             // Send the updated weight
-            sendWeightData(currentWeight, currentUnit);
-            
+            sendWeightData(currentNetWeight, currentUnit);
+
             // Continue sending updates
             handler.postDelayed(this, 1000);
         }
@@ -171,8 +172,19 @@ public class VirtualScaleSimulator {
      */
     private void sendWeightData(double weight, String unit) {
         if (scaleDataListener != null) {
-            Log.d(TAG, "Sending weight data: " + weight + " " + unit);
+            Log.d(TAG, "Sending weight data: Net=" + weight + " Tare=" + currentTareWeight + " " + unit);
             scaleDataListener.onWeightReceived(weight, unit);
+        }
+    }
+
+    /**
+     * Send detailed weight data including tare weight (simulated WeightInfoNew)
+     */
+    public void sendDetailedWeightData() {
+        if (scaleDataListener != null) {
+            // Simulate the WeightInfoNew object behavior
+            Log.d(TAG, "Sending detailed weight data: Net=" + currentNetWeight + " Tare=" + currentTareWeight + " " + currentUnit);
+            scaleDataListener.onWeightReceived(currentNetWeight, currentUnit);
         }
     }
     
@@ -180,37 +192,55 @@ public class VirtualScaleSimulator {
      * Simulate adding weight to the scale
      */
     public void addWeight(double weightToAdd) {
-        currentWeight += weightToAdd;
-        Log.d(TAG, "Added weight: " + weightToAdd + ", Total: " + currentWeight);
-        sendWeightData(currentWeight, currentUnit);
+        currentNetWeight += weightToAdd;
+        Log.d(TAG, "Added weight: " + weightToAdd + ", Net Total: " + currentNetWeight);
+        sendWeightData(currentNetWeight, currentUnit);
     }
-    
+
     /**
      * Simulate removing weight from the scale
      */
     public void removeWeight(double weightToRemove) {
-        currentWeight = Math.max(0, currentWeight - weightToRemove);
-        Log.d(TAG, "Removed weight: " + weightToRemove + ", Total: " + currentWeight);
-        sendWeightData(currentWeight, currentUnit);
+        currentNetWeight = Math.max(0, currentNetWeight - weightToRemove);
+        Log.d(TAG, "Removed weight: " + weightToRemove + ", Net Total: " + currentNetWeight);
+        sendWeightData(currentNetWeight, currentUnit);
     }
-    
+
     /**
      * Simulate zeroing the scale
      */
     public void zeroScale() {
-        currentWeight = 0.0;
+        currentNetWeight = 0.0;
         Log.d(TAG, "Scale zeroed");
-        sendWeightData(currentWeight, currentUnit);
+        sendWeightData(currentNetWeight, currentUnit);
     }
     
     /**
      * Simulate taring the scale
      */
     public void tareScale() {
-        // In a real scale, tare removes the current weight as the "tare weight"
-        // For simulation, we'll just zero it
-        Log.d(TAG, "Scale tared");
-        zeroScale();
+        // In a real scale, tare sets the current weight as the "tare weight" (container weight)
+        // Future weight readings will subtract this tare weight
+        currentTareWeight = currentNetWeight;  // Set current net weight as tare weight
+        currentNetWeight = 0.0;  // Net weight becomes 0 after taring
+        Log.d(TAG, "Scale tared. Tare weight set to: " + currentTareWeight);
+        sendWeightData(currentNetWeight, currentUnit);
+    }
+
+    /**
+     * Add weight to the tare (container) weight
+     */
+    public void addTareWeight(double tareToAdd) {
+        currentTareWeight += tareToAdd;
+        Log.d(TAG, "Added tare weight: " + tareToAdd + ", Tare Total: " + currentTareWeight);
+    }
+
+    /**
+     * Reset tare weight to zero
+     */
+    public void resetTare() {
+        currentTareWeight = 0.0;
+        Log.d(TAG, "Tare weight reset to zero");
     }
     
     /**
@@ -229,10 +259,17 @@ public class VirtualScaleSimulator {
     }
     
     /**
-     * Get current weight
+     * Get current net weight
      */
-    public double getCurrentWeight() {
-        return currentWeight;
+    public double getCurrentNetWeight() {
+        return currentNetWeight;
+    }
+
+    /**
+     * Get current tare weight
+     */
+    public double getCurrentTareWeight() {
+        return currentTareWeight;
     }
     
     /**

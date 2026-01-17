@@ -130,11 +130,21 @@ public class VirtualScaleTestUtility {
     }
     
     /**
-     * Get current weight from virtual scale
+     * Get current net weight from virtual scale
      */
-    public double getVirtualScaleWeight() {
+    public double getVirtualScaleNetWeight() {
         if (virtualScale != null) {
-            return virtualScale.getCurrentWeight();
+            return virtualScale.getCurrentNetWeight();
+        }
+        return 0.0;
+    }
+
+    /**
+     * Get current tare weight from virtual scale
+     */
+    public double getVirtualScaleTareWeight() {
+        if (virtualScale != null) {
+            return virtualScale.getCurrentTareWeight();
         }
         return 0.0;
     }
@@ -144,5 +154,29 @@ public class VirtualScaleTestUtility {
      */
     public boolean isVirtualScaleAvailable() {
         return virtualScale != null;
+    }
+
+    /**
+     * Add tare weight to virtual scale
+     */
+    public void addTareWeightToVirtualScale(double tareWeight) {
+        if (virtualScale != null) {
+            Log.d(TAG, "Adding " + tareWeight + "kg to virtual scale tare weight");
+            virtualScale.addTareWeight(tareWeight);
+        } else {
+            Log.e(TAG, "Virtual scale not initialized");
+        }
+    }
+
+    /**
+     * Reset tare weight on virtual scale
+     */
+    public void resetTareWeightOnVirtualScale() {
+        if (virtualScale != null) {
+            Log.d(TAG, "Resetting virtual scale tare weight");
+            virtualScale.resetTare();
+        } else {
+            Log.e(TAG, "Virtual scale not initialized");
+        }
     }
 }

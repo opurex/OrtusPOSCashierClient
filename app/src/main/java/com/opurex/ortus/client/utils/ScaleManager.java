@@ -199,7 +199,7 @@ public class ScaleManager {
      * Initialize virtual scale testing utility
      */
     public void initializeVirtualScaleTesting() {
-        virtualScaleTestUtility = new VirtualScaleTestUtility(context); Cannot resolve symbol 'context'
+        virtualScaleTestUtility = new VirtualScaleTestUtility(context);
         virtualScaleTestUtility.initializeVirtualScale(bluetoothScaleHelper);
         useVirtualScale = true;
     }
@@ -255,5 +255,43 @@ public class ScaleManager {
      */
     public boolean isUsingVirtualScale() {
         return useVirtualScale;
+    }
+
+    /**
+     * Get current net weight from virtual scale
+     */
+    public double getVirtualScaleNetWeight() {
+        if (virtualScaleTestUtility != null) {
+            return virtualScaleTestUtility.getVirtualScaleNetWeight();
+        }
+        return 0.0;
+    }
+
+    /**
+     * Get current tare weight from virtual scale
+     */
+    public double getVirtualScaleTareWeight() {
+        if (virtualScaleTestUtility != null) {
+            return virtualScaleTestUtility.getVirtualScaleTareWeight();
+        }
+        return 0.0;
+    }
+
+    /**
+     * Add tare weight to virtual scale
+     */
+    public void addTareWeightToVirtualScale(double tareWeight) {
+        if (virtualScaleTestUtility != null) {
+            virtualScaleTestUtility.addTareWeightToVirtualScale(tareWeight);
+        }
+    }
+
+    /**
+     * Reset tare weight on virtual scale
+     */
+    public void resetTareWeightOnVirtualScale() {
+        if (virtualScaleTestUtility != null) {
+            virtualScaleTestUtility.resetTareWeightOnVirtualScale();
+        }
     }
 }
