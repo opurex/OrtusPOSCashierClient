@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import android.preference.PreferenceManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.opurex.ortus.client.R;
@@ -361,7 +363,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
      * Check if virtual scale is enabled in settings
      */
     private boolean isVirtualScaleEnabled() {
-        SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
         return prefs.getBoolean("enable_virtual_scale", false); // Default to false as requested
     }
 
