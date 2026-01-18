@@ -172,6 +172,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
             statusDisplay.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
             zeroButton.setEnabled(true);
             tareButton.setEnabled(true);
+            weightInput.setEnabled(true); // Enable input when scale is connected
         } else {
             // Check if manual weight entry is enabled in settings
             boolean manualEntryEnabled = isManualWeightEntryEnabled();
@@ -186,9 +187,10 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
                 statusDisplay.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
             }
 
-            // Enable buttons if manual entry is enabled, otherwise disable them
+            // Enable/disable UI elements based on manual entry availability
             zeroButton.setEnabled(manualEntryEnabled);
             tareButton.setEnabled(manualEntryEnabled);
+            weightInput.setEnabled(manualEntryEnabled); // Also control the input field based on manual entry setting
         }
     }
 
