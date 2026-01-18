@@ -5,22 +5,36 @@
    android:layout_height="match_parent">
 
     <item
+        android:id="@+id/ab_menu_scale_connect"
+        android:icon="@drawable/scale"
+        android:title="@string/connect_scale" />  <!-- Digital weighing scale icon -->
+        android:title="@string/connect_scale"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/ab_menu_scale_disconnect"
+        android:icon="@drawable/scale"
+        android:title="@string/disconnect_scale" />  <!-- Digital weighing scale icon -->
+        android:title="@string/disconnect_scale"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
         android:id="@+id/ab_menu_printmain"
         android:icon="@drawable/ic_menu_print_enabled"
         android:title="@string/menu_print_main"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/ab_menu_printaux1"
         android:icon="@drawable/ic_menu_print_enabled"
         android:title="@string/menu_print_aux1"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/ab_menu_printaux2"
         android:icon="@drawable/ic_menu_print_enabled"
         android:title="@string/menu_print_aux2"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/ab_menu_cashdrawer"
