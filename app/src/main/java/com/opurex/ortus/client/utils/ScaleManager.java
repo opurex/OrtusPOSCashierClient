@@ -7,7 +7,7 @@ import com.opurex.ortus.client.models.Product;
 public class ScaleManager {
 
     private Context context;
-    private BluetoothScaleHelper bluetoothScaleHelper;
+    protected BluetoothScaleHelper bluetoothScaleHelper; // Protected for testing purposes
     private ScaleWeightListener scaleWeightListener;
     private ConnectionStateListener connectionStateListener;
     private ScanListener scanListener;
@@ -235,11 +235,11 @@ public class ScaleManager {
     /**
      * Zero the virtual scale
      */
-    public void zeroVirtualScale() {
-        if (virtualScaleTestUtility != null) {
-            virtualScaleTestUtility.zeroVirtualScale();
-        }
-    }
+//    public void zeroVirtualScale() {
+//        if (virtualScaleTestUtility != null) {
+//            virtualScaleTestUtility.zeroVirtualScale();
+//        }
+//    }
 
     /**
      * Tare the virtual scale
