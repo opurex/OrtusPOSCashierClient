@@ -43,64 +43,65 @@ public class ScaleManager {
         // Only set the internal listener if we're using the default BluetoothScaleHelper
         if (injectedBluetoothScaleHelper == null) {
             this.bluetoothScaleHelper.setScaleDataListener(new BluetoothScaleHelper.ScaleDataListener() {
-            @Override
-            public void onWeightReceived(double weight, String unit) {
-                if (scaleWeightListener != null) {
-                    scaleWeightListener.onWeightReceived(weight, unit);
+                @Override
+                public void onWeightReceived(double weight, String unit) {
+                    if (scaleWeightListener != null) {
+                        scaleWeightListener.onWeightReceived(weight, unit);
+                    }
                 }
-            }
 
-            @Override
-            public void onPriceDataReceived(double price, double amount) {
-                // Not used in this implementation
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleError(errorMessage);
+                @Override
+                public void onPriceDataReceived(double price, double amount) {
+                    // Not used in this implementation
                 }
-            }
-        });
 
-        this.bluetoothScaleHelper.setConnectionStateListener(new BluetoothScaleHelper.ConnectionStateListener() {
-            @Override
-            public void onConnected() {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleConnected();
+                @Override
+                public void onError(String errorMessage) {
+                    if (connectionStateListener != null) {
+                        connectionStateListener.onScaleError(errorMessage);
+                    }
                 }
-            }
+            });
 
-            @Override
-            public void onDisconnected() {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleDisconnected();
+            this.bluetoothScaleHelper.setConnectionStateListener(new BluetoothScaleHelper.ConnectionStateListener() {
+                @Override
+                public void onConnected() {
+                    if (connectionStateListener != null) {
+                        connectionStateListener.onScaleConnected();
+                    }
                 }
-            }
 
-            @Override
-            public void onError(String errorMessage) {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleError(errorMessage);
+                @Override
+                public void onDisconnected() {
+                    if (connectionStateListener != null) {
+                        connectionStateListener.onScaleDisconnected();
+                    }
                 }
-            }
-        });
 
-        this.bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
-            @Override
-            public void onDeviceFound(String name, String mac, String signal) {
-                if (scanListener != null) {
-                    scanListener.onDeviceFound(name, mac, signal);
+                @Override
+                public void onError(String errorMessage) {
+                    if (connectionStateListener != null) {
+                        connectionStateListener.onScaleError(errorMessage);
+                    }
                 }
-            }
+            });
 
-            @Override
-            public void onScanFinished() {
-                if (scanListener != null) {
-                    scanListener.onScanFinished();
+            this.bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
+                @Override
+                public void onDeviceFound(String name, String mac, String signal) {
+                    if (scanListener != null) {
+                        scanListener.onDeviceFound(name, mac, signal);
+                    }
                 }
-            }
-        });
+
+                @Override
+                public void onScanFinished() {
+                    if (scanListener != null) {
+                        scanListener.onScanFinished();
+                    }
+                }
+            });
+        } // Close the if block for injected helper check
     }
 
     public void startScan() {
