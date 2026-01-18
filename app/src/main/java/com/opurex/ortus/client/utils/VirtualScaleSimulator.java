@@ -228,6 +228,16 @@ public class VirtualScaleSimulator {
     }
 
     /**
+     * Simulate zeroing the scale
+     */
+    public void zeroScale() {
+        // Zeroing resets the current net weight to 0, but keeps tare weight if any
+        currentNetWeight = 0.0;
+        Log.d(TAG, "Scale zeroed. Current net weight: " + currentNetWeight + ", Tare weight: " + currentTareWeight);
+        sendWeightData(currentNetWeight, currentUnit);
+    }
+
+    /**
      * Add weight to the tare (container) weight
      */
     public void addTareWeight(double tareToAdd) {

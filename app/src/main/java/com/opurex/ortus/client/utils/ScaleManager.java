@@ -251,6 +251,15 @@ public class ScaleManager {
     }
 
     /**
+     * Zero the virtual scale
+     */
+    public void zeroVirtualScale() {
+        if (virtualScaleTestUtility != null) {
+            virtualScaleTestUtility.zeroVirtualScale();
+        }
+    }
+
+    /**
      * Check if using virtual scale
      */
     public boolean isUsingVirtualScale() {
