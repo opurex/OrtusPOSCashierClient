@@ -264,20 +264,43 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
             weightInput.setText(String.format("%.3f", weight));
         });
     }
+
+    /**
+     * Update weight display when scale is not connected
+     */
+    private void updateWeightDisplayForDisconnectedState() {
+        if (getActivity() == null) return;
+        getActivity().runOnUiThread(() -> {
+            boolean manualEntryEnabled = isManualWeightEntryEnabled();
+            if (manualEntryEnabled) {
+                weightDisplay.setText("Enter weight manually in the field below");
+                // Keep the input field as is - it will be controlled by updateScaleStatus()
+            } else {
+                weightDisplay.setText("Scale not connected - manual entry disabled");
+            }
+        });
+    }
     
     @Override
     public void onScaleConnected() {
         isScaleConnected = true;
         if (getActivity() != null) {
-            getActivity().runOnUiThread(this::updateScaleStatus);
+            getActivity().runOnUiThread(() -> {
+                updateScaleStatus();
+                // When connected, show waiting message until we get actual weight
+                weightDisplay.setText("Waiting for weight data...");
+            });
         }
     }
-    
+
     @Override
     public void onScaleDisconnected() {
         isScaleConnected = false;
         if (getActivity() != null) {
-            getActivity().runOnUiThread(this::updateScaleStatus);
+            getActivity().runOnUiThread(() -> {
+                updateScaleStatus();
+                updateWeightDisplayForDisconnectedState(); // Update weight display for disconnected state
+            });
         }
     }
 
