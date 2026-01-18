@@ -255,6 +255,12 @@
 	<PreferenceScreen
 		android:title="Scale Configuration">
 
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="enable_manual_weight_entry"
+			android:title="Enable Manual Weight Entry"
+			android:summary="Allow manual entry of weight when scale is not connected" />
+
 		<Preference
 			android:key="select_bluetooth_scale"
 			android:title="Select Bluetooth Scale"

@@ -171,28 +171,57 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
             zeroButton.setEnabled(true);
             tareButton.setEnabled(true);
         } else {
-            statusDisplay.setText("Scale not connected");
+            // Check if manual weight entry is enabled in settings
+            boolean manualEntryEnabled = isManualWeightEntryEnabled();
+            statusDisplay.setText("Scale not connected" + (manualEntryEnabled ? " - enter weight manually" : ""));
             statusDisplay.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-            zeroButton.setEnabled(false);
-            tareButton.setEnabled(false);
+
+            // Enable buttons if manual entry is enabled, otherwise disable them
+            zeroButton.setEnabled(manualEntryEnabled);
+            tareButton.setEnabled(manualEntryEnabled);
         }
+    }
+
+    /**
+     * Check if manual weight entry is enabled in settings
+     */
+    private boolean isManualWeightEntryEnabled() {
+        if (getContext() != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            return prefs.getBoolean("enable_manual_weight_entry", true); // Default to true as requested
+        }
+        return true; // Default to true if context is not available
     }
     
     private void zeroScale() {
         if (scaleManager != null && isScaleConnected) {
+            // Connected mode: use actual scale
             scaleManager.zeroScale();
             Toast.makeText(getContext(), "Scale zeroed", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getContext(), "Scale not connected", Toast.LENGTH_SHORT).show();
+            // Manual mode: clear the manual input field
+            if (isManualWeightEntryEnabled()) {
+                weightInput.setText("0.0");
+                Toast.makeText(getContext(), "Manual input cleared", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Scale not connected and manual entry disabled", Toast.LENGTH_SHORT).show();
+            }
         }
     }
-    
+
     private void tareScale() {
         if (scaleManager != null && isScaleConnected) {
+            // Connected mode: use actual scale
             scaleManager.tareScale();
             Toast.makeText(getContext(), "Scale tared", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getContext(), "Scale not connected", Toast.LENGTH_SHORT).show();
+            // Manual mode: clear the manual input field (simulate tare)
+            if (isManualWeightEntryEnabled()) {
+                weightInput.setText("0.0");
+                Toast.makeText(getContext(), "Manual input cleared (tare)", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Scale not connected and manual entry disabled", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     
