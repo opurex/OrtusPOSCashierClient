@@ -105,10 +105,11 @@
 
     <!-- Toolbar style -->
     <style name="Widget.POSTech.Toolbar" parent="Widget.Material3.Toolbar">
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="titleTextColor">@android:color/white</item>
-        <item name="subtitleTextColor">@android:color/white</item>
-        <item name="navigationIconTint">@android:color/white</item>
+        <item name="android:background">@color/content1_bg</item>  <!-- Light background instead of dark primary -->
+        <item name="titleTextColor">@color/content1_txt</item>  <!-- Dark text for contrast -->
+        <item name="subtitleTextColor">@color/content1_txt</item>  <!-- Dark text for contrast -->
+        <item name="navigationIconTint">@color/content1_txt</item>  <!-- Dark icon tint -->
+        <item name="android:textColor">@color/content1_txt</item>  <!-- Dark text color -->
     </style>
 
     <!-- Action Menu Items -->
