@@ -261,6 +261,12 @@
 			android:title="Enable Manual Weight Entry"
 			android:summary="Allow manual entry of weight when scale is not connected" />
 
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="enable_virtual_scale"
+			android:title="Enable Virtual Scale"
+			android:summary="Allow using virtual scale for testing (default: disabled)" />
+
 		<Preference
 			android:key="select_bluetooth_scale"
 			android:title="Select Bluetooth Scale"

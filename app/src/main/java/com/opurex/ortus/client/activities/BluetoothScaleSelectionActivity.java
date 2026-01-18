@@ -78,13 +78,29 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
         // Add a button for virtual scale
         Button virtualScaleButton = findViewById(R.id.virtual_scale_button);
         if (virtualScaleButton != null) {
-            virtualScaleButton.setVisibility(View.VISIBLE);
-            virtualScaleButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    connectToVirtualScale();
-                }
-            });
+            // Check if virtual scale is enabled in settings
+            boolean virtualScaleEnabled = isVirtualScaleEnabled();
+            virtualScaleButton.setVisibility(virtualScaleEnabled ? View.VISIBLE : View.GONE);
+            virtualScaleButton.setEnabled(virtualScaleEnabled);
+
+            if (virtualScaleEnabled) {
+                virtualScaleButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        connectToVirtualScale();
+                    }
+                });
+            } else {
+                // Disable the button and show appropriate message
+                virtualScaleButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(BluetoothScaleSelectionActivity.this,
+                            "Virtual scale is disabled in settings",
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         } else {
             Log.w("BluetoothScaleSelection", "Virtual scale button not found in layout");
         }
@@ -341,6 +357,14 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
         }
     }
     
+    /**
+     * Check if virtual scale is enabled in settings
+     */
+    private boolean isVirtualScaleEnabled() {
+        SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("enable_virtual_scale", false); // Default to false as requested
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
