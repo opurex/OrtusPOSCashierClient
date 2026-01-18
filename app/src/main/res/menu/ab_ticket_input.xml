@@ -26,13 +26,13 @@
         android:id="@+id/ab_menu_printaux1"
         android:icon="@drawable/ic_menu_print_enabled"
         android:title="@string/menu_print_aux1"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/ab_menu_printaux2"
         android:icon="@drawable/ic_menu_print_enabled"
         android:title="@string/menu_print_aux2"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/ab_menu_cashdrawer"
@@ -68,17 +68,17 @@
         android:id="@+id/ab_menu_calendar"
         android:icon="@drawable/calendar"
         android:title="@string/open_calendar"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom|withText" />
 
     <item
         android:id="@+id/ab_menu_past_ticket"
         android:title="@string/menu_edit_tickets"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom|withText" />
 
     <item
         android:id="@+id/ab_menu_close_session"
         android:icon="@drawable/power"
         android:enabled="false"
         android:title="@string/menu_main_close"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom|withText" />
 </menu>
