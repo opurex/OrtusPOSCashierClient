@@ -70,12 +70,15 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        // Set the listener from the parent fragment if no external listener is set
-        if (mListener == null) { // Only set target fragment as listener if no external listener is set
+        // Set the listener from the parent fragment only if no external listener was set beforehand
+        if (mListener == null) { // Only set target fragment as listener if no external listener was set via setDialogListener
             if (getTargetFragment() instanceof Listener) {
                 mListener = (Listener) getTargetFragment();
+            } else if (getActivity() instanceof Listener) {
+                // Check if the calling activity implements the listener interface
+                mListener = (Listener) getActivity();
             } else {
-                throw new ClassCastException("Calling fragment must implement ProductScaleDialog.Listener");
+                throw new ClassCastException("Calling fragment or activity must implement ProductScaleDialog.Listener");
             }
         }
     }
