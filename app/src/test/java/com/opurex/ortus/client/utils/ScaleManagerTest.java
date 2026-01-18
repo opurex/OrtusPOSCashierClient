@@ -1,0 +1,98 @@
+package com.opurex.ortus.client.utils;
+
+import android.content.Context;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.*;
+
+/**
+ * Unit tests for ScaleManager that properly mock dependencies to avoid native library issues
+ */
+public class ScaleManagerTest {
+
+    @Mock
+    private Context mockContext;
+
+    @Mock
+    private BluetoothScaleHelper mockBluetoothScaleHelper;
+
+    private ScaleManager scaleManager;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+
+        // Create ScaleManager with mocked dependencies to avoid native library loading
+        scaleManager = new ScaleManager(mockContext);
+        // Inject the mock helper to avoid native library calls
+        scaleManager.bluetoothScaleHelper = mockBluetoothScaleHelper;
+    }
+
+    @Test
+    public void testStartScanDelegatesToBluetoothScaleHelper() {
+        scaleManager.startScan();
+        verify(mockBluetoothScaleHelper).startScan();
+    }
+
+    @Test
+    public void testStopScanDelegatesToBluetoothScaleHelper() {
+        scaleManager.stopScan();
+        verify(mockBluetoothScaleHelper).stopScan();
+    }
+
+    @Test
+    public void testConnectToScaleDelegatesToBluetoothScaleHelper() {
+        String macAddress = "AA:BB:CC:DD:EE:FF";
+        scaleManager.connectToScale(macAddress);
+        verify(mockBluetoothScaleHelper).connectToScale(macAddress);
+    }
+
+    @Test
+    public void testDisconnectDelegatesToBluetoothScaleHelper() {
+        scaleManager.disconnect();
+        verify(mockBluetoothScaleHelper).disconnect();
+    }
+
+    @Test
+    public void testIsConnectedDelegatesToBluetoothScaleHelper() {
+        scaleManager.isConnected();
+        verify(mockBluetoothScaleHelper).isConnected();
+    }
+
+    @Test
+    public void testZeroScaleDelegatesToBluetoothScaleHelper() {
+        scaleManager.zeroScale();
+        verify(mockBluetoothScaleHelper).zeroScale();
+    }
+
+    @Test
+    public void testTareScaleDelegatesToBluetoothScaleHelper() {
+        scaleManager.tareScale();
+        verify(mockBluetoothScaleHelper).tareScale();
+    }
+
+    @Test
+    public void testSetScaleWeightListener() {
+        ScaleManager.ScaleWeightListener mockListener = mock(ScaleManager.ScaleWeightListener.class);
+        scaleManager.setScaleWeightListener(mockListener);
+        verify(mockBluetoothScaleHelper).setScaleDataListener(any(BluetoothScaleHelper.ScaleDataListener.class));
+    }
+
+    @Test
+    public void testSetConnectionStateListener() {
+        ScaleManager.ConnectionStateListener mockListener = mock(ScaleManager.ConnectionStateListener.class);
+        scaleManager.setConnectionStateListener(mockListener);
+        verify(mockBluetoothScaleHelper).setConnectionStateListener(any(BluetoothScaleHelper.ConnectionStateListener.class));
+    }
+
+    @Test
+    public void testSetScanListener() {
+        ScaleManager.ScanListener mockListener = mock(ScaleManager.ScanListener.class);
+        scaleManager.setScanListener(mockListener);
+        verify(mockBluetoothScaleHelper).setScanListener(any(BluetoothScaleHelper.ScanListener.class));
+    }
+}
