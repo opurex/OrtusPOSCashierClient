@@ -26,10 +26,8 @@ public class ScaleManagerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        // Create ScaleManager with mocked dependencies to avoid native library loading
-        scaleManager = new ScaleManager(mockContext);
-        // Inject the mock helper to avoid native library calls
-        scaleManager.bluetoothScaleHelper = mockBluetoothScaleHelper;
+        // Create ScaleManager with mocked BluetoothScaleHelper to avoid native library loading
+        scaleManager = new ScaleManager(mockContext, mockBluetoothScaleHelper);
     }
 
     @Test

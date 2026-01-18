@@ -28,9 +28,21 @@ public class ScaleManager {
     }
 
     public ScaleManager(Context context) {
+        this(context, null); // Use default BluetoothScaleHelper
+    }
+
+    // Constructor for testing purposes that allows injection of BluetoothScaleHelper
+    public ScaleManager(Context context, BluetoothScaleHelper injectedBluetoothScaleHelper) {
         this.context = context;
-        this.bluetoothScaleHelper = new BluetoothScaleHelper(context);
-        this.bluetoothScaleHelper.setScaleDataListener(new BluetoothScaleHelper.ScaleDataListener() {
+        if (injectedBluetoothScaleHelper != null) {
+            this.bluetoothScaleHelper = injectedBluetoothScaleHelper;
+        } else {
+            this.bluetoothScaleHelper = new BluetoothScaleHelper(context);
+        }
+
+        // Only set the internal listener if we're using the default BluetoothScaleHelper
+        if (injectedBluetoothScaleHelper == null) {
+            this.bluetoothScaleHelper.setScaleDataListener(new BluetoothScaleHelper.ScaleDataListener() {
             @Override
             public void onWeightReceived(double weight, String unit) {
                 if (scaleWeightListener != null) {
