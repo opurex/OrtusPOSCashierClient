@@ -174,7 +174,15 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
             // Check if manual weight entry is enabled in settings
             boolean manualEntryEnabled = isManualWeightEntryEnabled();
             statusDisplay.setText("Scale not connected" + (manualEntryEnabled ? " - enter weight manually" : ""));
-            statusDisplay.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+
+            // Use different colors based on manual entry availability
+            if (manualEntryEnabled) {
+                // Orange color when scale is not connected but manual entry is available
+                statusDisplay.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
+            } else {
+                // Red color when scale is not connected and manual entry is not available
+                statusDisplay.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+            }
 
             // Enable buttons if manual entry is enabled, otherwise disable them
             zeroButton.setEnabled(manualEntryEnabled);
