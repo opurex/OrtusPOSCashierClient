@@ -55,8 +55,8 @@ android {
         minSdkVersion 21
         targetSdk 34
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        versionCode 1
-        versionName "1.0"
+        versionCode 224  // OrtusPOSScaleDemo version 2.24
+        versionName "2.24"
         multiDexEnabled true
     }
 
