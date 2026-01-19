@@ -56,6 +56,8 @@ public class OrderDocument implements PrintableDocument
         } else {
             printer.printLine(PrinterHelper.padAfter(ctx.getString(R.string.order_name), 16) +
                     PrinterHelper.padBefore(this.t.getLabel(), 16));
+            printer.printLine(PrinterHelper.padAfter(ctx.getString(R.string.tkt_cust), 9)
+                    + PrinterHelper.padBefore("Walk-in Customer", 23));
         }
         printer.printLine();
         // Content
