@@ -79,7 +79,7 @@ public class ManualInputDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_NoActionBar_MinWidth);
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.popup_window);
         mContext = getActivity();
         mNotFoundToast = true;
         mMatchingItems = new BarcodeListAdapter();

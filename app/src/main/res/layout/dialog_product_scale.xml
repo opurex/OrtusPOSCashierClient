@@ -30,12 +30,11 @@
         android:id="@+id/scale_weight_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Scale not connected - enter weight manually"
-        android:textSize="14sp"
-        android:textStyle="italic"
         android:layout_marginBottom="16dp"
+        android:contentDescription="Current weight reading from scale"
         android:gravity="center"
-        android:contentDescription="Current weight reading from scale" />
+        android:textSize="14sp"
+        android:textStyle="italic" />
 
     <EditText
         android:id="@+id/scale_input"

@@ -205,15 +205,15 @@ public class VirtualScaleSimulator {
         Log.d(TAG, "Removed weight: " + weightToRemove + ", Net Total: " + currentNetWeight);
         sendWeightData(currentNetWeight, currentUnit);
     }
-
-    /**
-     * Simulate zeroing the scale
-     */
-    public void zeroScale() {
-        currentNetWeight = 0.0;
-        Log.d(TAG, "Scale zeroed");
-        sendWeightData(currentNetWeight, currentUnit);
-    }
+//
+//    /**
+//     * Simulate zeroing the scale
+//     */
+//    public void zeroScale() {
+//        currentNetWeight = 0.0;
+//        Log.d(TAG, "Scale zeroed");
+//        sendWeightData(currentNetWeight, currentUnit);
+//    }
     
     /**
      * Simulate taring the scale

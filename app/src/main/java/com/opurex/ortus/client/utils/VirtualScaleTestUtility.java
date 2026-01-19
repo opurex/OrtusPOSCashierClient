@@ -119,17 +119,6 @@ public class VirtualScaleTestUtility {
         }
     }
 
-    /**
-     * Zero the virtual scale
-     */
-    public void zeroVirtualScale() {
-        if (virtualScale != null) {
-            Log.d(TAG, "Zeroing virtual scale");
-            virtualScale.zeroScale();
-        } else {
-            Log.e(TAG, "Virtual scale not initialized");
-        }
-    }
     
     /**
      * Check if virtual scale is connected

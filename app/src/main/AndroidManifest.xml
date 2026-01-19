@@ -81,12 +81,12 @@
         <activity android:name="CloseCashCount"/>
         <activity
                 android:name=".Configure"
-                android:theme="@android:style/Theme.Holo"/>
+                android:theme="@style/Theme.Material3.DayNight"/>
         <activity
                 android:name="Debug"
-                android:theme="@android:style/Theme.Holo"/>
+                android:theme="@style/Theme.Material3.DayNight"/>
         <activity android:name=".activities.test.MPopActivity"
-                  android:theme="@android:style/Theme.Holo"/>
+                  android:theme="@style/Theme.Material3.DayNight"/>
         <activity android:name=".activities.POSDeviceFeatures"
             android:exported="true"
             android:theme="@style/Theme.AppCompat">

@@ -92,6 +92,30 @@ java -jar build/libs/ortus-pos-desktop.jar
 
 ---
 
+## Core Workflows
+
+### Weight-Based Product Sale
+
+This workflow outlines how a product sold by weight (e.g., oranges) is handled from selection to ticket update.
+
+1.  **Product Selection**: The process begins when a user selects a product from the `CatalogFragment`.
+
+2.  **Scaled Product Check**: The `Transaction` activity receives the selection and checks if the product is a "scaled" item by calling `product.isScaled()`.
+
+3.  **Weight Input Dialog**: If the product is scaled, the `askForAScaledProduct` method is invoked, which displays the `ProductScaleDialog`. This dialog is the primary interface for weight input.
+
+4.  **Getting the Weight**: The dialog can receive weight in two ways:
+    *   **Automatic (from Scale)**: The dialog's `ScaleManager` listens for data from the `BluetoothScaleHelper` (which uses the Aclas SDK). When weight is received, the `onWeightReceived` method updates the dialog's UI in real-time, showing the weight and the calculated price.
+    *   **Manual Input**: The user can also type the weight directly into an `EditText` field. A `TextWatcher` ensures the price is recalculated and displayed as the user types.
+
+5.  **Confirming the Weight**: The user presses "Ok" in the dialog. This action triggers the `onPsdPositiveClick` callback in the `Transaction` activity, passing the final product and weight information.
+
+6.  **Updating the Ticket**: The `Transaction` activity then calls `addAScaledProductToTicket`, which delegates the task to the `TicketFragment`. The fragment, in turn, tells the current `Ticket` object to add the scaled product. A new `TicketLine` is created where the **weight is stored in the `quantity` field**.
+
+7.  **UI Refresh**: Finally, the `TicketFragment`'s view is updated, and the new item appears on the ticket, showing the product name, the weight (as quantity), and the final calculated price.
+
+---
+
 ## Build Configuration
 
 ### Available Build Variants

@@ -1,0 +1,381 @@
+{
+	"info": {
+		"_postman_id": "ortuspos-admin-reports",
+		"name": "OrtusPOS Admin Reports API",
+		"description": "Collection for testing OrtusPOS Admin Reports API endpoints including weighted product sales, scale performance, and comprehensive analytics.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "System Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/system/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"system",
+								"health"
+							]
+						},
+						"description": "Check system health and performance metrics"
+					},
+					"response": []
+				},
+				{
+					"name": "API Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"test"
+							]
+						},
+						"description": "Simple test endpoint to verify API connectivity"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Weighted Product Reports",
+			"item": [
+				{
+					"name": "Weighted Sales Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/reports/weighted-sales-summary?startDate={{start_date}}&endDate={{end_date}}&cashRegisterId={{cash_register_id}}&categoryId={{category_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"reports",
+								"weighted-sales-summary"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "{{start_date}}"
+								},
+								{
+									"key": "endDate",
+									"value": "{{end_date}}"
+								},
+								{
+									"key": "cashRegisterId",
+									"value": "{{cash_register_id}}",
+									"disabled": true
+								},
+								{
+									"key": "categoryId",
+									"value": "{{category_id}}",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get weighted product sales summary for a date range"
+					},
+					"response": []
+				},
+				{
+					"name": "Scale Performance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/reports/scale-performance?startDate={{start_date}}&endDate={{end_date}}&scaleId={{scale_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"reports",
+								"scale-performance"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "{{start_date}}"
+								},
+								{
+									"key": "endDate",
+									"value": "{{end_date}}"
+								},
+								{
+									"key": "scaleId",
+									"value": "{{scale_id}}",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get scale performance report for connected scales"
+					},
+					"response": []
+				},
+				{
+					"name": "Weighted Transactions Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/reports/weighted-transactions?startDate={{start_date}}&endDate={{end_date}}&productId={{product_id}}&cashRegisterId={{cash_register_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"reports",
+								"weighted-transactions"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "{{start_date}}"
+								},
+								{
+									"key": "endDate",
+									"value": "{{end_date}}"
+								},
+								{
+									"key": "productId",
+									"value": "{{product_id}}",
+									"disabled": true
+								},
+								{
+									"key": "cashRegisterId",
+									"value": "{{cash_register_id}}",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get detailed transaction data for weighted products"
+					},
+					"response": []
+				},
+				{
+					"name": "Weighted Inventory Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/reports/weighted-inventory?lowStockThreshold={{low_stock_threshold}}&overStockThreshold={{over_stock_threshold}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"reports",
+								"weighted-inventory"
+							],
+							"query": [
+								{
+									"key": "lowStockThreshold",
+									"value": "{{low_stock_threshold}}",
+									"disabled": true
+								},
+								{
+									"key": "overStockThreshold",
+									"value": "{{over_stock_threshold}}",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get current inventory status for weighted products"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Core Business Entities",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/product/getAll",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"product",
+								"getAll"
+							]
+						},
+						"description": "Get all products in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/product/{{product_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"product",
+								"{{product_id}}"
+							]
+						},
+						"description": "Get a specific product by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ticket/search?dateStart={{start_date}}&dateStop={{end_date}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ticket",
+								"search"
+							],
+							"query": [
+								{
+									"key": "dateStart",
+									"value": "{{start_date}}"
+								},
+								{
+									"key": "dateStop",
+									"value": "{{end_date}}"
+								}
+							]
+						},
+						"description": "Search tickets within a date range"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "pre-request-script",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "test-script",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "base_url",
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"id": "auth_token",
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "start_date",
+			"key": "start_date",
+			"value": "1725148800",
+			"type": "string"
+		},
+		{
+			"id": "end_date",
+			"key": "end_date",
+			"value": "1727740800",
+			"type": "string"
+		},
+		{
+			"id": "product_id",
+			"key": "product_id",
+			"value": "1001",
+			"type": "string"
+		},
+		{
+			"id": "cash_register_id",
+			"key": "cash_register_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"id": "category_id",
+			"key": "category_id",
+			"value": "5",
+			"type": "string"
+		},
+		{
+			"id": "scale_id",
+			"key": "scale_id",
+			"value": "AA:BB:CC:DD:EE:FF",
+			"type": "string"
+		},
+		{
+			"id": "low_stock_threshold",
+			"key": "low_stock_threshold",
+			"value": "5.0",
+			"type": "string"
+		},
+		{
+			"id": "over_stock_threshold",
+			"key": "over_stock_threshold",
+			"value": "50.0",
+			"type": "string"
+		}
+	]
+}
