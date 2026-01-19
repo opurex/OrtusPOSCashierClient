@@ -102,8 +102,16 @@
 
     <!-- More colors required by layout files -->
     <color name="ticket_title_bg">#800020</color>
+    <color name="ticket_subtitle_bg">#A60024</color>
     <color name="ticket_bg">#FFFFFF</color>
-    <color name="content3_bg">#F0F0F0</color>
+    <color name="ticket_item_bg">#F9F9F9</color>
+    <color name="ticket_item_alternate_bg">#FFFFFF</color>
+    <color name="ticket_item_separator">#E0E0E0</color>
+    <color name="ticket_item_text">#212121</color>
+    <color name="ticket_item_price_text">#2E7D32</color>
+    <color name="ticket_item_quantity_bg">#E8F5E8</color>
+    <color name="ticket_item_quantity_text">#1B5E20</color>
+    <color name="content3_bg">#F5F5F5</color>
     <color name="content3_txt">#1C1B1F</color>
     <color name="accent2">#673AB7</color>
     <color name="accent2_txt">#FFFFFF</color>

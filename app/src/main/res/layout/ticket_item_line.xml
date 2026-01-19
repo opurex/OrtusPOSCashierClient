@@ -17,92 +17,113 @@
 --><!-- Designed to be merged as RelativeLayout -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="@dimen/ticketLineHeight"
-    android:layout_weight="0.8"
-    android:background="@android:color/white"
-    android:gravity="center"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/ticketLineHeight"
+    android:background="@color/ticket_item_bg"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:padding="12dp">
 
     <com.opurex.ortus.client.widgets.ItemImage
         android:id="@+id/product_img"
-        android:layout_width="@dimen/ticketLineHeight"
-        android:layout_height="@dimen/ticketLineHeight"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="12dp"
         android:src="@drawable/ic_placeholder_img" />
 
-    <include layout="@layout/separator" />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.5">
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/product_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Random Product Name"
+            android:textColor="@color/ticket_item_text"
+            android:textSize="@dimen/textMedium"
+            android:textStyle="bold" />
 
         <LinearLayout
-            android:id="@+id/product_label_group"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_above="@+id/product_edit_group"
-            android:gravity="center_vertical">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <!-- Static text here is only for Preview -->
             <TextView
                 android:id="@+id/product_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/content1_bg"
-                android:gravity="center_horizontal"
-                android:text="0" />
+                android:background="@color/ticket_item_quantity_bg"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/ticket_item_quantity_text"
+                android:textSize="@dimen/textSmall"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/contentMargin"
-                android:background="@color/content1_bg"
-                android:gravity="center_horizontal"
-                android:text="x" />
+                android:text="x"
+                android:textColor="@color/ticket_item_text"
+                android:textSize="@dimen/textSmall" />
 
-            <TextView
-                android:id="@+id/product_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/contentMargin"
-                android:background="@color/content1_bg"
-                android:text="Random Product Name" />
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/product_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="0.00Ksh"
+            android:textColor="@color/ticket_item_price_text"
+            android:textSize="@dimen/textMedium"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/product_edit_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+            android:layout_marginStart="12dp"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/product_subtract"
                 style="@style/btnTicket.btn_subtract"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/btn_subtract" />
-
-            <include layout="@layout/separator" />
+                android:src="@drawable/btn_subtract_default" />
 
             <ImageButton
                 android:id="@+id/product_add"
                 style="@style/btnTicket.btn_add"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/btn_add" />
-
-            <include layout="@layout/separator" />
+                android:layout_marginStart="4dp"
+                android:src="@drawable/btn_add_default" />
 
             <ImageButton
                 android:id="@+id/product_delete"
                 style="@style/btnTicket"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/btn_delete" />
-
-            <include layout="@layout/separator" />
+                android:layout_marginStart="4dp"
+                android:src="@drawable/btn_delete_default" />
 
             <!-- scale and edit should new be visible at the same time -->
             <ImageButton
@@ -110,27 +131,19 @@
                 style="@style/btnTicket"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/btn_scale" />
+                android:layout_marginStart="4dp"
+                android:src="@drawable/btn_scale_default" />
 
             <ImageButton
                 android:id="@+id/product_edit"
                 style="@style/btnTicket"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/btn_edit" />
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_content_cut_white_24dp" />
 
         </LinearLayout>
 
-    </RelativeLayout>
-
-    <include layout="@layout/separator" />
-
-    <TextView
-        android:id="@+id/product_price"
-        android:layout_width="@dimen/ticketLineHeight"
-        android:layout_height="@dimen/ticketLineHeight"
-        android:background="@color/content1_bg"
-        android:gravity="center"
-        android:text="0,00Ksh" />
+    </LinearLayout>
 
 </LinearLayout>

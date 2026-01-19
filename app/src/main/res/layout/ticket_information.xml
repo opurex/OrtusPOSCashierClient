@@ -4,70 +4,62 @@
     android:id="@+id/page_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="vertical">
 
-    >
-
-    <!-- Top bar: ticket and new/delete buttons -->
+    <!-- Top bar: ticket title -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ticket_title_bg"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/ticket_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/contentMargin"
             android:layout_weight="1"
             android:background="@drawable/ticket_dropdown"
             android:clickable="true"
+            android:textColor="@color/colorOnPrimary"
             android:textSize="@dimen/ticket_title"
+            android:textStyle="bold"
             tools:text="Ticket 0" />
-
-        <include layout="@layout/separator" />
-
-        <ImageButton
-            android:id="@+id/ticket_delete"
-            style="@style/btnTicket"
-            android:layout_width="@dimen/smallBtnWidth"
-            android:layout_height="@dimen/smallBtnHeight"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="@dimen/contentMargin"
-            android:layout_marginLeft="@dimen/halfBtnSpacing"
-            android:layout_marginRight="@dimen/halfBtnSpacing"
-            android:layout_marginTop="@dimen/contentMargin"
-            android:src="@drawable/btn_delete" />
-
-        <include layout="@layout/separator" />
 
         <ImageButton
             android:id="@+id/ticket_new"
             style="@style/btnTicket.btn_add"
             android:layout_width="@dimen/smallBtnWidth"
             android:layout_height="@dimen/smallBtnHeight"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="@dimen/contentMargin"
-            android:layout_marginLeft="@dimen/halfBtnSpacing"
-            android:layout_marginRight="@dimen/halfBtnSpacing"
-            android:layout_marginTop="@dimen/contentMargin"
+            android:layout_marginStart="8dp"
             android:src="@drawable/btn_add" />
+
+        <ImageButton
+            android:id="@+id/ticket_delete"
+            style="@style/btnTicket"
+            android:layout_width="@dimen/smallBtnWidth"
+            android:layout_height="@dimen/smallBtnHeight"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/btn_delete" />
     </LinearLayout>
 
+    <!-- Ticket area subtitle -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ticket_title_bg"
-        android:orientation="horizontal">
+        android:background="@color/ticket_subtitle_bg"
+        android:orientation="horizontal"
+        android:padding="12dp">
         <TextView
             android:id="@+id/ticket_area"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ticket_dropdown"
             android:clickable="true"
+            android:textColor="@color/colorOnPrimary"
             android:textSize="@dimen/ticket_subtitle"
-            tools:text="ticket area" />
+            android:textStyle="bold"
+            tools:text="Ticket Area" />
     </LinearLayout>
 
     <!-- Ticket content -->
@@ -77,100 +69,111 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/ticket_bg"
+        android:divider="@color/ticket_item_separator"
+        android:dividerHeight="1dp"
         android:cacheColorHint="@android:color/transparent" />
 
+    <!-- Customer info section -->
     <RelativeLayout
         android:id="@+id/ticket_customer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_neutral"
+        android:background="@color/content2_bg"
         android:clickable="true"
-        android:gravity="center_horizontal">
+        android:gravity="center_vertical"
+        android:padding="12dp">
 
         <ImageView
             android:id="@+id/ticket_customer_img"
             android:layout_width="@dimen/smallBtnWidth"
             android:layout_height="@dimen/smallBtnHeight"
+            android:layout_centerVertical="true"
             android:duplicateParentState="true"
             android:src="@drawable/ic_action_person" />
 
         <TextView
             android:id="@+id/ticket_customer_name"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/smallBtnHeight"
-            android:layout_toRightOf="@id/ticket_customer_img"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ticket_customer_img"
             android:duplicateParentState="true"
-            android:gravity="center"
-            android:paddingLeft="@dimen/contentMargin"
+            android:paddingStart="12dp"
             android:textColor="@color/content1_txt"
-            android:textSize="@dimen/textSmall"
+            android:textSize="@dimen/textMedium"
             android:textStyle="bold"
-            tools:text="Client" />
+            tools:text="Customer Name" />
     </RelativeLayout>
 
+    <!-- Discount section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ticket_discount_holder"
-        android:background="@color/ticket_bg"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:background="@color/content2_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:text="@string/ticket_discount" />
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/ticket_discount"
+            android:textColor="@color/content1_txt"
+            android:textSize="@dimen/textMedium" />
 
         <TextView
             android:id="@+id/ticket_discount"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:minWidth="50dp"
-            android:paddingLeft="20dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:minWidth="60dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:background="@color/ticket_item_quantity_bg"
+            android:textColor="@color/ticket_item_quantity_text"
+            android:textSize="@dimen/textMedium"
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/ticket_discount_delete"
             style="@style/btnTicket"
             android:layout_width="@dimen/smallBtnWidth"
             android:layout_height="@dimen/smallBtnHeight"
-            android:layout_marginLeft="20dp"
             android:src="@drawable/btn_delete" />
 
     </LinearLayout>
 
     <!-- Bottom bar: total and pay -->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/ticket_footer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ticketFooter"
-        android:background="@color/content3_bg"
+        android:background="@color/md_theme_primaryContainer"
+        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="10dp">
+        android:padding="12dp">
 
         <ImageButton
             android:id="@+id/btn_cart_back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
+            android:layout_marginEnd="12dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/btn_cart_back" />
-
-        <View
-            android:id="@+id/center_anchor"
-            android:layout_width="@dimen/smallBtnWidth"
-            android:layout_height="0dp"
-            android:layout_centerHorizontal="true" />
+            android:src="@drawable/cart_back" />
 
         <TextView
             android:id="@+id/ticket_total_label"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/center_anchor"
+            android:layout_weight="1"
+            android:gravity="start|center_vertical"
             android:text="@string/ticket_total_label"
             android:textAllCaps="true"
-            android:textColor="@color/content3_txt"
+            android:textColor="@color/colorOnPrimaryContainer"
             android:textSize="@dimen/ticket_subtitle"
             android:textStyle="bold" />
 
@@ -178,18 +181,19 @@
             android:id="@+id/ticket_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/center_anchor"
-            android:textColor="@color/content3_txt"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="end|center_vertical"
+            android:textColor="@color/colorOnPrimaryContainer"
             android:textSize="@dimen/ticket_subtitle"
             android:textStyle="bold"
-            tools:text="0,00Ksh" />
+            tools:text="0.00Ksh" />
 
         <ImageButton
             android:id="@+id/pay"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
-            android:src="@drawable/btn_cart_forward" />
-    </RelativeLayout>
+            android:src="@drawable/cart_pay" />
+    </LinearLayout>
 </LinearLayout>

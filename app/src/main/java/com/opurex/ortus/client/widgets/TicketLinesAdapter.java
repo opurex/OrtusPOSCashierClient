@@ -73,6 +73,7 @@ public class TicketLinesAdapter extends BaseAdapter {
         if (convertView != null && convertView instanceof TicketLineItem) {
             // Reuse the view
             TicketLineItem item = (TicketLineItem) convertView;
+            item.setTag(position); // Set position for alternating colors
             item.reuse(line, this.editable);
             return item;
         } else {
@@ -80,6 +81,7 @@ public class TicketLinesAdapter extends BaseAdapter {
             Context ctx = parent.getContext();
             TicketLineItem item = new TicketLineItem(ctx, line,
                     this.editable);
+            item.setTag(position); // Set position for alternating colors
             item.setEditListener(this.listener);
             return item;
         }

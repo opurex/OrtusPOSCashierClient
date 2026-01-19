@@ -99,6 +99,20 @@ public class TicketLineItem extends LinearLayout {
         this.reuse(line, editable);
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // Apply background color based on position if set
+        Integer position = (Integer) this.getTag();
+        if (position != null) {
+            if (position % 2 == 0) {
+                this.setBackgroundColor(getResources().getColor(R.color.ticket_item_bg));
+            } else {
+                this.setBackgroundColor(getResources().getColor(R.color.ticket_item_alternate_bg));
+            }
+        }
+    }
+
     private void updateScaleMode() {
         if (this.scaled) {
             // Weight
