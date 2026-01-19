@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/brand_mint_white"
+    android:padding="16dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        app:cardBackgroundColor="@color/brand_burgundy"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ORTUS SCALE"
+            android:textColor="@color/brand_mint_white"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textSize="24sp"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_card_rounded"
+        android:elevation="2dp"
+        android:padding="32dp"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/weight_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00 KG"
+            android:textColor="@color/brand_deep_purple"
+            android:textSize="48sp"
+            android:fontFamily="sans-serif-medium"/>
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ready to measure"
+            android:textColor="@color/brand_earth_brown"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/theme_light_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="Light"
+            android:backgroundTint="@color/brand_burgundy"
+            android:textColor="@color/surface_white"/>
+
+        <Button
+            android:id="@+id/theme_dark_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="Dark"
+            android:backgroundTint="@color/brand_deep_purple"
+            android:textColor="@color/surface_white"/>
+
+        <Button
+            android:id="@+id/theme_system_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="System"
+            android:backgroundTint="@color/brand_burnt_orange"
+            android:textColor="@color/surface_white"/>
+
+    </LinearLayout>
+
+    <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_to_basket_button"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_button_pill"
+        android:text="ADD TO BASKET"
+        android:textColor="@color/surface_white"
+        android:textStyle="bold"
+        android:elevation="8dp"/>
+
+</LinearLayout>

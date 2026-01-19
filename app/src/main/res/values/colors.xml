@@ -1,159 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- OrtusPOS Brand Colors -->
-    <color name="ortus_primary">#9E36A4</color>
-    <color name="ortus_primary_variant">#702DB2</color>
-    <color name="ortus_secondary">#303DB9</color>
-    <color name="ortus_secondary_variant">#E24778</color>
-    <color name="ortus_tertiary">#FEB01C</color>
-    <color name="ortus_neutral">#DDC2DE</color>
+    <!-- Brand Colors -->
+    <color name="brand_burgundy">#800020</color>
+    <color name="brand_deep_purple">#673AB7</color>
+    <color name="brand_burnt_orange">#BE5103</color>
+    <color name="brand_mint_white">#EFFCE1</color>
+    <color name="brand_earth_brown">#A52A2A</color>
 
-    <!-- Light surfaces -->
-    <color name="ortus_background_light">#FFFBFF</color>
-    <color name="ortus_surface_light">#FFFBFF</color>
-    <color name="ortus_on_background_light">#1C1B1F</color>
-    <color name="ortus_on_surface_light">#1C1B1F</color>
+    <!-- Surface and Text Colors -->
+    <color name="surface_white">#FFFFFF</color>
+    <color name="text_dark">#1C1B1F</color>
 
-    <!-- Dark surfaces -->
-    <color name="ortus_background_dark">#121212</color>
-    <color name="ortus_surface_dark">#121212</color>
-    <color name="ortus_on_background_dark">#E6E1E5</color>
-    <color name="ortus_on_surface_dark">#E6E1E5</color>
+    <!-- Material 3 Color Roles -->
+    <!-- Primary Colors -->
+    <color name="colorPrimary">@color/brand_burgundy</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimaryContainer">#FFDAD5</color>
+    <color name="colorOnPrimaryContainer">#410000</color>
 
-    <!-- States -->
-    <color name="ortus_error">#B3261E</color>
-    <color name="ortus_on_error">#FFFFFF</color>
+    <!-- Secondary Colors -->
+    <color name="colorSecondary">@color/brand_deep_purple</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorSecondaryContainer">#EADDFF</color>
+    <color name="colorOnSecondaryContainer">#21005D</color>
 
-    <!-- Material 3 Dynamic Color Palette (Mapped to Ortus Brand) -->
-    
-    <!-- Primary Colors (Using Ortus brand colors) -->
-    <color name="md_theme_primary">@color/ortus_primary</color>
-    <color name="md_theme_onPrimary">@color/ortus_on_surface_light</color>
-    <color name="md_theme_primaryContainer">@color/ortus_primary_variant</color>
-    <color name="md_theme_onPrimaryContainer">@color/ortus_on_surface_light</color>
-    
-    <!-- Secondary Colors (Using Ortus brand colors) -->
-    <color name="md_theme_secondary">@color/ortus_secondary</color>
-    <color name="md_theme_onSecondary">@color/ortus_on_surface_light</color>
-    <color name="md_theme_secondaryContainer">@color/ortus_secondary_variant</color>
-    <color name="md_theme_onSecondaryContainer">@color/ortus_on_surface_light</color>
-    
-    <!-- Tertiary Colors (Using Ortus brand colors) -->
-    <color name="md_theme_tertiary">@color/ortus_tertiary</color>
-    <color name="md_theme_onTertiary">@color/ortus_on_surface_dark</color>
-    <color name="md_theme_tertiaryContainer">@color/ortus_neutral</color>
-    <color name="md_theme_onTertiaryContainer">@color/ortus_on_surface_dark</color>
-    
+    <!-- Tertiary Colors -->
+    <color name="md_theme_tertiary">@color/brand_burnt_orange</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#FFE0D3</color>
+    <color name="md_theme_onTertiaryContainer">#390B00</color>
+
+    <!-- Surface Colors -->
+    <color name="colorSurface">@color/brand_mint_white</color>
+    <color name="colorOnSurface">#1C1B1F</color>
+    <color name="md_theme_surfaceVariant">#F4DDDA</color>
+    <color name="md_theme_onSurfaceVariant">#524341</color>
+
+    <!-- Background Colors -->
+    <color name="md_theme_onBackground">#1C1B1F</color>
+
     <!-- Error Colors -->
-    <color name="md_theme_error">@color/ortus_error</color>
-    <color name="md_theme_onError">@color/ortus_on_error</color>
+    <color name="md_theme_error">#BA1A1A</color>
+    <color name="md_theme_onError">#FFFFFF</color>
     <color name="md_theme_errorContainer">#FFDAD6</color>
-    <color name="md_theme_onErrorContainer">#410E0B</color>
-    
-    <!-- Background and Surface Colors -->
-    <color name="md_theme_background">@color/ortus_background_light</color>
-    <color name="md_theme_onBackground">@color/ortus_on_background_light</color>
-    <color name="md_theme_surface">@color/ortus_surface_light</color>
-    <color name="md_theme_onSurface">@color/ortus_on_surface_light</color>
-    <color name="md_theme_surfaceVariant">#E7E0EB</color>
-    <color name="md_theme_onSurfaceVariant">#49454E</color>
-    <color name="md_theme_outline">#79747E</color>
-    <color name="md_theme_outlineVariant">#CAC4CE</color>
-    
-    <!-- Scrim and Shadow -->
-    <color name="md_theme_scrim">#000000</color>
-    
-    <!-- Legacy Color Mappings (Preserving existing app-specific colors with brand integration) -->
-    <color name="colorPrimary">@color/ortus_primary</color>
-    <color name="colorOnPrimary">@color/ortus_on_surface_light</color>
-    <color name="colorPrimaryContainer">@color/ortus_primary_variant</color>
-    <color name="colorOnPrimaryContainer">@color/ortus_on_surface_light</color>
+    <color name="md_theme_onErrorContainer">#410002</color>
 
-    <color name="colorSecondary">@color/ortus_secondary</color>
-    <color name="colorOnSecondary">@color/ortus_on_surface_light</color>
-    <color name="colorSecondaryContainer">@color/ortus_secondary_variant</color>
-    <color name="colorOnSecondaryContainer">@color/ortus_on_surface_light</color>
-    
-    <!-- Preserve existing app-specific colors with brand integration -->
-    <color name="main_bg">@color/ortus_surface_light</color>
-    <color name="content1_bg">@color/ortus_surface_light</color>
-    <color name="content2_bg">@color/ortus_neutral</color>
-    <color name="content3_bg">@color/ortus_tertiary</color>
-    
-    <color name="accent1">@color/ortus_primary</color>
-    <color name="accent1_pressed">@color/ortus_primary_variant</color>
-    <color name="accent2">@color/ortus_secondary</color>
-    <color name="accent3">@color/ortus_tertiary</color>
-    
-    <!-- Text colors mapped to brand -->
-    <color name="main_txt">@color/ortus_on_surface_light</color>
-    <color name="main_txt_disabled">#A0A0A0</color>
+    <!-- Outline Colors -->
+    <color name="md_theme_outline">#857370</color>
+    <color name="md_theme_outlineVariant">#D7C2BF</color>
 
-    <color name="content1_txt">@color/ortus_on_surface_light</color>
-    <color name="content1_txt_disabled">#A0A0A0</color>
-    <color name="content2_txt">@color/ortus_on_surface_light</color>
-    <color name="content2_txt_disabled">#A0A0A0</color>
-    <color name="content3_txt">@color/ortus_on_surface_dark</color>
-    <color name="content3_txt_disabled">#A0A0A0</color>
+    <!-- Dynamic Colors (fallbacks) -->
+    <color name="dynamic_primary">#800020</color>
+    <color name="dynamic_secondary">#673AB7</color>
+    <color name="dynamic_tertiary">#BE5103</color>
+    <color name="dynamic_surface">#EFFCE1</color>
 
-    <color name="accent1_txt">@color/ortus_on_surface_light</color>
+    <!-- Additional Brand Colors for Dark Mode -->
+    <color name="brand_burgundy_variant">#FFB3A7</color>
+    <color name="brand_deep_purple_variant">#E0CFFF</color>
+    <color name="brand_burnt_orange_variant">#FFB59D</color>
+    <color name="brand_mint_white_variant">#2D3B2D</color>
+
+    <!-- Missing colors required by existing styles -->
+    <color name="popup_outer_txt">#FFFFFF</color>
+    <color name="postechBackgroundColor">#FFFFFF</color>
+    <color name="colorSecondPrimary">#800020</color>
+    <color name="content1_bg">#FFFFFF</color>
+    <color name="content1_txt">#1C1B1F</color>
+    <color name="btn_action">#800020</color>
+    <color name="btn_action_txt">#FFFFFF</color>
+    <color name="btn_input_txt">#FFFFFF</color>
+
+    <!-- Additional colors required by existing drawables -->
+    <color name="btn_action_pressed">#6A0019</color>
+    <color name="btn_neutral_pressed">#CCCCCC</color>
+    <color name="btn_neutral">#EEEEEE</color>
+    <color name="category_bg_selected">#800020</color>
+    <color name="category_bg">#F5F5F5</color>
+    <color name="accent1_pressed">#6A0019</color>
+    <color name="accent1">#800020</color>
     <color name="accent1_txt_disabled">#A0A0A0</color>
-    <color name="accent2_txt">@color/ortus_on_surface_light</color>
-    <color name="accent2_txt_disabled">#A0A0A0</color>
-    <color name="accent3_txt">@color/ortus_on_surface_dark</color>
-    <color name="accent3_txt_disabled">#A0A0A0</color>
+    <color name="accent1_txt">#FFFFFF</color>
+    <color name="tab_focused_end">#800020</color>
+    <color name="tab_focused_start">#800020</color>
+    <color name="tab_pressed">#6A0019</color>
+    <color name="tab_indicator">#FFFFFF</color>
+    <color name="tab_selected">#800020</color>
+    <color name="tab_unselected">#CCCCCC</color>
+    <color name="product_catalog_bg">#FFFFFF</color>
+    <color name="category_item_bg">#F9F9F9</color>
 
-    <!-- Very specific colors. Should generally reference one of the above. -->
-    <color name="tab_unselected">@color/ortus_surface_light</color>
-    <color name="tab_selected">@color/ortus_surface_light</color>
-    <color name="tab_pressed">@color/ortus_primary_variant</color>
-    <color name="tab_focused_start">@color/ortus_primary</color>
-    <color name="tab_focused_end">@color/ortus_primary_variant</color>
-    <color name="tab_indicator">@color/ortus_secondary</color>
+    <!-- Additional colors required by layout files -->
+    <color name="popup_outer_bg">#FFFFFF</color>
+    <color name="popup_inner_bg">#F5F5F5</color>
+    <color name="popup_inner_text">#1C1B1F</color>
+    <color name="accent3">#673AB7</color>
+    <color name="main_bg">#FFFFFF</color>
+    <color name="popup_divider">#DDDDDD</color>
+    <color name="content2_bg">#F9F9F9</color>
+    <color name="product_item_inner_bg">#FAFAFA</color>
 
-    <color name="category_bg">@color/ortus_surface_light</color>
-    <color name="category_bg_selected">@color/ortus_neutral</color>
-    <color name="category_item_bg">@color/ortus_primary</color>
-    <color name="category_text">@color/ortus_on_surface_light</color>
-    <color name="product_item_bg">@color/ortus_surface_light</color>
-    <color name="product_text">@color/ortus_on_surface_light</color>
+    <!-- More colors required by layout files -->
+    <color name="ticket_title_bg">#800020</color>
+    <color name="ticket_bg">#FFFFFF</color>
+    <color name="content3_bg">#F0F0F0</color>
+    <color name="content3_txt">#1C1B1F</color>
+    <color name="accent2">#673AB7</color>
+    <color name="accent2_txt">#FFFFFF</color>
 
-    <color name="product_catalog_bg">@color/ortus_neutral</color>
-    <color name="product_item_outer_bg">@color/ortus_primary</color>
-    <color name="product_item_inner_bg">@color/ortus_surface_light</color>
-    <color name="menu_disabled_gray">@color/ortus_secondary_variant</color> <!-- For disabled items -->
-
-    <color name="ticket_bg">@color/ortus_surface_light</color>
-    <color name="ticket_title_bg">@color/ortus_surface_light</color>
-
-    <color name="popup_outer_bg">@color/ortus_primary</color>
-    <color name="popup_outer_bg_pressed">@color/ortus_primary_variant</color>
-    <color name="popup_outer_txt">@color/ortus_on_surface_light</color>
-    <color name="popup_inner_bg">@color/ortus_surface_light</color>
-    <color name="popup_inner_text">@color/ortus_on_surface_light</color>
-    <color name="popup_divider">@color/ortus_tertiary</color>
-
-    <!-- Missing color aliases needed by POSTechTheme -->
-    <color name="colorSurface">@color/md_theme_surface</color>
-    <color name="colorOnSurface">@color/md_theme_onSurface</color>
-    <color name="postechBackgroundColor">@color/md_theme_background</color>
-    <color name="colorSecondPrimary">@color/ortus_secondary</color>
-
-    <!-- Action button -->
-    <color name="btn_action">@color/ortus_secondary</color>
-    <color name="btn_action_pressed">@color/ortus_secondary_variant</color>
-    <color name="btn_action_txt">@color/ortus_on_surface_light</color>
-    <!-- Accept, add, modify, etc... -->
-    <color name="btn_positive">@color/ortus_secondary</color>
-    <color name="btn_positive_pressed">@color/ortus_secondary_variant</color>
-    <!-- Cancel, delete, etc... -->
-    <color name="btn_negative">@color/ortus_error</color>
-    <color name="btn_negative_pressed">@color/ortus_error</color>
-    <!-- Input button -->
-    <color name="btn_input">@android:color/transparent</color>
-    <color name="btn_input_pressed">@color/ortus_secondary</color>
-    <color name="btn_input_txt">@color/ortus_on_surface_light</color>
-    <!-- Neutral button -->
-    <color name="btn_neutral">@color/ortus_surface_light</color>
-    <color name="btn_neutral_pressed">@color/ortus_neutral</color>
+    <!-- Colors required by Java code -->
+    <color name="md_theme_surface">#EFFCE1</color>
+    <color name="md_theme_primaryContainer">#FFDAD5</color>
+    <color name="md_theme_secondaryContainer">#EADDFF</color>
+    <color name="category_text">#1C1B1F</color>
+    <color name="product_item_bg">#FFFFFF</color>
+    <color name="product_text">#1C1B1F</color>
+    <color name="product_item_outer_bg">#F5F5F5</color>
 </resources>

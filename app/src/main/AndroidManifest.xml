@@ -117,6 +117,10 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activities.ScaleMainActivity"
+            android:exported="false"
+            android:label="Scale Measurement"
+            android:theme="@style/POSTechTheme"/>
         <service android:name=".drivers.DeviceService"/>
 
         <!-- M-Pesa Callback Receiver -->
