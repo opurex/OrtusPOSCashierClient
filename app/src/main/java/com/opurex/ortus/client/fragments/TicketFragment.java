@@ -304,8 +304,10 @@ public class TicketFragment extends ViewPageFragment implements
             mCustomer.setVisibility(View.VISIBLE);
             mCustomerImg.setVisibility(View.VISIBLE);
         } else {
-            mCustomer.setVisibility(View.GONE);
-            mCustomerImg.setVisibility(View.GONE);
+            // Show "Walk-in Customer" when no customer is selected
+            mCustomer.setText("Walk-in Customer");
+            mCustomer.setVisibility(View.VISIBLE);
+            mCustomerImg.setVisibility(View.VISIBLE);
         }
         // Update tariff area info
         if (mTicketData.getTariffArea() == null) {

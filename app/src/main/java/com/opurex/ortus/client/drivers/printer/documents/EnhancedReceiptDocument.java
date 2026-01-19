@@ -71,6 +71,10 @@ public class EnhancedReceiptDocument implements PrintableDocument
         if (c != null) {
             printer.printLine(PrinterHelper.padAfter(ctx.getString(R.string.tkt_cust), 9)
                     + PrinterHelper.padBefore(c.getName(), 23));
+        } else {
+            // Print "Walk-in Customer" when no customer is selected
+            printer.printLine(PrinterHelper.padAfter(ctx.getString(R.string.tkt_cust), 9)
+                    + PrinterHelper.padBefore("Walk-in Customer", 23));
         }
         printer.printLine(PrinterHelper.padAfter(ctx.getString(R.string.tkt_number), 16) +
                 PrinterHelper.padBefore(cr.getMachineName() + " - " + this.r.getTicketNumber(), 16));
@@ -186,6 +190,11 @@ public class EnhancedReceiptDocument implements PrintableDocument
             }
             printer.printLine(PrinterHelper.padAfter(ctx.getString(R.string.tkt_prepaid_amount), 32));
             printer.printLine(PrinterHelper.padBefore(priceFormat.format(c.getPrepaid()) + currencySymbol, 32));
+        } else {
+            // Print blank space when no customer is selected to maintain layout
+            printer.printLine();
+            printer.printLine(PrinterHelper.padAfter(ctx.getString(R.string.tkt_prepaid_amount), 32));
+            printer.printLine(PrinterHelper.padBefore("0.00" + currencySymbol, 32));
         }
         printer.printLine();
         PrinterHelper.printFooter(printer, ctx);
