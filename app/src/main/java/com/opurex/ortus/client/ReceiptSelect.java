@@ -51,22 +51,6 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
         super.onCreate(state);
         // Set views
         setContentView(R.layout.receipt_select);
-        this.list = (ListView) this.findViewById(R.id.receipts_list);
-        this.list.setAdapter(new ReceiptsAdapter(Data.Receipt.getReceipts(this)));
-        this.list.setOnItemClickListener(this);
-        // Init printer connection
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        // Set views
-        setContentView(R.layout.receipt_select);
 
         // Setup toolbar
         com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
