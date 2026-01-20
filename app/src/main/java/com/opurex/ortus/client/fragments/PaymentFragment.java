@@ -101,7 +101,7 @@ public class PaymentFragment extends ViewPageFragment
     private TextView mCusPrepaid;
     private TextView mCusDebt;
     private TextView mCusDebtMax;
-    private ToggleButton mPrintBtn;
+    private MaterialButton mPrintBtn;
     private PaymentProcessor mCurrentProcessor;
 
     @SuppressWarnings("unused") // Used via class reflection
@@ -191,7 +191,7 @@ public class PaymentFragment extends ViewPageFragment
         mCusDebtMax = (TextView) layout.findViewById(R.id.mountMax);
 
         // Print button, visible only if a printer is configured.
-        mPrintBtn = (ToggleButton) layout.findViewById(R.id.print_ticket);
+        mPrintBtn =  layout.findViewById(R.id.print_ticket);
         OpurexConfiguration config = OrtusPOS.getConfiguration();
         boolean hasPrinter = !(OpurexConfiguration.PrinterDriver.NONE.equals(config.getPrinterDriver()));
         mPrintBtn.setChecked(hasPrinter);
@@ -200,6 +200,17 @@ public class PaymentFragment extends ViewPageFragment
         } else {
             mPrintBtn.setChecked(config.getPrintTicketByDefault());
         }
+
+//        if (!hasPrinter) {
+//            mPrintBtn.setVisibility(View.GONE);
+//        } else {
+//            mPrintBtn.setChecked(config.getPrintTicketByDefault());
+//        }
+
+// Optional: listen for toggle changes
+        mPrintBtn.addOnCheckedChangeListener((button, isChecked) -> {
+            Log.d(LOG_TAG, "Print button checked: " + isChecked);
+        });
 
         // Set the first payment mode as selected initially
         if (!modes.isEmpty()) {
