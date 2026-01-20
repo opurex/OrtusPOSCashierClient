@@ -77,6 +77,7 @@
         <activity android:name="TariffAreaSelect"/>
         <activity android:name="ReceiptSelect"/>
         <activity android:name="ZSelect"/>
+        <activity android:name="ReceiptDetailActivity"/>
         <activity android:name="CloseCash"/>
         <activity android:name="CloseCashCount"/>
         <activity

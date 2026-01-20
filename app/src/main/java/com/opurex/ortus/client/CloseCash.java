@@ -68,7 +68,16 @@ public class CloseCash extends POSConnectedTrackedActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.close_cash);
+        setContentView(R.layout.close_cash_material);
+
+        // Setup toolbar
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(R.string.close_z_title);
+        }
+
         this.retryTimer = new Timer();
         // Set z ticket info
         this.zTicket = new ZTicket(this);
@@ -149,6 +158,15 @@ public class CloseCash extends POSConnectedTrackedActivity {
         // if closed by cancel the current cash may have these data set from
         // close activities
         this.undoClose();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Close button callback
