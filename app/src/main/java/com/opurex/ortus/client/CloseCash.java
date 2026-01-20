@@ -28,6 +28,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import androidx.appcompat.app.AlertDialog;
 
 import java.io.IOError;
@@ -81,6 +83,10 @@ public class CloseCash extends POSConnectedTrackedActivity {
         this.retryTimer = new Timer();
         // Set z ticket info
         this.zTicket = new ZTicket(this);
+
+        // Initialize UI components
+        initializeUI();
+
         String labelPayment, valuePayment, labelTaxes, valueTaxes;
         labelPayment = valuePayment = labelTaxes = valueTaxes = "";
         Map<Integer, PaymentDetail> payments = zTicket.getPayments();
@@ -133,6 +139,136 @@ public class CloseCash extends POSConnectedTrackedActivity {
                 requestClose();
             }
         });
+    }
+
+    private void initializeUI() {
+        // Populate Z-Ticket information
+        TextView zDate = findViewById(R.id.z_date);
+        TextView zTime = findViewById(R.id.z_time);
+        TextView zCashier = findViewById(R.id.z_cashier);
+        TextView zRegister = findViewById(R.id.z_register);
+
+        // Set basic Z-ticket info
+        if (zDate != null) {
+            zDate.setText(java.text.DateFormat.getDateInstance().format(new java.util.Date()));
+        }
+        if (zTime != null) {
+            zTime.setText(new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date()));
+        }
+        if (zCashier != null) {
+            // Get the current user from the session
+            List<User> userList = Data.User.users(this);
+            if (!userList.isEmpty()) {
+                // Assuming the first user in the list is the current user
+                zCashier.setText(userList.get(0).getName());
+            } else {
+                zCashier.setText("Unknown");
+            }
+        }
+        if (zRegister != null) {
+            zRegister.setText("#" + Data.CashRegister.current(this).getId());
+        }
+
+        // Populate sales summary
+        TextView zTickets = findViewById(R.id.z_tickets);
+        TextView zGrossSales = findViewById(R.id.z_gross_sales);
+        TextView zNetSales = findViewById(R.id.z_net_sales);
+        TextView zTaxes = findViewById(R.id.z_taxes);
+
+        if (zTickets != null) {
+            zTickets.setText(String.valueOf(zTicket.getTicketCount()));
+        }
+        if (zGrossSales != null) {
+            zGrossSales.setText(String.format("%.2f KSH", zTicket.getSubtotal()));
+        }
+        if (zNetSales != null) {
+            zNetSales.setText(String.format("%.2f KSH", zTicket.getTotal()));
+        }
+        if (zTaxes != null) {
+            zTaxes.setText(String.format("%.2f KSH", zTicket.getTaxAmount()));
+        }
+
+        // Populate cash count
+        TextView zExpected = findViewById(R.id.z_expected);
+        TextView zActual = findViewById(R.id.z_actual);
+        TextView zDifference = findViewById(R.id.z_difference);
+
+        if (zExpected != null) {
+            zExpected.setText(String.format("%.2f KSH", zTicket.getTotal()));
+        }
+        if (zActual != null) {
+            // This would typically be set by user input or retrieved from cash drawer
+            zActual.setText("0.00 KSH");
+        }
+        if (zDifference != null) {
+            zDifference.setText("0.00 KSH");
+        }
+
+        // Populate additional stats
+        TextView zAvgTicket = findViewById(R.id.z_avg_ticket);
+        TextView zRefunds = findViewById(R.id.z_refunds);
+        TextView zDiscounts = findViewById(R.id.z_discounts);
+
+        if (zAvgTicket != null) {
+            double avgTicket = zTicket.getTicketCount() > 0 ?
+                zTicket.getTotal() / zTicket.getTicketCount() : 0;
+            zAvgTicket.setText(String.format("%.2f KSH", avgTicket));
+        }
+        if (zRefunds != null) {
+            zRefunds.setText("0.00 KSH"); // Would be calculated from refunds
+        }
+        if (zDiscounts != null) {
+            double discountAmount = zTicket.getSubtotal() - zTicket.getTotal();
+            zDiscounts.setText(String.format("%.2f KSH", discountAmount));
+        }
+
+        // Populate payment methods dynamically
+        android.widget.LinearLayout paymentMethodsContainer = findViewById(R.id.payment_methods_container);
+        if (paymentMethodsContainer != null) {
+            paymentMethodsContainer.removeAllViews();
+
+            Map<Integer, PaymentDetail> payments = zTicket.getPayments();
+            for (Integer paymentModeId : payments.keySet()) {
+                PaymentMode pm = Data.PaymentMode.get(paymentModeId);
+                PaymentDetail detail = payments.get(paymentModeId);
+
+                // Create a horizontal layout for each payment method
+                android.widget.LinearLayout paymentRow = new android.widget.LinearLayout(this);
+                paymentRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+                paymentRow.setLayoutParams(new android.view.ViewGroup.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                // Payment method name
+                android.widget.TextView methodName = new android.widget.TextView(this);
+                methodName.setText(pm.getLabel());
+                methodName.setTextSize(14);
+                methodName.setTextColor(getColor(com.opurex.ortus.client.R.color.md_theme_onSurfaceVariant));
+                methodName.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+                // Payment method amounts
+                android.widget.TextView methodAmount = new android.widget.TextView(this);
+                methodAmount.setText(String.format("%.2f KSH", detail.getTotal()));
+                methodAmount.setTextSize(14);
+                methodAmount.setTextColor(getColor(com.opurex.ortus.client.R.color.colorOnSurface));
+                methodAmount.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                paymentRow.addView(methodName);
+                paymentRow.addView(methodAmount);
+
+                paymentMethodsContainer.addView(paymentRow);
+
+                // Add divider
+                android.view.View divider = new android.view.View(this);
+                divider.setLayoutParams(new android.view.ViewGroup.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT, 2));
+                divider.setBackgroundColor(getColor(com.opurex.ortus.client.R.color.md_theme_outline));
+                paymentMethodsContainer.addView(divider);
+            }
+        }
     }
 
     private String addValuePaymentMode(DecimalFormat format, PaymentDetail paymentDetail, String currencySymbol) {
