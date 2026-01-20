@@ -179,9 +179,11 @@ public class CloseCash extends POSConnectedTrackedActivity {
             zTickets.setText(String.valueOf(zTicket.getTicketCount()));
         }
         if (zGrossSales != null) {
+            // Gross sales is the amount before tax
             zGrossSales.setText(String.format("%.2f KSH", zTicket.getSubtotal()));
         }
         if (zNetSales != null) {
+            // Net sales is the final total amount (this should be the same as getTotal())
             zNetSales.setText(String.format("%.2f KSH", zTicket.getTotal()));
         }
         if (zTaxes != null) {
@@ -210,6 +212,7 @@ public class CloseCash extends POSConnectedTrackedActivity {
         TextView zDiscounts = findViewById(R.id.z_discounts);
 
         if (zAvgTicket != null) {
+            // Calculate average ticket value based on total sales divided by number of tickets
             double avgTicket = zTicket.getTicketCount() > 0 ?
                 zTicket.getTotal() / zTicket.getTicketCount() : 0;
             zAvgTicket.setText(String.format("%.2f KSH", avgTicket));
@@ -218,8 +221,14 @@ public class CloseCash extends POSConnectedTrackedActivity {
             zRefunds.setText("0.00 KSH"); // Would be calculated from refunds
         }
         if (zDiscounts != null) {
-            double discountAmount = zTicket.getSubtotal() - zTicket.getTotal();
-            zDiscounts.setText(String.format("%.2f KSH", discountAmount));
+            // Calculate discount amount properly
+            // In ZTicket, the total represents the final amount received from payments
+            // The discount would be the difference between what should have been paid and what was actually paid
+            // Since subtotal is before tax and total is the final amount, the calculation depends on the business logic
+            // For now, using the correct relationship: total = subtotal + tax - discount
+            // So discount = subtotal + tax - total
+            double discountAmount = zTicket.getSubtotal() + zTicket.getTaxAmount() - zTicket.getTotal();
+            zDiscounts.setText(String.format("%.2f KSH", Math.max(0, discountAmount))); // Ensure non-negative
         }
 
         // Populate payment methods dynamically
