@@ -15,12 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.Gallery;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.opurex.ortus.client.data.Data;
@@ -85,7 +87,7 @@ public class PaymentFragment extends ViewPageFragment
     private Customer mCustomer;
     private double mTicketPrepaid;
     // Views
-    private Gallery mPaymentModes;
+    private RecyclerView mPaymentModes;
     private EditText mInput;
     private NumKeyboard mNumberPad;
     private ListView mPaymentsList;
@@ -130,11 +132,23 @@ public class PaymentFragment extends ViewPageFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.payment_zone, container, false);
-        mPaymentModes = (Gallery) layout.findViewById(R.id.payment_modes);
+        View layout = inflater.inflate(R.layout.payment_zone_material, container, false);
+        mPaymentModes = layout.findViewById(R.id.payment_modes_recycler);
+
         List<PaymentMode> modes = Data.PaymentMode.paymentModes(mContext);
-        mPaymentModes.setAdapter(new PaymentModesAdapter(modes));
-        mPaymentModes.setOnItemSelectedListener(new PaymentModeItemSelectedListener());
+        com.opurex.ortus.client.widgets.PaymentModesAdapter adapter =
+            new com.opurex.ortus.client.widgets.PaymentModesAdapter(mContext, modes);
+
+        adapter.setOnPaymentModeClickListener(new com.opurex.ortus.client.widgets.PaymentModesAdapter.OnPaymentModeClickListener() {
+            @Override
+            public void onPaymentModeClick(PaymentMode mode, int position) {
+                mCurrentMode = mode;
+                PaymentFragment.this.updateView();
+            }
+        });
+
+        mPaymentModes.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
+        mPaymentModes.setAdapter(adapter);
 
         mInput = (EditText) layout.findViewById(R.id.input);
         mInput.setInputType(InputType.TYPE_NULL); // Should be TextView.
@@ -142,8 +156,8 @@ public class PaymentFragment extends ViewPageFragment
         mNumberPad.setKeyHandler(new Handler(this));
 
         mPaymentsList = (ListView) layout.findViewById(R.id.payments_list);
-        adapter = new PaymentsAdapter(mPaymentsListContent, this);
-        mPaymentsList.setAdapter(adapter);
+        PaymentsAdapter paymentsAdapter = new PaymentsAdapter(mPaymentsListContent, this);
+        mPaymentsList.setAdapter(paymentsAdapter);
 
         mRemaining = (TextView) layout.findViewById(R.id.ticket_remaining);
         mGiveBack = (TextView) layout.findViewById(R.id.give_back);
@@ -164,8 +178,15 @@ public class PaymentFragment extends ViewPageFragment
             mPrintBtn.setChecked(config.getPrintTicketByDefault());
         }
 
-        mPaymentModes.setSelection(0, false);
-        mCurrentMode = modes.get(0);
+        // Set the first payment mode as selected initially
+        if (!modes.isEmpty()) {
+            mCurrentMode = modes.get(0);
+            // Update the adapter to reflect the selected item
+            if (mPaymentModes.getAdapter() instanceof com.opurex.ortus.client.widgets.PaymentModesAdapter) {
+                ((com.opurex.ortus.client.widgets.PaymentModesAdapter) mPaymentModes.getAdapter())
+                    .setSelectedIndex(0);
+            }
+        }
 
         LinearLayout customerList = (LinearLayout) layout.findViewById(R.id.customers_list);
         customerList.setOnClickListener(new View.OnClickListener() {
@@ -502,7 +523,8 @@ public class PaymentFragment extends ViewPageFragment
                 return false;
         }
         this.registerPayment(p);
-        this.mPaymentModes.setSelection(0);
+        // For RecyclerView, we don't use setSelection. Instead, we can scroll to position if needed
+        // this.mPaymentModes.scrollToPosition(0); // Uncomment if needed to scroll to first item
         return true;
     }
 
