@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.button.MaterialButtonToggleGroup
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/payment_modes_toggle_group"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:singleSelection="true"
+    app:selectionRequired="true"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
+
+    <!-- Payment mode buttons will be added programmatically -->
+    <!-- Example static buttons for reference -->
+    <!--
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/payment_mode_cash"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cash" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/payment_mode_card"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Card" />
+    -->
+
+</com.google.android.material.button.MaterialButtonToggleGroup>

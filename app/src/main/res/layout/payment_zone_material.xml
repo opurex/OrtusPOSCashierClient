@@ -8,7 +8,7 @@
     android:background="@color/colorSurface"
     android:padding="16dp">
 
-    <!-- Top zone: Payment types - Using RecyclerView instead of Gallery -->
+    <!-- Top zone: Payment types - Using MaterialButtonToggleGroup instead of Gallery -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,12 +33,19 @@
                 android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="8dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/payment_modes_recycler"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/payment_modes_toggle_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="80dp"
-                android:layout_gravity="center" />
+                app:singleSelection="true"
+                app:selectionRequired="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- Payment mode buttons will be added programmatically -->
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </LinearLayout>
 

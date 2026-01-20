@@ -24,6 +24,9 @@ import android.widget.ToggleButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.opurex.ortus.client.data.Data;
 import com.opurex.ortus.client.utils.EmptyList;
@@ -87,7 +90,8 @@ public class PaymentFragment extends ViewPageFragment
     private Customer mCustomer;
     private double mTicketPrepaid;
     // Views
-    private RecyclerView mPaymentModes;
+    private RecyclerView mPaymentModes; // Keep for now as we may still need it for other purposes
+    private com.google.android.material.button.MaterialButtonToggleGroup mPaymentModesToggleGroup;
     private EditText mInput;
     private NumKeyboard mNumberPad;
     private ListView mPaymentsList;
@@ -133,22 +137,41 @@ public class PaymentFragment extends ViewPageFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.payment_zone_material, container, false);
-        mPaymentModes = layout.findViewById(R.id.payment_modes_recycler);
+        mPaymentModesToggleGroup = layout.findViewById(R.id.payment_modes_toggle_group);
 
         List<PaymentMode> modes = Data.PaymentMode.paymentModes(mContext);
-        com.opurex.ortus.client.widgets.PaymentModesAdapter adapter =
-            new com.opurex.ortus.client.widgets.PaymentModesAdapter(mContext, modes);
 
-        adapter.setOnPaymentModeClickListener(new com.opurex.ortus.client.widgets.PaymentModesAdapter.OnPaymentModeClickListener() {
-            @Override
-            public void onPaymentModeClick(PaymentMode mode, int position) {
-                mCurrentMode = mode;
+        // Clear any existing buttons
+        mPaymentModesToggleGroup.removeAllViews();
+
+        // Add payment mode buttons dynamically
+        for (int i = 0; i < modes.size(); i++) {
+            PaymentMode mode = modes.get(i);
+
+            com.google.android.material.button.MaterialButton button =
+                new com.google.android.material.button.MaterialButton(mContext);
+            button.setText(mode.getLabel());
+            button.setId(View.generateViewId()); // Generate unique ID
+
+            // MaterialButtonToggleGroup will handle the styling automatically
+
+            // Add to the toggle group
+            mPaymentModesToggleGroup.addView(button);
+
+            final int position = i;
+            final PaymentMode currentMode = mode;
+
+            button.setOnClickListener(v -> {
+                mCurrentMode = currentMode;
                 PaymentFragment.this.updateView();
-            }
-        });
+            });
+        }
 
-        mPaymentModes.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
-        mPaymentModes.setAdapter(adapter);
+        // Set the first payment mode as selected initially
+        if (!modes.isEmpty()) {
+            mCurrentMode = modes.get(0);
+            // The toggle group will automatically handle selection
+        }
 
         mInput = (EditText) layout.findViewById(R.id.input);
         mInput.setInputType(InputType.TYPE_NULL); // Should be TextView.
@@ -181,11 +204,7 @@ public class PaymentFragment extends ViewPageFragment
         // Set the first payment mode as selected initially
         if (!modes.isEmpty()) {
             mCurrentMode = modes.get(0);
-            // Update the adapter to reflect the selected item
-            if (mPaymentModes.getAdapter() instanceof com.opurex.ortus.client.widgets.PaymentModesAdapter) {
-                ((com.opurex.ortus.client.widgets.PaymentModesAdapter) mPaymentModes.getAdapter())
-                    .setSelectedIndex(0);
-            }
+            // The toggle group will automatically handle selection
         }
 
         LinearLayout customerList = (LinearLayout) layout.findViewById(R.id.customers_list);
