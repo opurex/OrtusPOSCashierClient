@@ -15,6 +15,67 @@
         app:title="@string/close_z_title"
         app:navigationIcon="?attr/homeAsUpIndicator" />
 
+    <!-- Legacy IDs to maintain compatibility with existing Java code -->
+    <TextView
+        android:id="@+id/z_payment_total_value"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/close_warning"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/z_label_payment_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/z_value_payment_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/z_label_taxes_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/z_value_taxes_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/z_subtotal_value"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/z_taxes_taxes_values"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/z_taxes_total_values"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/close"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -300,6 +361,25 @@
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface"
                         android:layout_marginBottom="12dp" />
+
+                    <!-- Legacy IDs to maintain compatibility with existing Java code -->
+                    <TextView
+                        android:id="@+id/z_label_payment_content"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/z_value_payment_content"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/z_payment_total_value"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/payment_methods_container"
