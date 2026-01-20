@@ -63,31 +63,47 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
     }
 
     @Override
+    public void onCreate(Bundle state) {
+        super.onCreate(state);
+        // Set views
+        setContentView(R.layout.receipt_select);
+
+        // Setup toolbar
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        this.list = (ListView) this.findViewById(R.id.receipts_list);
+        this.list.setAdapter(new ReceiptsAdapter(Data.Receipt.getReceipts(this)));
+        this.list.setOnItemClickListener(this);
+        // Init printer connection
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onItemClick(AdapterView parent, View v,
                             int position, long id) {
         final Receipt receipt = Data.Receipt.getReceipts(this).get(position);
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        String label = this.getString(R.string.ticket_label,
-                receipt.getTicket().getTicketId());
-        builder.setTitle(label);
-        String[] items = new String[]{this.getString(R.string.print), this.getString(R.string.refund)};
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        selectedReceipt = receipt;
-                        print(receipt);
-                        break;
-                    case 1:
-                        Intent intent = new Intent().putExtra(ReceiptSelect.TICKET_ID_KEY, receipt.getTicket().getId());
-                        setResult(Transaction.PAST_TICKET_FOR_RESULT, intent);
-                        finish();
-                        break;
-                }
-            }
-        });
-        builder.show();
+        // Navigate to the detailed receipt view
+        Intent intent = new Intent(this, ReceiptDetailActivity.class);
+        intent.putExtra("RECEIPT_ID", receipt.getTicket().getId());
+        intent.putExtra("RECEIPT_POSITION", position);
+        startActivity(intent);
     }
 
     private void refreshList() {
