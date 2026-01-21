@@ -82,8 +82,12 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
 
         // If still null, try with the position as a fallback
         if (receipt == null) {
-            // Log error for debugging purposes
-            Toast.makeText(this, "Could not find receipt with ID: " + receiptId, Toast.LENGTH_LONG).show();
+            // Log more detailed error for debugging purposes
+            int position = intent.getIntExtra("RECEIPT_POSITION", -1);
+            Toast.makeText(this, "Could not find receipt with ID: " + receiptId +
+                          " at position: " + position + ". Total receipts: " +
+                          com.opurex.ortus.client.data.Data.Receipt.getReceipts(this).size(),
+                          Toast.LENGTH_LONG).show();
         }
 
         if (receipt != null) {
@@ -390,7 +394,11 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
             btnRefund.setEnabled(true);
         } else {
             // Receipt not found - show error message and disable buttons
-            Toast.makeText(this, "Receipt not found: " + receiptId, Toast.LENGTH_LONG).show();
+            int position = intent.getIntExtra("RECEIPT_POSITION", -1);
+            Toast.makeText(this, "Receipt not found: " + receiptId +
+                          " at position: " + position + ". Total receipts: " +
+                          com.opurex.ortus.client.data.Data.Receipt.getReceipts(this).size(),
+                          Toast.LENGTH_LONG).show();
 
             MaterialButton btnPrint = findViewById(R.id.btn_print);
             MaterialButton btnRefund = findViewById(R.id.btn_refund);

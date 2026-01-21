@@ -88,7 +88,7 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
         intent.putExtra("RECEIPT_ID", receipt.getTicket().getId());
         intent.putExtra("RECEIPT_POSITION", position);
         // Add flags to ensure the activity is recreated properly
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 
