@@ -546,11 +546,13 @@ public class Transaction extends POSConnectedTrackedActivity
             switch (position) {
                 case CATALOG_FRAG: {
                     TicketFragment ticket = getTicketFragment();
-                    ticket.setState(TicketFragment.CHECKIN_STATE);
-                    ticket.updatePageState();
-                    if (mPendingTicket != null) {
-                        ticket.switchTicket(mPendingTicket);
-                        mPendingTicket = null;
+                    if (ticket != null) { // Add null check here
+                        ticket.setState(TicketFragment.CHECKIN_STATE);
+                        ticket.updatePageState();
+                        if (mPendingTicket != null) {
+                            ticket.switchTicket(mPendingTicket);
+                            mPendingTicket = null;
+                        }
                     }
 //                    disposeTicketFragment(ticket);
                     invalidateOptionsMenu();

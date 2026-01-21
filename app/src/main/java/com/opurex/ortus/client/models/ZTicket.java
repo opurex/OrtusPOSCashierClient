@@ -91,12 +91,6 @@ public class ZTicket {
                     }
                 }
             }
-            for (Integer pmId : this.payments.keySet()) {
-                PaymentLine pml = new PaymentLine(pmId, currency.getId());
-                pml.add(this.payments.get(pmId).getTotal(),
-                        this.payments.get(pmId).getTotal());
-                this.paymentLines.put(pmId, pml);
-            }
             // Taxes, categories and prepayment refill
             Ticket t = r.getTicket();
             // TaxLines from Ticket
@@ -162,14 +156,18 @@ public class ZTicket {
                 this.custBalances.get(custId).add(balance);
             }
         }
-        // Compute expected cash
-        if (cashPaymentModeId != null) {
-            this.expectedCash = this.cash.getOpenCash();
-            this.expectedCash = CalculPrice.add(this.expectedCash,
-                    this.paymentLines.get(cashPaymentModeId).getAmount());
-        } else {
-            this.expectedCash = this.cash.getOpenCash();
+
+        for (Integer pmId : this.payments.keySet()) {
+            if (currency != null) {
+                PaymentLine pml = new PaymentLine(pmId, currency.getId());
+                pml.add(this.payments.get(pmId).getTotal(),
+                        this.payments.get(pmId).getTotal());
+                this.paymentLines.put(pmId, pml);
+            }
         }
+
+        // Compute expected cash
+        this.expectedCash = CalculPrice.add(this.cash.getOpenCash(), this.total);
     }
 
     /**
