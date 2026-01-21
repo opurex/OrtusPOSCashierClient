@@ -63,7 +63,7 @@ public class Ticket implements Serializable {
     private Integer custCount;
     private long serverDate_seconds;
 
-    private transient ArrayList<Payment> payments;
+    private ArrayList<Payment> payments;
 
     // TicketId is only set on payment action
     // The equivalent of ticketId is the creationTime
