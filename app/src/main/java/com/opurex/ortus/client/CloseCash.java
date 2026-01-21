@@ -133,10 +133,21 @@ public class CloseCash extends POSConnectedTrackedActivity {
         ((TextView) this.findViewById(R.id.z_taxes_total_values))
                 .setText(currFormat.format(zTicket.getTotal()) + " " + currencySymbol);
 
-        this.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
+        // Set up the close button click listener
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestClose();
+            }
+        });
+
+        // Set up the undo button click listener
+        findViewById(R.id.btn_undo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // For now, just finish the activity - in a real implementation,
+                // this would undo the close operation
+                finish();
             }
         });
     }
