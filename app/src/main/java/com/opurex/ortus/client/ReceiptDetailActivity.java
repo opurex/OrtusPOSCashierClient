@@ -53,12 +53,16 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
         }
 
         // Get receipt from intent
-        String receiptId = getIntent().getStringExtra("RECEIPT_ID");
-        if (receiptId != null) {
-            // Find the receipt by ID
+        Intent intent = getIntent();
+        String receiptId = intent.getStringExtra("RECEIPT_ID");
+
+        // First, try to find the receipt by ID
+        this.receipt = null; // Reset receipt to null first
+        if (receiptId != null && !receiptId.isEmpty()) {
             List<Receipt> receipts = com.opurex.ortus.client.data.Data.Receipt.getReceipts(this);
             for (Receipt r : receipts) {
-                if (r.getTicket().getId().equals(receiptId)) {
+                if (r != null && r.getTicket() != null && r.getTicket().getId() != null &&
+                    r.getTicket().getId().equals(receiptId)) {
                     this.receipt = r;
                     break;
                 }
@@ -67,13 +71,19 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
 
         // If not found by ID, try to get from position (fallback)
         if (receipt == null) {
-            int position = getIntent().getIntExtra("RECEIPT_POSITION", -1);
+            int position = intent.getIntExtra("RECEIPT_POSITION", -1);
             if (position >= 0) {
                 List<Receipt> receipts = com.opurex.ortus.client.data.Data.Receipt.getReceipts(this);
                 if (position < receipts.size()) {
                     this.receipt = receipts.get(position);
                 }
             }
+        }
+
+        // If still null, try with the position as a fallback
+        if (receipt == null) {
+            // Log error for debugging purposes
+            Toast.makeText(this, "Could not find receipt with ID: " + receiptId, Toast.LENGTH_LONG).show();
         }
 
         if (receipt != null) {
@@ -186,10 +196,17 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
         TextView discount = findViewById(R.id.receipt_discount);
         TextView total = findViewById(R.id.receipt_total_summary);
 
-        subtotal.setText(String.format("%.2f KSH", ticket.getSubtotal()));
-        tax.setText(String.format("%.2f KSH", ticket.getTaxCost()));
-        discount.setText(String.format("%.2f KSH", ticket.getSubtotal() - ticket.getTicketPrice()));
-        total.setText(String.format("%.2f KSH", ticket.getTicketPrice()));
+        // Calculate values properly
+        double subtotalValue = ticket.getSubtotal();
+        double taxValue = ticket.getTaxCost();
+        // Use the same discount calculation as in the Ticket class
+        double discountValue = ticket.getFinalDiscount();
+        double totalValue = ticket.getTicketPrice();
+
+        subtotal.setText(String.format("%.2f KSH", subtotalValue));
+        tax.setText(String.format("%.2f KSH", taxValue));
+        discount.setText(String.format("%.2f KSH", discountValue));
+        total.setText(String.format("%.2f KSH", totalValue));
     }
 
     private void printReceipt() {
@@ -274,6 +291,7 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         getMenuInflater().inflate(R.menu.receipt_detail_menu, menu);
@@ -305,10 +323,17 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
             }
 
             receiptText.append("\n--- SUMMARY ---\n");
-            receiptText.append(String.format("Subtotal: %.2f KSH\n", ticket.getSubtotal()));
-            receiptText.append(String.format("Tax: %.2f KSH\n", ticket.getTaxCost()));
-            receiptText.append(String.format("Discount: %.2f KSH\n", ticket.getSubtotal() - ticket.getTicketPrice()));
-            receiptText.append(String.format("Total: %.2f KSH\n", ticket.getTicketPrice()));
+            // Calculate values properly for sharing
+            double subtotalValue = ticket.getSubtotal();
+            double taxValue = ticket.getTaxCost();
+            // Use the same discount calculation as in the Ticket class
+            double discountValue = ticket.getFinalDiscount();
+            double totalValue = ticket.getTicketPrice();
+
+            receiptText.append(String.format("Subtotal: %.2f KSH\n", subtotalValue));
+            receiptText.append(String.format("Tax: %.2f KSH\n", taxValue));
+            receiptText.append(String.format("Discount: %.2f KSH\n", discountValue));
+            receiptText.append(String.format("Total: %.2f KSH\n", totalValue));
 
             // Create share intent
             Intent shareIntent = new Intent();
@@ -319,6 +344,59 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
 
             Intent chooser = Intent.createChooser(shareIntent, "Share Receipt via");
             startActivity(chooser);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // Store the new intent
+
+        // Get receipt from the new intent
+        String receiptId = intent.getStringExtra("RECEIPT_ID");
+
+        // First, try to find the receipt by ID
+        this.receipt = null; // Reset receipt to null first
+        if (receiptId != null && !receiptId.isEmpty()) {
+            List<Receipt> receipts = com.opurex.ortus.client.data.Data.Receipt.getReceipts(this);
+            for (Receipt r : receipts) {
+                if (r != null && r.getTicket() != null && r.getTicket().getId() != null &&
+                    r.getTicket().getId().equals(receiptId)) {
+                    this.receipt = r;
+                    break;
+                }
+            }
+        }
+
+        // If not found by ID, try to get from position (fallback)
+        if (receipt == null) {
+            int position = intent.getIntExtra("RECEIPT_POSITION", -1);
+            if (position >= 0) {
+                List<Receipt> receipts = com.opurex.ortus.client.data.Data.Receipt.getReceipts(this);
+                if (position < receipts.size()) {
+                    this.receipt = receipts.get(position);
+                }
+            }
+        }
+
+        if (receipt != null) {
+            displayReceiptDetails();
+
+            // Enable action buttons since receipt is loaded
+            MaterialButton btnPrint = findViewById(R.id.btn_print);
+            MaterialButton btnRefund = findViewById(R.id.btn_refund);
+
+            btnPrint.setEnabled(true);
+            btnRefund.setEnabled(true);
+        } else {
+            // Receipt not found - show error message and disable buttons
+            Toast.makeText(this, "Receipt not found: " + receiptId, Toast.LENGTH_LONG).show();
+
+            MaterialButton btnPrint = findViewById(R.id.btn_print);
+            MaterialButton btnRefund = findViewById(R.id.btn_refund);
+
+            btnPrint.setEnabled(false);
+            btnRefund.setEnabled(false);
         }
     }
 
