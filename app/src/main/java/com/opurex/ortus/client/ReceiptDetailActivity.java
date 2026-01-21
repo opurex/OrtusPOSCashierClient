@@ -82,12 +82,24 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
 
         // If still null, try with the position as a fallback
         if (receipt == null) {
-            // Log more detailed error for debugging purposes
+            // Try to get receipt by position as fallback
             int position = intent.getIntExtra("RECEIPT_POSITION", -1);
-            Toast.makeText(this, "Could not find receipt with ID: " + receiptId +
-                          " at position: " + position + ". Total receipts: " +
-                          com.opurex.ortus.client.data.Data.Receipt.getReceipts(this).size(),
-                          Toast.LENGTH_LONG).show();
+            if (position >= 0) {
+                List<Receipt> receipts = com.opurex.ortus.client.data.Data.Receipt.getReceipts(this);
+                if (position < receipts.size()) {
+                    this.receipt = receipts.get(position);
+                    // Show a message indicating it's using position fallback
+                    Toast.makeText(this, "Using position fallback: " + position + "/" + receipts.size(),
+                                  Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Position out of bounds: " + position + ", total: " + receipts.size(),
+                                  Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(this, "Could not find receipt with ID: " + receiptId +
+                              " and no valid position provided",
+                              Toast.LENGTH_LONG).show();
+            }
         }
 
         if (receipt != null) {
@@ -393,18 +405,41 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
             btnPrint.setEnabled(true);
             btnRefund.setEnabled(true);
         } else {
-            // Receipt not found - show error message and disable buttons
+            // Try to get receipt by position as fallback
             int position = intent.getIntExtra("RECEIPT_POSITION", -1);
-            Toast.makeText(this, "Receipt not found: " + receiptId +
-                          " at position: " + position + ". Total receipts: " +
-                          com.opurex.ortus.client.data.Data.Receipt.getReceipts(this).size(),
-                          Toast.LENGTH_LONG).show();
+            if (position >= 0) {
+                List<Receipt> receipts = com.opurex.ortus.client.data.Data.Receipt.getReceipts(this);
+                if (position < receipts.size()) {
+                    this.receipt = receipts.get(position);
+                    // Show a message indicating it's using position fallback
+                    Toast.makeText(this, "Using position fallback: " + position + "/" + receipts.size(),
+                                  Toast.LENGTH_SHORT).show();
 
-            MaterialButton btnPrint = findViewById(R.id.btn_print);
-            MaterialButton btnRefund = findViewById(R.id.btn_refund);
+                    // Update UI since we now have a valid receipt
+                    displayReceiptDetails();
+                    MaterialButton btnPrint = findViewById(R.id.btn_print);
+                    MaterialButton btnRefund = findViewById(R.id.btn_refund);
+                    btnPrint.setEnabled(true);
+                    btnRefund.setEnabled(true);
+                } else {
+                    Toast.makeText(this, "Position out of bounds: " + position + ", total: " + receipts.size(),
+                                  Toast.LENGTH_LONG).show();
 
-            btnPrint.setEnabled(false);
-            btnRefund.setEnabled(false);
+                    MaterialButton btnPrint = findViewById(R.id.btn_print);
+                    MaterialButton btnRefund = findViewById(R.id.btn_refund);
+                    btnPrint.setEnabled(false);
+                    btnRefund.setEnabled(false);
+                }
+            } else {
+                Toast.makeText(this, "Receipt not found: " + receiptId +
+                              " and no valid position provided",
+                              Toast.LENGTH_LONG).show();
+
+                MaterialButton btnPrint = findViewById(R.id.btn_print);
+                MaterialButton btnRefund = findViewById(R.id.btn_refund);
+                btnPrint.setEnabled(false);
+                btnRefund.setEnabled(false);
+            }
         }
     }
 
