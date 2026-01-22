@@ -18,28 +18,35 @@
 
 package com.opurex.ortus.client.test;
 
+import android.content.Intent;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.ActivityTestRule;
+
 import com.opurex.ortus.client.Start;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class StartTest extends ActivityInstrumentationTestCase2<Start> {
+import static org.junit.Assert.assertTrue;
 
-    private Start activity;
-    
-    public StartTest() {
-        super(Start.class);
-    }
+@RunWith(AndroidJUnit4.class)
+public class StartTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        this.activity = getActivity();
-        
-    }
+    @Rule
+    public ActivityTestRule<Start> activityRule = new ActivityTestRule<>(
+            Start.class,
+            true,     // initialTouchMode
+            false);   // launchActivity. False to control when the activity is launched
 
     @Test
     public void testBasic() {
+        // Launch the activity
+        Intent intent = new Intent();
+        Start activity = activityRule.launchActivity(intent);
+
+        // Perform basic test
         assertTrue(true);
     }
 }
