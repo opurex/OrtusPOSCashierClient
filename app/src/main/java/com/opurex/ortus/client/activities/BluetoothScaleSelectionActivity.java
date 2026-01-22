@@ -2,7 +2,9 @@ package com.opurex.ortus.client.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -35,9 +37,6 @@ import com.opurex.ortus.client.utils.ScaleManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -301,15 +300,42 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
     }
 
     private void startScanning() {
-        // Check if we have the required permissions
+        // Check if location services are enabled (required for many Android devices including Redmi)
+        if (!isLocationEnabled()) {
+            showLocationServicesRequiredDialog();
+            return;
+        }
+
+        // Check if we have the required permissions for Android 15 and Redmi devices
+        String[] requiredPermissions;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT},
-                    1002);
-                return;
+            // For Android 12+, we need these permissions
+            requiredPermissions = new String[]{
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            };
+        } else {
+            // For older versions, we need traditional permissions
+            requiredPermissions = new String[]{
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            };
+        }
+
+        // Check if any permission is missing
+        boolean hasAllPermissions = true;
+        for (String permission : requiredPermissions) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                hasAllPermissions = false;
+                break;
             }
+        }
+
+        if (!hasAllPermissions) {
+            ActivityCompat.requestPermissions(this, requiredPermissions, 1002);
+            return;
         }
 
         // Clear the device list before starting a new scan
@@ -402,10 +428,88 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
                 }
             }
             if (allGranted) {
-                startScanning();
+                // Check if we need to request ignoring battery optimization on Android 6.0+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestIgnoreBatteryOptimization();
+                } else {
+                    startScanning();
+                }
             } else {
                 Toast.makeText(this, "Bluetooth permissions are required for scanning", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    /**
+     * Check if location services are enabled
+     * This is required for Bluetooth scanning on many Android devices including Redmi
+     */
+    private boolean isLocationEnabled() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // For Android 9+, check location service status
+            android.location.LocationManager locationManager = (android.location.LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (locationManager != null) {
+                try {
+                    return locationManager.isLocationEnabled();
+                } catch (Exception e) {
+                    // Handle potential SecurityException
+                    return true; // Assume enabled if we can't check
+                }
+            }
+        } else {
+            // For older versions, check the secure settings
+            try {
+                int locationMode = android.provider.Settings.Secure.getInt(getContentResolver(),
+                        android.provider.Settings.Secure.LOCATION_MODE);
+                return locationMode != android.provider.Settings.Secure.LOCATION_MODE_OFF;
+            } catch (android.provider.Settings.SettingNotFoundException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Show dialog to enable location services
+     */
+    private void showLocationServicesRequiredDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Location Services Required");
+        builder.setMessage("Location services must be enabled for Bluetooth scanning to work properly on your Redmi device.");
+        builder.setPositiveButton("Enable", (dialog, which) -> {
+            Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
+    /**
+     * Request to be ignored from battery optimization on Android 6.0+
+     * This is critical for Redmi devices and Android 15 to maintain stable Bluetooth connections
+     */
+    private void requestIgnoreBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            android.os.PowerManager pm = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                try {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(android.net.Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+
+                    // Wait a bit for the user to respond to the dialog, then start scanning
+                    new android.os.Handler().postDelayed(() -> startScanning(), 2000);
+                } catch (Exception e) {
+                    // If the above fails, just start scanning anyway
+                    startScanning();
+                }
+            } else {
+                // Already ignoring battery optimizations, start scanning
+                startScanning();
+            }
+        } else {
+            // Below Android 6.0, no battery optimization to worry about
+            startScanning();
         }
     }
     

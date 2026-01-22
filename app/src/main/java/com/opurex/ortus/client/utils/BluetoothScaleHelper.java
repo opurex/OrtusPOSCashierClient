@@ -3,11 +3,13 @@ package com.opurex.ortus.client.utils;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
 
 import com.example.scaler.AclasScaler;
 
@@ -133,6 +135,9 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
 
     // --- Scan Methods ---
     public void startScan() {
+        // Start foreground service for Bluetooth operations
+        startForegroundService();
+
         if (aclasScaler != null) {
             aclasScaler.startScanBluetooth(true);
         }
@@ -142,6 +147,8 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
         if (aclasScaler != null) {
             aclasScaler.startScanBluetooth(false);
         }
+        // Stop foreground service when scan stops
+        stopForegroundService();
     }
 
     @Override
@@ -320,9 +327,38 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
 
     public void cleanup() {
         disconnect();
+        stopForegroundService();
         if (aclasScaler != null) {
             // Clean up resources if needed
             aclasScaler = null;
+        }
+    }
+
+    /**
+     * Start the foreground service for Bluetooth operations
+     */
+    public void startForegroundService() {
+        try {
+            Intent serviceIntent = new Intent(context, com.opurex.ortus.client.services.BluetoothForegroundService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent);
+            } else {
+                context.startService(serviceIntent);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting foreground service", e);
+        }
+    }
+
+    /**
+     * Stop the foreground service
+     */
+    public void stopForegroundService() {
+        try {
+            Intent serviceIntent = new Intent(context, com.opurex.ortus.client.services.BluetoothForegroundService.class);
+            context.stopService(serviceIntent);
+        } catch (Exception e) {
+            Log.e(TAG, "Error stopping foreground service", e);
         }
     }
 

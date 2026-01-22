@@ -26,8 +26,20 @@
     <!-- Android 12+ specific -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
 
+    <!-- Foreground service for Bluetooth operations -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+
+    <!-- For Redmi devices and Android 15 compatibility -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
     <uses-feature
         android:name="android.hardware.bluetooth"
+        android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
 
@@ -123,6 +135,13 @@
             android:label="Scale Measurement"
             android:theme="@style/POSTechTheme"/>
         <service android:name=".drivers.DeviceService"/>
+
+        <!-- Foreground service for Bluetooth operations -->
+        <service
+            android:name=".services.BluetoothForegroundService"
+            android:foregroundServiceType="connectedDevice"
+            android:enabled="true"
+            android:exported="false" />
 
         <!-- M-Pesa Callback Receiver -->
         <receiver android:name=".receivers.MpesaCallbackReceiver"
