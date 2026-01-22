@@ -45,9 +45,14 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
     public BluetoothScaleHelper(Context context) {
         this.context = context.getApplicationContext();
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        
+
         // Initialize the Aclas scaler
         initAclasScaler();
+
+        // Ensure the ACLAS scaler has this as the Bluetooth listener
+        if (aclasScaler != null) {
+            aclasScaler.setBluetoothListener(this);
+        }
     }
 
     private void initAclasScaler() {
@@ -60,12 +65,15 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
                     if (scaleDataListener != null) {
                         scaleDataListener.onError(lastError);
                     }
+                    if (connectionStateListener != null) {
+                        connectionStateListener.onError(lastError);
+                    }
                 }
 
                 @Override
                 public void onDisConnected() {
                     isConnected = false;
-                    Log.d(TAG, "Aclas scaler disconnected");
+                    Log.d(TAG, "Aclas scaler disconnected callback received");
                     if (connectionStateListener != null) {
                         connectionStateListener.onDisconnected();
                     }
@@ -75,7 +83,7 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
                 public void onConnected() {
                     isConnected = true;
                     lastError = null;
-                    Log.d(TAG, "Aclas scaler connected");
+                    Log.d(TAG, "Aclas scaler connected callback received");
                     if (connectionStateListener != null) {
                         connectionStateListener.onConnected();
                     }
@@ -85,10 +93,16 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
                 public void onRcvData(AclasScaler.WeightInfoNew info) {
                     // Handle weight data
                     if (scaleDataListener != null && info != null) {
+                        // Log received weight data for debugging
+                        Log.d(TAG, "Received weight data - Net Weight: " + info.netWeight +
+                              ", Unit: " + info.unit);
+
                         // Convert weight to kg if needed
                         double weightInKg = info.netWeight;
                         String unit = info.unit != null ? info.unit : "kg";
                         scaleDataListener.onWeightReceived(weightInKg, unit);
+                    } else {
+                        Log.w(TAG, "Received weight data but listener is null or info is null");
                     }
                 }
 
@@ -132,14 +146,26 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
 
     @Override
     public void onSearchBluetooth(String deviceInfo) {
+        Log.d(TAG, "Found Bluetooth device: " + deviceInfo);
         if (deviceInfo != null && deviceInfo.contains(",") && scanListener != null) {
             String[] parts = deviceInfo.split(",");
-            scanListener.onDeviceFound(parts[0], parts[1], parts[2]);
+            // According to ACLAS SDK, format is "name,mac,signal" - but sometimes signal might not be present
+            if (parts.length >= 2) {
+                String name = parts[0];
+                String mac = parts[1];
+                String signal = parts.length >= 3 ? parts[2] : "Unknown";
+
+                Log.d(TAG, "Parsed device - Name: " + name + ", MAC: " + mac + ", Signal: " + signal);
+                scanListener.onDeviceFound(name, mac, signal);
+            } else {
+                Log.w(TAG, "Invalid device info format: " + deviceInfo + " (expected at least 'name,mac')");
+            }
         }
     }
 
     @Override
     public void onSearchFinish() {
+        Log.d(TAG, "Bluetooth scan finished");
         if (scanListener != null) {
             scanListener.onScanFinished();
         }
@@ -182,6 +208,8 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
     }
 
     public boolean connectToScale(String macAddress) {
+        Log.d(TAG, "Attempting to connect to scale with MAC: " + macAddress);
+
         if (aclasScaler == null) {
             Log.e(TAG, "Aclas scaler not initialized");
             lastError = "Scale not initialized";
@@ -189,32 +217,39 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
         }
 
         try {
-            // According to original SDK documentation:
-            // For newly paired devices, pass the MAC address
-            // For reconnection to already paired devices, pass empty string ""
+            // According to ACLAS demo app implementation:
+            // For already paired devices, pass empty string
+            // For new connections to unpaired devices, pass the MAC address
             String connectionParam = "";
-            if (macAddress != null && !macAddress.isEmpty()) {
-                // Check if device is already paired
-                Set<android.bluetooth.BluetoothDevice> pairedDevices = getPairedDevices();
-                boolean isAlreadyPaired = false;
 
+            // Check if device is already paired
+            Set<android.bluetooth.BluetoothDevice> pairedDevices = getPairedDevices();
+            Log.d(TAG, "Checking paired devices, found: " + pairedDevices.size());
+
+            boolean isAlreadyPaired = false;
+            if (macAddress != null && !macAddress.isEmpty()) {
                 for (android.bluetooth.BluetoothDevice device : pairedDevices) {
+                    Log.d(TAG, "Paired device: " + device.getName() + " - " + device.getAddress());
                     if (device.getAddress().equalsIgnoreCase(macAddress)) {
                         isAlreadyPaired = true;
+                        Log.d(TAG, "Device is already paired, will use empty string for connection");
                         break;
                     }
                 }
-
-                // If device is already paired, pass empty string for reconnection
-                // If it's a new connection to unpaired device, pass the MAC address
-                connectionParam = isAlreadyPaired ? "" : macAddress;
             }
 
+            // For already paired devices, pass empty string for reconnection
+            // For new connections to unpaired devices, pass the MAC address
+            connectionParam = isAlreadyPaired || (macAddress == null || macAddress.isEmpty()) ? "" : macAddress;
+
+            Log.d(TAG, "Calling AclasConnect with param: '" + connectionParam + "'");
             int result = aclasScaler.AclasConnect(connectionParam);
+            Log.d(TAG, "AclasConnect returned: " + result);
+
             if (result == 0) {
                 isConnected = true;
                 lastError = null;
-                Log.d(TAG, "Successfully connected to scale");
+                Log.d(TAG, "Successfully connected to scale with result: " + result);
                 return true;
             } else {
                 Log.e(TAG, "Failed to connect to scale, error code: " + result);
@@ -248,6 +283,17 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
         }
     }
 
+    /**
+     * Request weight data from the scale after connection
+     */
+    public void requestWeightData() {
+        Log.d(TAG, "Requesting weight data from scale");
+        // Some scales may require a command to start sending weight data
+        // This is a placeholder - the actual implementation depends on the specific scale model
+        // The ACLAS PSX scale should send weight data continuously once connected
+        // but we'll add this method for completeness
+    }
+
     public boolean isConnected() {
         return isConnected;
     }
@@ -266,6 +312,10 @@ public class BluetoothScaleHelper implements AclasScaler.AclasBluetoothListener 
 
     public void setScanListener(ScanListener listener) {
         this.scanListener = listener;
+        // Also propagate the listener to the ACLAS scaler if it exists
+        if (aclasScaler != null) {
+            aclasScaler.setBluetoothListener(this);
+        }
     }
 
     public void cleanup() {

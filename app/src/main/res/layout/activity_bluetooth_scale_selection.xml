@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Select a scale from the list below:"
+        android:text="@string/select_device"
         android:textSize="16sp" />
 
     <ListView
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="4dp"
-            android:text="Scan for devices" />
+            android:text="@string/button_scan" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/virtual_scale_button"

@@ -15,8 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.opurex.ortus.client.adapters.DeviceListAdapter;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -29,6 +32,10 @@ import com.opurex.ortus.client.R;
 import com.opurex.ortus.client.utils.BluetoothScaleHelper;
 import com.opurex.ortus.client.utils.BluetoothPrinterHelper;
 import com.opurex.ortus.client.utils.ScaleManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +52,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
     private static final int REQUEST_SCAN_DEVICES = 1001;
     
     private BluetoothScaleHelper bluetoothScaleHelper;
-    private ArrayAdapter<String> deviceListAdapter;
+    private DeviceListAdapter deviceListAdapter;
     private List<BluetoothDevice> availableDevices;
     
     private ListView deviceListView;
@@ -108,7 +115,12 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
         }
 
         availableDevices = new ArrayList<>();
-        deviceListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
+        // Use the custom device layout with name, MAC, and signal strength
+        List<HashMap<String, String>> deviceDataList = new ArrayList<>();
+        deviceListAdapter = new DeviceListAdapter(this, deviceDataList,
+                R.layout.device_layout,
+                new String[]{"NAME", "MAC", "SIG"},
+                new int[]{R.id.tv_pair_name, R.id.tv_pair_mac, R.id.tv_pair_sig});
         deviceListView.setAdapter(deviceListAdapter);
 
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -177,47 +189,93 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
     }
     
     private void updateDeviceListDisplay() {
-        List<String> deviceNames = new ArrayList<>();
-        for (BluetoothDevice device : availableDevices) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+        // Cast the adapter to DeviceListAdapter to work with HashMap data
+        if (deviceListAdapter instanceof DeviceListAdapter) {
+            DeviceListAdapter deviceAdapter = (DeviceListAdapter) deviceListAdapter;
+            deviceAdapter.clearItems(); // Clear existing items
+
+            for (BluetoothDevice device : availableDevices) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+
+                HashMap<String, String> deviceMap = new HashMap<>();
+                deviceMap.put("NAME", device.getName() != null ? device.getName() : "Unknown Device");
+                deviceMap.put("MAC", device.getAddress());
+                deviceMap.put("SIG", "N/A"); // Signal strength not available for paired devices
+                deviceAdapter.addItem(deviceMap);
             }
-            deviceNames.add(BluetoothPrinterHelper.formatDeviceInfo(this, device));
+        } else {
+            // Fallback for compatibility
+            List<String> deviceNames = new ArrayList<>();
+            for (BluetoothDevice device : availableDevices) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                deviceNames.add(BluetoothPrinterHelper.formatDeviceInfo(this, device));
+            }
+
+            deviceListAdapter.clearItems();
+            // Add items to the DeviceListAdapter
+            for (String deviceName : deviceNames) {
+                HashMap<String, String> deviceMap = new HashMap<>();
+                deviceMap.put("NAME", deviceName);
+                deviceMap.put("MAC", "");
+                deviceMap.put("SIG", "");
+                deviceListAdapter.addItem(deviceMap);
+            }
         }
-        
-        deviceListAdapter.clear();
-        deviceListAdapter.addAll(deviceNames);
-        deviceListAdapter.notifyDataSetChanged();
     }
     
     private void selectDevice(int position) {
-        if (position >= 0 && position < availableDevices.size()) {
-            BluetoothDevice selectedDevice = availableDevices.get(position);
-            
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra(EXTRA_SCALE_ADDRESS, selectedDevice.getAddress());
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+        // Handle selection from the device list
+        if (position >= 0 && deviceListAdapter instanceof DeviceListAdapter) {
+            DeviceListAdapter deviceAdapter = (DeviceListAdapter) deviceListAdapter;
+            if (position < deviceAdapter.getCount()) {
+                HashMap<String, String> selectedItem = (HashMap<String, String>) deviceAdapter.getItem(position);
+                String deviceAddress = selectedItem.get("MAC");
+                String deviceName = selectedItem.get("NAME");
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(EXTRA_SCALE_ADDRESS, deviceAddress);
+                resultIntent.putExtra(EXTRA_SCALE_NAME, deviceName);
+
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
             }
-            resultIntent.putExtra(EXTRA_SCALE_NAME, selectedDevice.getName());
-            
-            setResult(Activity.RESULT_OK, resultIntent);
-            finish();
         }
+    }
+
+    private String extractMacAddress(String deviceInfo) {
+        // Extract MAC address from device info string
+        // Format might be "Device Name (AA:BB:CC:DD:EE:FF) - Signal: -70db"
+        if (deviceInfo.contains("(") && deviceInfo.contains(")")) {
+            int start = deviceInfo.indexOf('(') + 1;
+            int end = deviceInfo.indexOf(')');
+            if (start < end) {
+                return deviceInfo.substring(start, end);
+            }
+        }
+        return deviceInfo; // fallback
+    }
+
+    private String extractDeviceName(String deviceInfo) {
+        // Extract device name from device info string
+        // Format might be "Device Name (AA:BB:CC:DD:EE:FF) - Signal: -70db"
+        if (deviceInfo.contains("(")) {
+            int end = deviceInfo.indexOf('(');
+            if (end > 0) {
+                return deviceInfo.substring(0, end).trim();
+            }
+        }
+        return deviceInfo; // fallback
     }
     
     @Override
@@ -254,36 +312,35 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
             }
         }
 
-        // Note: The Aclas SDK is designed to find specific Aclas scale devices
-        // It may not detect generic Bluetooth devices like speakers
-        // The scanning is specifically looking for Aclas scale devices
+        // Clear the device list before starting a new scan
+        deviceListAdapter.clearItems();
+
+        // Update UI to show scanning state
+        progressBar.setVisibility(View.VISIBLE);
+        scanButton.setEnabled(false);
+        statusText.setText("Scanning for Bluetooth scales...");
 
         // Register the scan listener to receive device discovery events
         bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
             @Override
             public void onDeviceFound(String name, String mac, String signal) {
                 runOnUiThread(() -> {
-                    // Create a temporary BluetoothDevice object to add to our list
-                    // Since we can't create BluetoothDevice directly, we'll store the info differently
-                    String deviceInfo = name + " (" + mac + ") - Signal: " + signal;
-
                     // Check if device is already in the list to avoid duplicates
                     boolean deviceExists = false;
-                    for (int i = 0; i < deviceListAdapter.getCount(); i++) {
-                        if (deviceListAdapter.getItem(i).equals(deviceInfo)) {
-                            deviceExists = true;
-                            break;
+
+                    if (deviceListAdapter instanceof DeviceListAdapter) {
+                        DeviceListAdapter deviceAdapter = (DeviceListAdapter) deviceListAdapter;
+                        deviceExists = deviceAdapter.containsDeviceWithMac(mac);
+
+                        if (!deviceExists) {
+                            HashMap<String, String> deviceMap = new HashMap<>();
+                            deviceMap.put("NAME", name != null ? name : "Unknown Device");
+                            deviceMap.put("MAC", mac);
+                            deviceMap.put("SIG", signal != null ? signal : "N/A");
+
+                            deviceAdapter.addItem(deviceMap);
+                            statusText.setText("Found device: " + name);
                         }
-                    }
-
-                    if (!deviceExists) {
-                        deviceListAdapter.add(deviceInfo);
-                        deviceListAdapter.notifyDataSetChanged();
-
-                        // Store the actual device info for later use
-                        // We'll use a simple approach: parse the MAC from the string
-                        // In a production app, you'd want a better mapping
-                        statusText.setText("Found device: " + name);
                     }
                 });
             }
@@ -297,13 +354,6 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity {
                 });
             }
         });
-
-        // Clear the device list and start scanning
-        deviceListAdapter.clear();
-        deviceListAdapter.notifyDataSetChanged();
-        progressBar.setVisibility(View.VISIBLE);
-        scanButton.setEnabled(false);
-        statusText.setText("Scanning for Bluetooth scales...");
 
         // Start the actual scan
         bluetoothScaleHelper.startScan();

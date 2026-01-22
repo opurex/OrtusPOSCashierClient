@@ -385,7 +385,16 @@
     <string name="none_found">No devices found</string>
     <string name="enter_amount">..</string>
 
-    <string name="connect_scale">Connect Scale</string>
-    <string name="disconnect_scale">Disconnect Scale</string>
+    <string name="connect_scale">Pair Scale</string>
+    <string name="disconnect_scale">Unpair Scale</string>
+    <string name="pair_scale">Pair Scale</string>
+    <string name="title_pair">Pairable Bluetooth Device</string>
+    <string name="dev_name">BT Name:</string>
+    <string name="dev_mac">Mac Address:</string>
+    <string name="connect">Connect successfully</string>
+    <string name="unbind">Unbind</string>
+    <string name="success">Succeed</string>
+    <string name="failed">Fail</string>
+    <string name="wait_connect">Waiting for connection!</string>
 
 </resources>
