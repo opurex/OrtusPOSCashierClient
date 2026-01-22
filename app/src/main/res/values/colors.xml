@@ -124,4 +124,7 @@
     <color name="product_item_bg">#FFFFFF</color>
     <color name="product_text">#1C1B1F</color>
     <color name="product_item_outer_bg">#F5F5F5</color>
+
+    <!-- Colors required by PSX device layout -->
+    <color name="graylight">#Cddfcf</color>
 </resources>

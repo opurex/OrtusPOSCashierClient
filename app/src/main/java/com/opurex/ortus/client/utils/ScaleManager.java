@@ -40,68 +40,68 @@ public class ScaleManager {
             this.bluetoothScaleHelper = new BluetoothScaleHelper(context);
         }
 
-        // Only set the internal listener if we're using the default BluetoothScaleHelper
-        if (injectedBluetoothScaleHelper == null) {
-            this.bluetoothScaleHelper.setScaleDataListener(new BluetoothScaleHelper.ScaleDataListener() {
-                @Override
-                public void onWeightReceived(double weight, String unit) {
-                    if (scaleWeightListener != null) {
-                        scaleWeightListener.onWeightReceived(weight, unit);
-                    }
+        // Set up the internal listeners regardless of whether we're using the default helper
+        this.bluetoothScaleHelper.setScaleDataListener(new BluetoothScaleHelper.ScaleDataListener() {
+            @Override
+            public void onWeightReceived(double weight, String unit) {
+                if (scaleWeightListener != null) {
+                    scaleWeightListener.onWeightReceived(weight, unit);
                 }
+            }
 
-                @Override
-                public void onPriceDataReceived(double price, double amount) {
-                    // Not used in this implementation
-                }
+            @Override
+            public void onPriceDataReceived(double price, double amount) {
+                // Not used in this implementation
+            }
 
-                @Override
-                public void onError(String errorMessage) {
-                    if (connectionStateListener != null) {
-                        connectionStateListener.onScaleError(errorMessage);
-                    }
+            @Override
+            public void onError(String errorMessage) {
+                if (connectionStateListener != null) {
+                    connectionStateListener.onScaleError(errorMessage);
                 }
-            });
+            }
+        });
 
-            this.bluetoothScaleHelper.setConnectionStateListener(new BluetoothScaleHelper.ConnectionStateListener() {
-                @Override
-                public void onConnected() {
-                    if (connectionStateListener != null) {
-                        connectionStateListener.onScaleConnected();
-                    }
+        this.bluetoothScaleHelper.setConnectionStateListener(new BluetoothScaleHelper.ConnectionStateListener() {
+            @Override
+            public void onConnected() {
+                if (connectionStateListener != null) {
+                    connectionStateListener.onScaleConnected();
                 }
+                // Request weight data after connection is established
+                bluetoothScaleHelper.requestWeightData();
+            }
 
-                @Override
-                public void onDisconnected() {
-                    if (connectionStateListener != null) {
-                        connectionStateListener.onScaleDisconnected();
-                    }
+            @Override
+            public void onDisconnected() {
+                if (connectionStateListener != null) {
+                    connectionStateListener.onScaleDisconnected();
                 }
+            }
 
-                @Override
-                public void onError(String errorMessage) {
-                    if (connectionStateListener != null) {
-                        connectionStateListener.onScaleError(errorMessage);
-                    }
+            @Override
+            public void onError(String errorMessage) {
+                if (connectionStateListener != null) {
+                    connectionStateListener.onScaleError(errorMessage);
                 }
-            });
+            }
+        });
 
-            this.bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
-                @Override
-                public void onDeviceFound(String name, String mac, String signal) {
-                    if (scanListener != null) {
-                        scanListener.onDeviceFound(name, mac, signal);
-                    }
+        this.bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
+            @Override
+            public void onDeviceFound(String name, String mac, String signal) {
+                if (scanListener != null) {
+                    scanListener.onDeviceFound(name, mac, signal);
                 }
+            }
 
-                @Override
-                public void onScanFinished() {
-                    if (scanListener != null) {
-                        scanListener.onScanFinished();
-                    }
+            @Override
+            public void onScanFinished() {
+                if (scanListener != null) {
+                    scanListener.onScanFinished();
                 }
-            });
-        } // Close the if block for injected helper check
+            }
+        });
     }
 
     public void startScan() {
@@ -144,26 +144,21 @@ public class ScaleManager {
         this.scanListener = listener;
         // Propagate the listener down to the helper
         if (bluetoothScaleHelper != null) {
-            if (listener != null) {
-                // Wrap the ScaleManager.ScanListener in a BluetoothScaleHelper.ScanListener
-                bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
-                    @Override
-                    public void onDeviceFound(String name, String mac, String signal) {
-                        if (scanListener != null) {
-                            scanListener.onDeviceFound(name, mac, signal);
-                        }
+            bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
+                @Override
+                public void onDeviceFound(String name, String mac, String signal) {
+                    if (listener != null) {
+                        listener.onDeviceFound(name, mac, signal);
                     }
+                }
 
-                    @Override
-                    public void onScanFinished() {
-                        if (scanListener != null) {
-                            scanListener.onScanFinished();
-                        }
+                @Override
+                public void onScanFinished() {
+                    if (listener != null) {
+                        listener.onScanFinished();
                     }
-                });
-            } else {
-                bluetoothScaleHelper.setScanListener(null);
-            }
+                }
+            });
         }
     }
 
@@ -277,6 +272,13 @@ public class ScaleManager {
      */
     public boolean isUsingVirtualScale() {
         return useVirtualScale;
+    }
+
+    /**
+     * Request weight data from the scale
+     */
+    public void requestWeightData() {
+        bluetoothScaleHelper.requestWeightData();
     }
 
     /**
