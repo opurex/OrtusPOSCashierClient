@@ -155,7 +155,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         super.onResume();
         scaleManager.setScaleWeightListener(this);
         scaleManager.setConnectionStateListener(this);
-        isScaleConnected = scaleManager.isConnected();
+//        isScaleConnected = scaleManager.isConnected();
         updateScaleStatus();
     }
 
@@ -208,7 +208,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     private void zeroScale() {
         if (scaleManager != null && isScaleConnected) {
             // Connected mode: use actual scale
-            scaleManager.zeroScale();
+         //   scaleManager.zeroScale();
             Toast.makeText(getContext(), "Scale zeroed", Toast.LENGTH_SHORT).show();
         } else {
             // Manual mode: clear the manual input field
@@ -224,7 +224,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     private void tareScale() {
         if (scaleManager != null && isScaleConnected) {
             // Connected mode: use actual scale
-            scaleManager.tareScale();
+          //  scaleManager.tareScale();
             Toast.makeText(getContext(), "Scale tared", Toast.LENGTH_SHORT).show();
         } else {
             // Manual mode: clear the manual input field (simulate tare)

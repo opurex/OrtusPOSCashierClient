@@ -19,12 +19,15 @@ package com.opurex.ortus.client.widgets;
 
 import com.opurex.ortus.client.interfaces.PaymentEditListener;
 import com.opurex.ortus.client.R;
+import com.opurex.ortus.client.data.ImagesData;
 import com.opurex.ortus.client.models.Payment;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
@@ -35,6 +38,7 @@ public class PaymentItem extends RelativeLayout {
 
     private TextView type;
     private TextView amount;
+    private ImageView modeIcon;
 
     public PaymentItem(Context context, Payment payment) {
         super(context);
@@ -46,6 +50,7 @@ public class PaymentItem extends RelativeLayout {
                                                 true);
         this.type = (TextView) this.findViewById(R.id.payment_type);
         this.amount = (TextView) this.findViewById(R.id.payment_amount);
+        this.modeIcon = (ImageView) this.findViewById(R.id.payment_mode_icon);
 
         View delete = this.findViewById(R.id.payment_delete);
         delete.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +67,27 @@ public class PaymentItem extends RelativeLayout {
         this.payment = p;
         this.type.setText(this.payment.getMode().getLabel());
         this.amount.setText(String.format("%.2f", this.payment.getAmount()));
+
+        // Load payment mode image if available
+        if (this.payment.getMode().hasImage()) {
+            try {
+                Bitmap paymentImage = ImagesData.getPaymentModeImage(this.payment.getMode().getId());
+                if (paymentImage != null) {
+                    this.modeIcon.setImageBitmap(paymentImage);
+                    this.modeIcon.setVisibility(View.VISIBLE);
+                } else {
+                    // Hide the icon if image not found locally
+                    this.modeIcon.setVisibility(View.GONE);
+                }
+            } catch (Exception e) {
+                // Log the error and hide the icon
+                android.util.Log.e("PaymentItem", "Error loading payment mode image for mode ID: " + this.payment.getMode().getId(), e);
+                this.modeIcon.setVisibility(View.GONE);
+            }
+        } else {
+            // Hide the icon if no image is associated with this payment mode
+            this.modeIcon.setVisibility(View.GONE);
+        }
     }
 
     public Payment getPayment() {

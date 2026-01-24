@@ -93,9 +93,26 @@ public class PaymentModesAdapter extends RecyclerView.Adapter<PaymentModesAdapte
         
         public void bind(PaymentMode mode, int position) {
             modeName.setText(mode.getLabel());
-            // Set icon based on payment mode type - you might need to customize this
-            // For now, using a generic payment icon
-            modeIcon.setImageResource(R.drawable.ic_payment); // You'll need to add this drawable
+
+            // Load payment mode image if available
+            if (mode.hasImage()) {
+                try {
+                    android.graphics.Bitmap paymentImage = com.opurex.ortus.client.data.ImagesData.getPaymentModeImage(mode.getId());
+                    if (paymentImage != null) {
+                        modeIcon.setImageBitmap(paymentImage);
+                    } else {
+                        // Fallback to generic payment icon if image not found locally
+                        modeIcon.setImageResource(R.drawable.ic_payment);
+                    }
+                } catch (Exception e) {
+                    // Log the error and use fallback icon
+                    android.util.Log.e("PaymentModesAdapter", "Error loading payment mode image for mode ID: " + mode.getId(), e);
+                    modeIcon.setImageResource(R.drawable.ic_payment);
+                }
+            } else {
+                // Use generic payment icon if no image is associated with this payment mode
+                modeIcon.setImageResource(R.drawable.ic_payment);
+            }
         }
     }
 }

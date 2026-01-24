@@ -58,7 +58,6 @@ import com.opurex.ortus.client.utils.BarcodeCheck;
 import com.opurex.ortus.client.utils.Error;
 import com.opurex.ortus.client.utils.OpurexConfiguration;
 import com.opurex.ortus.client.utils.ScaleManager;
-import com.opurex.ortus.client.utils.BluetoothScaleHelper;
 import com.opurex.ortus.client.utils.exception.NotFoundException;
 
 import java.io.IOError;
@@ -258,26 +257,26 @@ public class Transaction extends POSConnectedTrackedActivity
                     scaleMacAddress = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_ADDRESS);
                     String scaleName = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
 
-                    if (scaleManager != null && scaleMacAddress != null) {
-                        // Check if this is a virtual scale connection
-                        if (scaleMacAddress.equals("VIRTUAL:AC:LAS:SC:AL:E0")) {
-                            // Initialize virtual scale testing
-                            scaleManager.initializeVirtualScaleTesting();
-                            // Connect to virtual scale
-                            boolean connected = scaleManager.connectToVirtualScale();
-
-                            if (connected) {
-                                Log.d("Transaction", "Connected to virtual scale");
-                                Toast.makeText(this, "Connected to virtual scale", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Log.e("Transaction", "Failed to connect to virtual scale");
-                                Toast.makeText(this, "Failed to connect to virtual scale", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // Regular Bluetooth scale connection
-                            scaleManager.connectToScale(scaleMacAddress);
-                        }
-                    }
+//                    if (scaleManager != null && scaleMacAddress != null) {
+//                        // Check if this is a virtual scale connection
+//                        if (scaleMacAddress.equals("VIRTUAL:AC:LAS:SC:AL:E0")) {
+//                            // Initialize virtual scale testing
+//                          //  scaleManager.initializeVirtualScaleTesting();
+//                            // Connect to virtual scale
+//                         //   boolean connected = scaleManager.connectToVirtualScale();
+//
+//                            if (connected) {
+//                                Log.d("Transaction", "Connected to virtual scale");
+//                                Toast.makeText(this, "Connected to virtual scale", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Log.e("Transaction", "Failed to connect to virtual scale");
+//                                Toast.makeText(this, "Failed to connect to virtual scale", Toast.LENGTH_SHORT).show();
+//                            }
+//                        } else {
+//                            // Regular Bluetooth scale connection
+//                       //     scaleManager.connectToScale(scaleMacAddress);
+//                        }
+//                    }
                 }
                 break;
             default:
@@ -346,8 +345,9 @@ public class Transaction extends POSConnectedTrackedActivity
     }
 
     private boolean returnToCatalogueView() {
-        if (getCatalogFragment().displayProducts()) {
-            getCatalogFragment().setCategoriesVisible();
+        CatalogFragment catalogFragment = getCatalogFragment();
+        if (catalogFragment != null && catalogFragment.displayProducts()) {
+            catalogFragment.setCategoriesVisible();
             return true;
         }
         return false;
@@ -412,7 +412,9 @@ public class Transaction extends POSConnectedTrackedActivity
     @Override
     public void onMidProductPick(Product product) {
         CatalogFragment cat = getCatalogFragment();
-        registerAProduct(product, cat.getCatalogData());
+        if (cat != null) {
+            registerAProduct(product, cat.getCatalogData());
+        }
 //        disposeCatalogFragment(cat);
     }
 
@@ -666,9 +668,12 @@ public class Transaction extends POSConnectedTrackedActivity
     }
 
     private String getCurrentCategoryTitle() {
-        Category category = getCatalogFragment().getCurrentCategory();
-        if (category != null) {
-            return category.getLabel();
+        CatalogFragment catalogFragment = getCatalogFragment();
+        if (catalogFragment != null) {
+            Category category = catalogFragment.getCurrentCategory();
+            if (category != null) {
+                return category.getLabel();
+            }
         }
         return getString(R.string.catalog);
     }
@@ -747,13 +752,13 @@ public class Transaction extends POSConnectedTrackedActivity
 
         MenuItem connectItem = menu.findItem(R.id.ab_menu_scale_connect);
         MenuItem disconnectItem = menu.findItem(R.id.ab_menu_scale_disconnect);
-        if (scaleManager != null && scaleManager.isConnected()) {
-            connectItem.setVisible(false);
-            disconnectItem.setVisible(true);
-        } else {
-            connectItem.setVisible(true);
-            disconnectItem.setVisible(false);
-        }
+//        if (scaleManager != null && scaleManager.isConnected()) {
+//            connectItem.setVisible(false);
+//            disconnectItem.setVisible(true);
+//        } else {
+//            connectItem.setVisible(true);
+//            disconnectItem.setVisible(false);
+//        }
 
         return true;
     }
@@ -907,11 +912,8 @@ public class Transaction extends POSConnectedTrackedActivity
                 Intent intent = new Intent(this, com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.class);
                 startActivityForResult(intent, SCALE_SELECT);
                 return true;
-            case R.id.ab_menu_scale_disconnect:
-                if (scaleManager != null) {
-                    scaleManager.disconnect();
-                }
-                return true;
+
+//                return true;
             default:
                 return false;
 
@@ -1081,7 +1083,9 @@ public class Transaction extends POSConnectedTrackedActivity
         Product p = cat.getProductByBarcode(code);
         if (p != null) {
             CatalogFragment catFrag = getCatalogFragment();
-            registerAProduct(p, catFrag.getCatalogData());
+            if (catFrag != null) {
+                registerAProduct(p, catFrag.getCatalogData());
+            }
 //            disposeCatalogFragment(catFrag);
             String text = getString(R.string.barcode_found, p.getLabel());
             Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
@@ -1336,10 +1340,10 @@ public class Transaction extends POSConnectedTrackedActivity
         }
         
         // Clean up the scale manager
-        if (scaleManager != null) {
-            scaleManager.cleanup();
-            scaleManager = null;
-        }
+//        if (scaleManager != null) {
+//            scaleManager.cleanup();
+//            scaleManager = null;
+//        }
     }
 
 

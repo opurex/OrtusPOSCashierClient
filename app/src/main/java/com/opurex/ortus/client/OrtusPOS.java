@@ -13,6 +13,11 @@ public class OrtusPOS extends Application {
 
     public static final String TAG = "Ortus:";
     private static Context context;
+    private static OrtusPOS ortusPOS;
+
+    public static OrtusPOS getInstance(){
+        return ortusPOS;
+    }
 
     public static float getRestaurantMapWidth() {
         return 635f;
@@ -25,6 +30,7 @@ public class OrtusPOS extends Application {
     public void onCreate() {
         super.onCreate();
         OrtusPOS.context = getApplicationContext();
+        OrtusPOS.ortusPOS = this;
 
         // Initialize file logger
         com.opurex.ortus.client.utils.FileLogger.getInstance(this);
