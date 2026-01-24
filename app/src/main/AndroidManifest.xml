@@ -5,23 +5,23 @@
           android:versionName="8.2.6">
 
     <!-- Request legacy Bluetooth permissions -->
-    <uses-permission android:name="android.permission.BLUETOOTH"
-        android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
-        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+<!--        android:maxSdkVersion="30" />-->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<!--        android:maxSdkVersion="30" />-->
 
     <!-- Request Bluetooth permissions for Android 12 and newer -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-        android:usesPermissionFlags="neverForLocation"
-        tools:targetApi="s" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+<!--        android:usesPermissionFlags="neverForLocation"-->
+<!--        tools:targetApi="s" />-->
 
     <!-- Needed only if your app looks for Bluetooth devices.
          If your app doesn't use Bluetooth scan results to derive physical
          location information, you can strongly assert that your app
          doesn't derive physical location. -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!--        android:maxSdkVersion="30" />-->
 
     <!-- Android 12+ specific -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
@@ -130,10 +130,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ScaleMainActivity"
-            android:exported="false"
-            android:label="Scale Measurement"
-            android:theme="@style/POSTechTheme"/>
+
         <service android:name=".drivers.DeviceService"/>
 
         <!-- Foreground service for Bluetooth operations -->

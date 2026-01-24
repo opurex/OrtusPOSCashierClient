@@ -153,6 +153,30 @@ public class PaymentFragment extends ViewPageFragment
             button.setText(mode.getLabel());
             button.setId(View.generateViewId()); // Generate unique ID
 
+            // Set icon if payment mode has an image
+            if (mode.hasImage()) {
+                try {
+                    android.graphics.Bitmap paymentImage = com.opurex.ortus.client.data.ImagesData.getPaymentModeImage(mode.getId());
+                    if (paymentImage != null) {
+                        // Convert bitmap to drawable and set as icon
+                        android.graphics.drawable.BitmapDrawable drawable =
+                            new android.graphics.drawable.BitmapDrawable(mContext.getResources(), paymentImage);
+                        // Set the icon with a reasonable size
+                        button.setIcon(drawable);
+                    } else {
+                        // Fallback to generic payment icon if image not found locally
+                        button.setIconResource(R.drawable.ic_payment);
+                    }
+                } catch (Exception e) {
+                    // Log the error and use fallback icon
+                    android.util.Log.e("PaymentFragment", "Error loading payment mode image for mode ID: " + mode.getId(), e);
+                    button.setIconResource(R.drawable.ic_payment);
+                }
+            } else {
+                // Use generic payment icon if no image is associated with this payment mode
+                button.setIconResource(R.drawable.ic_payment);
+            }
+
             // MaterialButtonToggleGroup will handle the styling automatically
 
             // Add to the toggle group

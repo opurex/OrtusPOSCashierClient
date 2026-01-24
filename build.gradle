@@ -28,8 +28,12 @@ allprojects {
 // Optional: A common task to clean the project
 // In your root build.gradle
 buildscript {
+    ext {
+        kotlin_version = '2.2.0'
+    }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.1' // This line
+        classpath 'com.android.tools.build:gradle:8.11.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // This line
     }
 }
 tasks.register('clean', Delete) {

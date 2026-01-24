@@ -1,16 +1,23 @@
 package com.opurex.ortus.client.utils;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.util.Log;
 
+import com.example.scaler.AclasScaler;
 import com.opurex.ortus.client.models.Product;
 
 public class ScaleManager {
 
+    private static final String TAG = "ScaleManager";
     private Context context;
-    protected BluetoothScaleHelper bluetoothScaleHelper; // Protected for testing purposes
+    private AclasScaler aclasScaler;
+    private BluetoothAdapter bluetoothAdapter;
     private ScaleWeightListener scaleWeightListener;
     private ConnectionStateListener connectionStateListener;
     private ScanListener scanListener;
+    private boolean isConnected = false;
+    private String lastError = null;
 
     public interface ScaleWeightListener {
         void onWeightReceived(double weight, String unit);
@@ -28,109 +35,18 @@ public class ScaleManager {
     }
 
     public ScaleManager(Context context) {
-        this(context, null); // Use default BluetoothScaleHelper
-    }
-
-    // Constructor for testing purposes that allows injection of BluetoothScaleHelper
-    public ScaleManager(Context context, BluetoothScaleHelper injectedBluetoothScaleHelper) {
         this.context = context;
-        if (injectedBluetoothScaleHelper != null) {
-            this.bluetoothScaleHelper = injectedBluetoothScaleHelper;
-        } else {
-            this.bluetoothScaleHelper = new BluetoothScaleHelper(context);
-        }
+        this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // Set up the internal listeners regardless of whether we're using the default helper
-        this.bluetoothScaleHelper.setScaleDataListener(new BluetoothScaleHelper.ScaleDataListener() {
-            @Override
-            public void onWeightReceived(double weight, String unit) {
-                if (scaleWeightListener != null) {
-                    scaleWeightListener.onWeightReceived(weight, unit);
-                }
-            }
-
-            @Override
-            public void onPriceDataReceived(double price, double amount) {
-                // Not used in this implementation
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleError(errorMessage);
-                }
-            }
-        });
-
-        this.bluetoothScaleHelper.setConnectionStateListener(new BluetoothScaleHelper.ConnectionStateListener() {
-            @Override
-            public void onConnected() {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleConnected();
-                }
-                // Request weight data after connection is established
-                bluetoothScaleHelper.requestWeightData();
-            }
-
-            @Override
-            public void onDisconnected() {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleDisconnected();
-                }
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                if (connectionStateListener != null) {
-                    connectionStateListener.onScaleError(errorMessage);
-                }
-            }
-        });
-
-        this.bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
-            @Override
-            public void onDeviceFound(String name, String mac, String signal) {
-                if (scanListener != null) {
-                    scanListener.onDeviceFound(name, mac, signal);
-                }
-            }
-
-            @Override
-            public void onScanFinished() {
-                if (scanListener != null) {
-                    scanListener.onScanFinished();
-                }
-            }
-        });
     }
+
 
     public void startScan() {
-        bluetoothScaleHelper.startScan();
+        if (aclasScaler != null) {
+            aclasScaler.startScanBluetooth(true);
+        }
     }
 
-    public void stopScan() {
-        bluetoothScaleHelper.stopScan();
-    }
-
-    public boolean connectToScale(String macAddress) {
-        return bluetoothScaleHelper.connectToScale(macAddress);
-    }
-
-    public void disconnect() {
-        bluetoothScaleHelper.disconnect();
-    }
-
-    public boolean isConnected() {
-        return bluetoothScaleHelper.isConnected();
-    }
-
-    public void zeroScale() {
-        bluetoothScaleHelper.zeroScale();
-    }
-
-    public void tareScale() {
-        bluetoothScaleHelper.tareScale();
-    }
 
     public void setScaleWeightListener(ScaleWeightListener listener) {
         this.scaleWeightListener = listener;
@@ -142,36 +58,22 @@ public class ScaleManager {
 
     public void setScanListener(ScanListener listener) {
         this.scanListener = listener;
-        // Propagate the listener down to the helper
-        if (bluetoothScaleHelper != null) {
-            bluetoothScaleHelper.setScanListener(new BluetoothScaleHelper.ScanListener() {
-                @Override
-                public void onDeviceFound(String name, String mac, String signal) {
-                    if (listener != null) {
-                        listener.onDeviceFound(name, mac, signal);
-                    }
-                }
-
-                @Override
-                public void onScanFinished() {
-                    if (listener != null) {
-                        listener.onScanFinished();
-                    }
-                }
-            });
-        }
     }
 
-    public void cleanup() {
-        bluetoothScaleHelper.cleanup();
-    }
+//    public void cleanup() {
+//        disconnect();
+//        if (aclasScaler != null) {
+//            // Clean up resources if needed
+//            aclasScaler = null;
+//        }
+//    }
 
     /**
      * Initialize the scale and check if Bluetooth is supported
      */
-    public boolean initializeScale() {
-        return bluetoothScaleHelper.isBluetoothSupported();
-    }
+//    public boolean initializeScale() {
+//        return bluetoothAdapter != null;
+//    }
 
     /**
      * Calculate the price based on product price and weight
@@ -193,129 +95,31 @@ public class ScaleManager {
     }
 
     /**
-     * Get the last error from the Bluetooth scale helper
+     * Get the last error from the scale
      */
     public String getLastError() {
-        return bluetoothScaleHelper.getLastError();
-    }
-
-    // Virtual scale testing support
-    private VirtualScaleTestUtility virtualScaleTestUtility;
-    private boolean useVirtualScale = false;
-
-    /**
-     * Initialize virtual scale testing utility
-     */
-    public void initializeVirtualScaleTesting() {
-        virtualScaleTestUtility = new VirtualScaleTestUtility(context);
-        virtualScaleTestUtility.initializeVirtualScale(bluetoothScaleHelper);
-        useVirtualScale = true;
+        return lastError;
     }
 
     /**
-     * Start virtual scale scanning
+     * Get paired Bluetooth devices
      */
-    public void startVirtualScaleScan() {
-        if (virtualScaleTestUtility != null) {
-            virtualScaleTestUtility.startVirtualScan();
-        }
-    }
-
-    /**
-     * Connect to virtual scale
-     */
-    public boolean connectToVirtualScale() {
-        if (virtualScaleTestUtility != null) {
-            return virtualScaleTestUtility.connectToVirtualScale();
-        }
-        return false;
-    }
-
-    /**
-     * Add weight to virtual scale for testing
-     */
-    public void addWeightToVirtualScale(double weight) {
-        if (virtualScaleTestUtility != null) {
-            virtualScaleTestUtility.addWeightToVirtualScale(weight);
-        }
-    }
-
-    /**
-     * Zero the virtual scale
-     */
-//    public void zeroVirtualScale() {
-//        if (virtualScaleTestUtility != null) {
-//            virtualScaleTestUtility.zeroVirtualScale();
+//    private java.util.Set<android.bluetooth.BluetoothDevice> getPairedDevices() {
+//        if (bluetoothAdapter == null) {
+//            return java.util.Collections.emptySet();
 //        }
+//        return bluetoothAdapter.getBondedDevices();
 //    }
 
     /**
-     * Tare the virtual scale
-     */
-    public void tareVirtualScale() {
-        if (virtualScaleTestUtility != null) {
-            virtualScaleTestUtility.tareVirtualScale();
-        }
-    }
-
-    /**
-     * Zero the virtual scale
-     */
-    public void zeroVirtualScale() {
-        if (virtualScaleTestUtility != null) {
-            virtualScaleTestUtility.zeroVirtualScale();
-        }
-    }
-
-    /**
-     * Check if using virtual scale
-     */
-    public boolean isUsingVirtualScale() {
-        return useVirtualScale;
-    }
-
-    /**
-     * Request weight data from the scale
+     * Request weight data from the scale after connection
      */
     public void requestWeightData() {
-        bluetoothScaleHelper.requestWeightData();
+        Log.d(TAG, "Requesting weight data from scale");
+        // Some scales may require a command to start sending weight data
+        // This is a placeholder - the actual implementation depends on the specific scale model
+        // The ACLAS PSX scale should send weight data continuously once connected
+        // but we'll add this method for completeness
     }
 
-    /**
-     * Get current net weight from virtual scale
-     */
-    public double getVirtualScaleNetWeight() {
-        if (virtualScaleTestUtility != null) {
-            return virtualScaleTestUtility.getVirtualScaleNetWeight();
-        }
-        return 0.0;
-    }
-
-    /**
-     * Get current tare weight from virtual scale
-     */
-    public double getVirtualScaleTareWeight() {
-        if (virtualScaleTestUtility != null) {
-            return virtualScaleTestUtility.getVirtualScaleTareWeight();
-        }
-        return 0.0;
-    }
-
-    /**
-     * Add tare weight to virtual scale
-     */
-    public void addTareWeightToVirtualScale(double tareWeight) {
-        if (virtualScaleTestUtility != null) {
-            virtualScaleTestUtility.addTareWeightToVirtualScale(tareWeight);
-        }
-    }
-
-    /**
-     * Reset tare weight on virtual scale
-     */
-    public void resetTareWeightOnVirtualScale() {
-        if (virtualScaleTestUtility != null) {
-            virtualScaleTestUtility.resetTareWeightOnVirtualScale();
-        }
-    }
 }
