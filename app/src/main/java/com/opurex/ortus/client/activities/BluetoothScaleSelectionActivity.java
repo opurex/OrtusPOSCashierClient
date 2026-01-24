@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.data.St_PSData;
@@ -140,7 +141,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         init();
-        InitDevice(AclasScaler.Type_BLE);
+        InitDevice(AclasScaler.Type_BlueTooth);
         int iRet = UtilPermission.getPermission(permissions,this.getApplicationContext(),BluetoothScaleSelectionActivity.this);//动态申请权限
 
         if(iRet==permissions.length){
@@ -696,6 +697,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
         showBtVersion();
     }
 
+    @RequiresPermission(allOf = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT})
     private void searchDev(){
         LogUtil.info("Starting searchDev() - initiating both native Android and AclasScaler discovery");
 
@@ -736,8 +738,8 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
 
             // Also trigger AclasScaler search for SPP devices
             if(m_scaler != null) {
-                boolean aclasStarted = m_scaler.startScanBluetooth(true);
-                LogUtil.info("AclasScaler Bluetooth discovery started: " + aclasStarted);
+                m_scaler.startScanBluetooth(true);
+                LogUtil.info("AclasScaler Bluetooth discovery initiated");
             } else {
                 LogUtil.info("AclasScaler is null, cannot start AclasScaler discovery");
             }
