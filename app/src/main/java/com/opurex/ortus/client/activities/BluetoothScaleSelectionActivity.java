@@ -115,6 +115,10 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
                 if (!m_listMac.contains(deviceHardwareAddress)) {
                     String deviceInfo = deviceName + "\n" + deviceHardwareAddress;
                     addDeviceToList(deviceName, deviceHardwareAddress, String.valueOf(rssi));
+                    // Log the discovered device
+                    LogUtil.info("Native Android Bluetooth discovered device: " + deviceName + " (" + deviceHardwareAddress + ") RSSI: " + rssi);
+                } else {
+                    LogUtil.info("Duplicate device found, skipping: " + deviceName + " (" + deviceHardwareAddress + ")");
                 }
             }
             // When discovery is finished
@@ -122,6 +126,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
                 showLog("Discovery finished");
                 handleMsg("Scan completed");
                 showWait(false);
+                LogUtil.info("Native Android Bluetooth discovery finished");
             }
         }
     };
@@ -135,7 +140,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         init();
-        InitDevice(AclasScaler.Type_FSC);
+        InitDevice(AclasScaler.Type_BLE);
         int iRet = UtilPermission.getPermission(permissions,this.getApplicationContext(),BluetoothScaleSelectionActivity.this);//动态申请权限
 
         if(iRet==permissions.length){
@@ -260,11 +265,14 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
         if(index>=0){
             m_listData.remove(index);
             m_listData.add(index,map);
+            LogUtil.info("Updated existing device in list: " + name + " (" + mac + ")");
         }else{
             m_listData.add(map);
             m_listMac.add(mac);
+            LogUtil.info("Added new device to list: " + name + " (" + mac + ")");
         }
         m_listAdapter.notifyDataSetChanged();
+        LogUtil.info("Device list now has " + m_listData.size() + " items");
     }
 
     /**
@@ -292,19 +300,25 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
     protected void onDestroy() {
         super.onDestroy();
         showLog("---onDestroy---");
+        LogUtil.info("BluetoothScaleSelectionActivity onDestroy()");
         CloseScale();
 
         // Make sure we're not doing discovery anymore
         if (mBluetoothAdapter != null) {
-            mBluetoothAdapter.cancelDiscovery();
+            if (mBluetoothAdapter.isDiscovering()) {
+                mBluetoothAdapter.cancelDiscovery();
+                LogUtil.info("Cancelled ongoing Bluetooth discovery in onDestroy()");
+            }
         }
 
         // Unregister broadcast receiver
         try {
             unregisterReceiver(mReceiver);
+            LogUtil.info("Successfully unregistered Bluetooth broadcast receiver");
         } catch (IllegalArgumentException e) {
             // Receiver was not registered, which is fine
             showLog("Receiver was not registered: " + e.getMessage());
+            LogUtil.info("Bluetooth broadcast receiver was not registered: " + e.getMessage());
         }
     }
     @Override
@@ -377,10 +391,12 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
     private AclasScaler.AclasBluetoothListener m_listenerBt = new AclasScaler.AclasBluetoothListener() {
         @Override
         public void onSearchBluetooth(String s) {
-            showLog("onSearchBluetooth:"+s);
+            showLog("onSearchBluetooth: " + s);
             if(m_iPage == PAGE_PAIR){
                 addDev(s);
             }
+            // Log the discovered device
+            LogUtil.info("AclasScaler discovered device: " + s);
         }
 
         @Override
@@ -388,6 +404,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
             showLog("onSearchFinish");
             handleMsg("onSearchFinish");
             showWait(false); // Hide progress dialog when search finishes
+            LogUtil.info("AclasScaler search finished");
         }
     };
     private AclasScaler.AclasScalerListener m_listener = new AclasScaler.AclasScalerListener() {
@@ -661,55 +678,76 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
      */
     private void InitDevice(int iType) {
         showLog("InitDevice:"+iType);
+        LogUtil.info("Initializing AclasScaler with type: " + iType +
+            (iType == AclasScaler.Type_FSC ? " (SPP/Serial Port Profile)" :
+             iType == AclasScaler.Type_BLE ? " (BLE)" :
+             " (Other type)"));
+
         if(m_scaler==null){
             m_scaler = new AclasScaler(iType, this,m_listener);
             m_scaler.setAclasPSXListener(m_listenerPS);//设置 单价总价按键 的回调
             m_scaler.setBluetoothListener(m_listenerBt);//搜索蓝牙回调
             m_weight = m_scaler.new WeightInfoNew();
             m_scaler.setLog(true);
+            LogUtil.info("AclasScaler initialized successfully with type: " + iType);
+        } else {
+            LogUtil.info("AclasScaler already initialized, reusing existing instance");
         }
         showBtVersion();
     }
 
     private void searchDev(){
+        LogUtil.info("Starting searchDev() - initiating both native Android and AclasScaler discovery");
+
         if(mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             // Clear previous results
             m_listMac.clear();
             m_listData.clear();
             m_listAdapter.notifyDataSetChanged();
+            LogUtil.info("Cleared previous scan results");
 
             // Register the BroadcastReceiver
             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
             registerReceiver(mReceiver, filter);
+            LogUtil.info("Registered Bluetooth broadcast receiver");
 
             // Clear previous devices and show progress
             showWait(true);
 
             // Get paired devices first
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            LogUtil.info("Found " + pairedDevices.size() + " paired Bluetooth devices");
+
             if (pairedDevices.size() > 0) {
                 for (BluetoothDevice device : pairedDevices) {
                     // Only add SPP-compatible devices
                     if (device.getName() != null) { // Add only devices with readable names
                         addDeviceToList(device.getName(), device.getAddress(), "Paired");
+                        LogUtil.info("Added paired device: " + device.getName() + " (" + device.getAddress() + ")");
                     }
                 }
             }
 
             // Start discovery
             showLog("Starting Bluetooth discovery...");
-            mBluetoothAdapter.startDiscovery();
+            boolean discoveryStarted = mBluetoothAdapter.startDiscovery();
+            LogUtil.info("Native Android Bluetooth discovery started: " + discoveryStarted);
 
             // Also trigger AclasScaler search for SPP devices
             if(m_scaler != null) {
-                m_scaler.startScanBluetooth(true);
+                boolean aclasStarted = m_scaler.startScanBluetooth(true);
+                LogUtil.info("AclasScaler Bluetooth discovery started: " + aclasStarted);
+            } else {
+                LogUtil.info("AclasScaler is null, cannot start AclasScaler discovery");
             }
 
             // Stop scanning after timeout
             mHandler.postDelayed(stopRunnable, SCAN_TIMEOUT);
+            LogUtil.info("Scheduled scan timeout for " + SCAN_TIMEOUT + "ms");
         } else {
             showLog("Bluetooth is not enabled");
+            LogUtil.info("Bluetooth is not enabled, cannot start discovery");
             Toast.makeText(this, "Please enable Bluetooth", Toast.LENGTH_SHORT).show();
         }
     }
