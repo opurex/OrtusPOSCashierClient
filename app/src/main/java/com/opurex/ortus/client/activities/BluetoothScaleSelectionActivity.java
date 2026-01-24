@@ -2,8 +2,15 @@ package com.opurex.ortus.client.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,6 +36,7 @@ import com.opurex.ortus.client.utils.scale.UtilPermission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  *  1 init();初始化界面
@@ -73,6 +81,10 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
 
     private boolean m_bInitFinish = false;
 
+    private BluetoothAdapter mBluetoothAdapter;
+    private static final int REQUEST_ENABLE_BT = 1000;
+    private static final int SCAN_TIMEOUT = 10000; // 10 seconds
+
     private String[]    permissions = new String[]{
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
@@ -84,10 +96,43 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
             Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
     };
 
+    // Register for broadcasts when a device is discovered
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+
+                // Calculate RSSI (signal strength)
+                int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+
+                // Avoid adding duplicate devices
+                if (!m_listMac.contains(deviceHardwareAddress)) {
+                    String deviceInfo = deviceName + "\n" + deviceHardwareAddress;
+                    addDeviceToList(deviceName, deviceHardwareAddress, String.valueOf(rssi));
+                }
+            }
+            // When discovery is finished
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                showLog("Discovery finished");
+                handleMsg("Scan completed");
+                showWait(false);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get the local Bluetooth adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         init();
         InitDevice(AclasScaler.Type_FSC);
@@ -96,6 +141,15 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
         if(iRet==permissions.length){
             showLog("onCreate getPermission ret:"+iRet);
             checkPower();
+
+            // Check if Bluetooth is enabled
+            if (mBluetoothAdapter == null) {
+                Toast.makeText(this, "Device doesn't support Bluetooth", Toast.LENGTH_SHORT).show();
+            } else if (!mBluetoothAdapter.isEnabled()) {
+                // Request user to enable Bluetooth
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
         }
         showAppInfo();
     }
@@ -197,7 +251,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
      * @param mac   蓝牙秤mac
      * @param value 信号值
      */
-    private void addDev(String name,String mac,String value){
+    private void addDeviceToList(String name,String mac,String value){
         HashMap<String,String> map = new HashMap<>();
         map.put("NAME",name);
         map.put("MAC",mac);
@@ -220,7 +274,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
     private void addDev(String info){
         if(info.contains(",")){
             String[] list = info.split(",");
-            addDev(list[0],list[1],list[2]+"db");
+            addDeviceToList(list[0],list[1],list[2]+"db");
         }
     }
 
@@ -234,11 +288,26 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
         m_tvMac.setText(getString(R.string.dev_mac)+mac);
     }
 
-    public void onDestroy(){
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         showLog("---onDestroy---");
         CloseScale();
+
+        // Make sure we're not doing discovery anymore
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+        // Unregister broadcast receiver
+        try {
+            unregisterReceiver(mReceiver);
+        } catch (IllegalArgumentException e) {
+            // Receiver was not registered, which is fine
+            showLog("Receiver was not registered: " + e.getMessage());
+        }
     }
+    @Override
     public void onClick(View v){
         int id = v.getId();
         boolean bFlag = false;
@@ -318,6 +387,7 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
         public void onSearchFinish() {
             showLog("onSearchFinish");
             handleMsg("onSearchFinish");
+            showWait(false); // Hide progress dialog when search finishes
         }
     };
     private AclasScaler.AclasScalerListener m_listener = new AclasScaler.AclasScalerListener() {
@@ -554,6 +624,20 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                showLog("Bluetooth enabled successfully");
+            } else {
+                showLog("Bluetooth enabling was cancelled");
+                Toast.makeText(this, "Bluetooth needs to be enabled for device discovery", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permiss, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode,permiss,grantResults);
         showLog("onRequestPermissionsResult requestCode:"+requestCode+" permissions size:"+permiss.length+" "+permiss[0]+" grantResults zize:"+grantResults.length+" "+grantResults[0]);
@@ -588,13 +672,58 @@ public class BluetoothScaleSelectionActivity extends AppCompatActivity implement
     }
 
     private void searchDev(){
-        if(m_scaler!=null){
+        if(mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+            // Clear previous results
             m_listMac.clear();
             m_listData.clear();
             m_listAdapter.notifyDataSetChanged();
-            m_scaler.startScanBluetooth(true);
+
+            // Register the BroadcastReceiver
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            registerReceiver(mReceiver, filter);
+
+            // Clear previous devices and show progress
+            showWait(true);
+
+            // Get paired devices first
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            if (pairedDevices.size() > 0) {
+                for (BluetoothDevice device : pairedDevices) {
+                    // Only add SPP-compatible devices
+                    if (device.getName() != null) { // Add only devices with readable names
+                        addDeviceToList(device.getName(), device.getAddress(), "Paired");
+                    }
+                }
+            }
+
+            // Start discovery
+            showLog("Starting Bluetooth discovery...");
+            mBluetoothAdapter.startDiscovery();
+
+            // Also trigger AclasScaler search for SPP devices
+            if(m_scaler != null) {
+                m_scaler.startScanBluetooth(true);
+            }
+
+            // Stop scanning after timeout
+            mHandler.postDelayed(stopRunnable, SCAN_TIMEOUT);
+        } else {
+            showLog("Bluetooth is not enabled");
+            Toast.makeText(this, "Please enable Bluetooth", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private Handler mHandler = new Handler();
+    private Runnable stopRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mBluetoothAdapter != null && mBluetoothAdapter.isDiscovering()) {
+                mBluetoothAdapter.cancelDiscovery();
+                showWait(false);
+            }
+        }
+    };
 
     private void checkPower(final String mac,final String name){
         showLog("-----checkPower-------");
