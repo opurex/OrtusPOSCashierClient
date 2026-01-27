@@ -4,17 +4,17 @@
     android:layout_width="match_parent"
    android:layout_height="match_parent">
 
-    <item
-        android:id="@+id/ab_menu_printmain"
-        android:icon="@drawable/ic_menu_print_enabled"
-        android:title="@string/menu_print_main"
-        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/ab_menu_scale_connect"
         android:icon="@drawable/scale"
         android:title="@string/connect_scale"
         app:showAsAction="ifRoom|withText" />
-
+        <item
+            android:id="@+id/ab_menu_printmain"
+            android:icon="@drawable/ic_menu_print_enabled"
+            android:title="@string/menu_print_main"
+            app:showAsAction="ifRoom" />
     <item
         android:id="@+id/ab_menu_scale_disconnect"
         android:icon="@drawable/scale"

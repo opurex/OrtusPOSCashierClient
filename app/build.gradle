@@ -38,7 +38,7 @@ ext {
             "wcr"    : [packageName    : "com.opurex.ortus.client.wcr",
                         applicationName: "wcr"],
             "vanilla": [packageName    : "com.opurex.ortus.client.vanilla",
-                        applicationName: "OrtusPOSScale"]
+                        applicationName: "OrtusPOSScaleApp"]
     ]
 }
 
@@ -56,8 +56,8 @@ android {
         minSdkVersion 24
         targetSdk 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        versionCode 224  // OrtusPOSScaleDemo version 2.24
-        versionName "2.24"
+        versionCode 245  // OrtusPOSScaleDemo version 2.24
+        versionName "2.45"
         multiDexEnabled true
     }
 
@@ -70,7 +70,7 @@ android {
     android.applicationVariants.all {
         variant ->
             variant.outputs.all {
-                outputFileName "OrtusPOSScale.apk"
+                outputFileName "OrtusPOSScaleApp.apk"
             }
     }
 

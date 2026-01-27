@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
-import com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity
+import com.aclas.ortus.BluetoothScaleSelectionActivity
 
 class BatteryUtil {
     companion object {

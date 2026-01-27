@@ -24,13 +24,15 @@
             />
 
     </com.google.android.material.appbar.AppBarLayout>
+
     <com.google.android.material.navigation.NavigationView
-        android:layout_width="wrap_content"
+        android:layout_width="137dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        app:menu="@menu/ab_ticket_input"
+        android:background="@color/accent2_txt"
+        android:backgroundTint="#E64A19"
+        app:itemIconTint="@color/colorOnPrimary"
         app:itemTextColor="@color/colorOnPrimary"
-        app:itemIconTint="@color/colorOnPrimary"/>
+        app:menu="@menu/ab_ticket_input" />
     <!-- ViewPager2 with AppBar scrolling behavior -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/transaction_view_pager"

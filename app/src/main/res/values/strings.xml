@@ -261,8 +261,8 @@
 
     <!-- About -->
     <string name="about_title">About</string>
-    <string name="about_licence">http://opurex.com/privacy</string>
-    <string name="about_source">Download the Application From Opurex Website / App Store</string>
+    <string name="about_licence">http://ortuspos.com/privacy</string>
+    <string name="about_source">Download the Application From Ortus POS Website / App Store</string>
 
     <!-- Add Customer -->
     <string name="nameCustomer">Name</string>

@@ -23,6 +23,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
+import com.aclas.ortus.BluetoothScaleSelectionActivity;
 import com.opurex.ortus.client.activities.POSConnectedTrackedActivity;
 import com.opurex.ortus.client.data.Data;
 import com.opurex.ortus.client.drivers.POSDeviceManager;
@@ -254,8 +255,8 @@ public class Transaction extends POSConnectedTrackedActivity
                 break;
             case SCALE_SELECT:
                 if (resultCode == Activity.RESULT_OK) {
-                    scaleMacAddress = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_ADDRESS);
-                    String scaleName = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
+//                    scaleMacAddress = data.getStringExtra(BluetoothScaleSelectionActivity.);
+//                    String scaleName = data.getStringExtra(BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
 
 //                    if (scaleManager != null && scaleMacAddress != null) {
 //                        // Check if this is a virtual scale connection
@@ -909,7 +910,7 @@ public class Transaction extends POSConnectedTrackedActivity
                 CloseCash.close(this);
                 break;
             case R.id.ab_menu_scale_connect:
-                Intent intent = new Intent(this, com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.class);
+                Intent intent = new Intent(this,BluetoothScaleSelectionActivity.class);
                 startActivityForResult(intent, SCALE_SELECT);
                 return true;
 
