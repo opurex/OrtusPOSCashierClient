@@ -116,7 +116,7 @@
         <activity android:name=".activities.BluetoothPrinterSelectionActivity"
             android:exported="false"
             android:label="Select Bluetooth Printer" />
-        <activity android:name=".activities.BluetoothScaleSelectionActivity"
+        <activity android:name="com.aclas.ortus.BluetoothScaleSelectionActivity"
             android:exported="false"
             android:label="Select Bluetooth Scale" />
         <activity android:name=".activities.DeviceListActivity"

@@ -30,8 +30,9 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/postechBackgroundColor"
         android:title="@string/app_name"
-        app:titleTextColor="@android:color/white"
-        app:navigationIcon="@drawable/ab_logo" />
+        app:logo="@drawable/ab_logo"
+        app:navigationIconTint="#00000000"
+        app:titleTextColor="@android:color/white" />
 
     <!-- Divider below AppBar -->
     <View

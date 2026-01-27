@@ -303,7 +303,6 @@
                     android:textSize="@dimen/text_size_big"/>
             </LinearLayout>
             <LinearLayout
-                android:visibility="gone"
                 android:layout_marginTop="@dimen/margin_small"
                 android:layout_marginBottom="@dimen/margin_small_x"
                 android:layout_width="match_parent"
