@@ -17,7 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:title="@string/app_name"
-            app:titleTextColor="#0E010F"
+            app:titleTextColor="?attr/colorOnPrimary"
             app:navigationIcon="@drawable/ab_logo"
             app:menu="@menu/ab_ticket_input"
             app:popupTheme="@style/Widget.POSTech.PopupMenu"
