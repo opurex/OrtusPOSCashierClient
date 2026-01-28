@@ -302,14 +302,14 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
 
     private void checkPower(final String mac, final String name){
         LogUtil.info("ProductScaleDialog checkPower with mac: " + mac + ", name: " + name);
-        if(BatteryUtil.Companion.checkOptimization(requireContext(), requireContext().getPackageName())){
+        if(BatteryUtil.Companion.checkOptimization(requireActivity(), requireActivity().getPackageName())){
             OpenScale(mac, name);
         }
     }
 
     private void checkPower(){
         LogUtil.info("ProductScaleDialog checkPower");
-        if(BatteryUtil.Companion.checkOptimization(requireContext(), requireContext().getPackageName())){
+        if(BatteryUtil.Companion.checkOptimization(requireActivity(), requireActivity().getPackageName())){
             OpenScale();
         }
     }
