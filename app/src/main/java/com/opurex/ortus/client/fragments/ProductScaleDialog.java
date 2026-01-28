@@ -81,7 +81,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     private SimpleAdapter m_listAdapter;
     private List<HashMap<String,String>> m_listData;
     private List<String> m_listMac;
-    private LinearLayout m_btnBack;
+    private android.widget.ImageButton m_btnBack;
     private LinearLayout m_ltMain;
     private LinearLayout m_ltPair;
     private TextView m_tvTitle;
