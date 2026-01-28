@@ -95,6 +95,11 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     private TextView m_tvKey;
     private TextView m_tvTareUnit;
 
+    // Additional UI elements for dialog layout
+    private com.google.android.material.card.MaterialCardView cardBluetooth;
+    private com.google.android.material.card.MaterialCardView cardDeviceList;
+    private Button btnPair;
+
     // Permissions
     private String[] permissions = new String[]{
             Manifest.permission.BLUETOOTH,
@@ -183,7 +188,35 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         statusDisplay = view.findViewById(R.id.scale_status_display);
         zeroButton = view.findViewById(R.id.scale_zero_button);
         tareButton = view.findViewById(R.id.scale_tare_button);
-        
+
+        // Initialize new UI elements for device selection
+        cardBluetooth = view.findViewById(R.id.card_bluetooth);
+        cardDeviceList = view.findViewById(R.id.card_device_list);
+        btnPair = view.findViewById(R.id.btn_pair);
+        m_lvList = view.findViewById(R.id.lv_Devicelist);
+        m_btnBack = view.findViewById(R.id.btn_back);
+        m_tvName = view.findViewById(R.id.tv_dev_name);
+        m_tvMac = view.findViewById(R.id.tv_dev_mac);
+
+        // Initialize list data structures
+        m_listData = new ArrayList<>();
+        m_listMac = new ArrayList<>();
+        m_listAdapter = new SimpleAdapter(requireContext(), m_listData,
+                R.layout.device_layout,
+                new String[]{"NAME", "MAC", "SIG"},
+                new int[]{R.id.tv_pair_name, R.id.tv_pair_mac, R.id.tv_pair_sig});
+        if (m_lvList != null) {
+            m_lvList.setAdapter(m_listAdapter);
+            m_lvList.setOnItemClickListener((parent, view1, position, id) -> {
+                HashMap<String, String> map = m_listData.get(position);
+                String mac = map.get("MAC");
+                String name = map.get("NAME");
+                LogUtil.info("Device selected - POS:" + position + " name:" + name + " mac:" + mac);
+                checkPower(mac, name);
+                handleWaitDlg();
+            });
+        }
+
         weightInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         weightInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -192,9 +225,14 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
                 updatePriceDisplayFromInput();
             }
         });
-        
+
         zeroButton.setOnClickListener(v -> zeroScale());
         tareButton.setOnClickListener(v -> tareScale());
+
+        // Set click listener for back button
+        if (m_btnBack != null) {
+            m_btnBack.setOnClickListener(v -> handleBackButtonClick());
+        }
         
         alertDialogBuilder.setView(view);
         alertDialogBuilder.setTitle(mProd.getLabel());
@@ -213,8 +251,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
                 .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.cancel());
                 
         // Find the pair button and set click listener
-        Button pairButton = view.findViewById(R.id.btn_pair);
-        pairButton.setOnClickListener(new View.OnClickListener() {
+        btnPair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onPairButtonClick();
@@ -270,26 +307,25 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
      * @param index  PAGE_MAIN 秤数据界面;  PAGE_PAIR 秤搜索和连接界面
      */
     private void showPage(int index){
-        // For now, just log the page change since we're in a dialog
         LogUtil.info("ProductScaleDialog showPage: " + index);
         switch (index){
             case PAGE_MAIN:
                 LogUtil.info("ProductScaleDialog showPage showWait false");
                 showWait(false);
                 m_iPage = PAGE_MAIN;
-                // Update UI elements if they exist
-                if (m_tvTitle != null) m_tvTitle.setText("Scale Data");
+                // Show main controls, hide device list
                 if (m_btnBack != null) m_btnBack.setVisibility(View.INVISIBLE);
-                if (m_ltMain != null) m_ltMain.setVisibility(View.VISIBLE);
-                if (m_ltPair != null) m_ltPair.setVisibility(View.GONE);
+                if (cardBluetooth != null) cardBluetooth.setVisibility(View.VISIBLE);
+                if (cardDeviceList != null) cardDeviceList.setVisibility(View.GONE);
+                if (btnPair != null) btnPair.setVisibility(View.VISIBLE);
                 break;
             case PAGE_PAIR:
                 m_iPage = PAGE_PAIR;
-                // Update UI elements if they exist
-                if (m_tvTitle != null) m_tvTitle.setText("Pair Scale");
-                if (m_ltPair != null) m_ltPair.setVisibility(View.VISIBLE);
+                // Show device list, hide main controls
                 if (m_btnBack != null) m_btnBack.setVisibility(View.VISIBLE);
-                if (m_ltMain != null) m_ltMain.setVisibility(View.GONE);
+                if (cardBluetooth != null) cardBluetooth.setVisibility(View.GONE);
+                if (cardDeviceList != null) cardDeviceList.setVisibility(View.VISIBLE);
+                if (btnPair != null) btnPair.setVisibility(View.GONE);
                 break;
         }
     }
@@ -351,7 +387,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int iRet = -1;
+                int iRet;
 
                 //已经配对的 mac传入"",未配对的传入mac地址
                 if (m_scaler != null) {
@@ -364,6 +400,8 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
                     }else{
                         saveAddress("");
                     }
+                } else {
+                    iRet = -1;
                 }
                 LogUtil.info("ProductScaleDialog OpenScale in thread closeWait ret:" + iRet);
                 closeWaitDlg(m_iWaitVal, 0);
