@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F7"
-    tools:context="com.aclas.ortus.BluetoothScaleSelectionActivity">
+    tools:context="">
 
     <View
         android:id="@+id/header_bg"
@@ -20,13 +20,13 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
-        android:background="@color/material_dynamic_tertiary40"
+        android:background="@color/brand_burgundy"
         android:contentDescription="Back"
         android:src="@drawable/back"
         app:layout_constraintBottom_toBottomOf="@id/header_bg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/header_bg"
-        app:tint="@color/material_dynamic_tertiary90" />
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/tv_title"
