@@ -397,12 +397,18 @@ public class Transaction extends POSConnectedTrackedActivity
 
     @Override
     public void onPsdPositiveClick(Product p, double weight, boolean isProductReturned) {
+        Log.i("Transaction", "onPsdPositiveClick called - Product: " + p.getLabel() + 
+                ", Weight: " + weight + ", IsReturn: " + isProductReturned);
+        
         if (weight > 0) {
+            Log.i("Transaction", "Adding scaled product to ticket - Weight: " + weight);
             if (isProductReturned) {
                 addAScaledProductReturnToTicket(p, weight);
             } else {
                 addAScaledProductToTicket(p, weight);
             }
+        } else {
+            Log.e("Transaction", "ERROR: Weight is zero or negative: " + weight);
         }
     }
 

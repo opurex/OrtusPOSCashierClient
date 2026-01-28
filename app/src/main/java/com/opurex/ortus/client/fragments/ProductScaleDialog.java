@@ -540,13 +540,14 @@ public class ProductScaleDialog extends DialogFragment implements View.OnClickLi
     private void calculateTotalPrice(double weight) {
         if (mProduct != null && weight > 0) {
             double totalPrice = weight * mProduct.getPrice();
-            m_currentWeight = weight;
             
-            // Update UI with calculated price
+            // Update both the current weight and UI on the UI thread
             requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    m_currentWeight = weight;
                     m_tvTotal.setText(String.format("%.3f", totalPrice));
+                    showLog("Weight updated: " + weight + ", Total: " + totalPrice);
                 }
             });
         }
@@ -556,8 +557,15 @@ public class ProductScaleDialog extends DialogFragment implements View.OnClickLi
      * Handle positive button click - send result back to listener
      */
     public void onPositiveClick() {
+        showLog("onPositiveClick called - Product: " + (mProduct != null ? mProduct.getLabel() : "null") + 
+                ", Weight: " + m_currentWeight + ", IsReturn: " + mIsProductReturned);
+        
         if (mListener != null && mProduct != null && m_currentWeight > 0) {
+            showLog("Calling listener.onPsdPositiveClick with weight: " + m_currentWeight);
             mListener.onPsdPositiveClick(mProduct, m_currentWeight, mIsProductReturned);
+        } else {
+            showLog("ERROR: Cannot call listener - Product: " + (mProduct != null) + 
+                    ", Weight: " + m_currentWeight + ", Listener: " + (mListener != null));
         }
         dismiss();
     }
