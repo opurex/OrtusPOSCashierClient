@@ -107,7 +107,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Card for device list (initially hidden) -->
+    <!-- Card for device list (shown when in pairing mode) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_device_list"
         android:layout_width="0dp"
@@ -118,8 +118,8 @@
         app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_bg"
-        app:layout_constraintBottom_toTopOf="@id/card_weight">
+        app:layout_constraintTop_toBottomOf="@id/card_bluetooth"
+        app:layout_constraintBottom_toTopOf="@id/ll_controls">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -151,6 +151,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:visibility="visible"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"

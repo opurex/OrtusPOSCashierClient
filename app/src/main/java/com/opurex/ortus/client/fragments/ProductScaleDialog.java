@@ -98,6 +98,8 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     // Additional UI elements for dialog layout
     private com.google.android.material.card.MaterialCardView cardBluetooth;
     private com.google.android.material.card.MaterialCardView cardDeviceList;
+    private com.google.android.material.card.MaterialCardView cardWeight;
+    private LinearLayout controlsLayout;
     private Button btnPair;
 
     // Permissions
@@ -192,6 +194,8 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         // Initialize new UI elements for device selection
         cardBluetooth = view.findViewById(R.id.card_bluetooth);
         cardDeviceList = view.findViewById(R.id.card_device_list);
+        cardWeight = view.findViewById(R.id.card_weight);
+        controlsLayout = view.findViewById(R.id.ll_controls);
         btnPair = view.findViewById(R.id.btn_pair);
         m_lvList = view.findViewById(R.id.lv_Devicelist);
         m_btnBack = view.findViewById(R.id.btn_back);
@@ -317,6 +321,8 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
                 if (m_btnBack != null) m_btnBack.setVisibility(View.INVISIBLE);
                 if (cardBluetooth != null) cardBluetooth.setVisibility(View.VISIBLE);
                 if (cardDeviceList != null) cardDeviceList.setVisibility(View.GONE);
+                if (cardWeight != null) cardWeight.setVisibility(View.VISIBLE); // Show weight card
+                if (controlsLayout != null) controlsLayout.setVisibility(View.VISIBLE); // Show controls
                 if (btnPair != null) btnPair.setVisibility(View.VISIBLE);
                 break;
             case PAGE_PAIR:
@@ -325,6 +331,8 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
                 if (m_btnBack != null) m_btnBack.setVisibility(View.VISIBLE);
                 if (cardBluetooth != null) cardBluetooth.setVisibility(View.GONE);
                 if (cardDeviceList != null) cardDeviceList.setVisibility(View.VISIBLE);
+                if (cardWeight != null) cardWeight.setVisibility(View.GONE); // Hide weight card during pairing
+                if (controlsLayout != null) controlsLayout.setVisibility(View.GONE); // Hide controls during pairing
                 if (btnPair != null) btnPair.setVisibility(View.GONE);
                 break;
         }
