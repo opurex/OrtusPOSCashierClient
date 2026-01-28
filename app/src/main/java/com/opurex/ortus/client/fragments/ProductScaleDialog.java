@@ -794,6 +794,13 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         }
     }
 
+    // Handle back button click to return from device list to main view
+    private void handleBackButtonClick() {
+        showPage(PAGE_MAIN);
+        checkPower();
+        LogUtil.info("Back button click in ProductScaleDialog");
+    }
+
     @Override
     public void onPause() {
         super.onPause();
