@@ -591,9 +591,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         @Override
         public void onSearchBluetooth(String s) {
             LogUtil.info("ProductScaleDialog onSearchBluetooth:" + s);
-            if(m_iPage == PAGE_PAIR){
-                addDev(s);
-            }
+            addDev(s);
         }
 
         @Override
