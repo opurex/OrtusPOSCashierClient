@@ -72,7 +72,7 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
     private String m_strMac = "";
     private final int PAGE_MAIN = 0;
     private final int PAGE_PAIR = 1;
-    private int m_iPage = -1;
+    private int m_iPage = PAGE_MAIN; // Initialize to main page by default
     private ProgressDialog m_Dialog = null;
     private int m_iWaitVal = 0;
 
@@ -199,13 +199,13 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
         m_tvMac = view.findViewById(R.id.tv_dev_mac);
 
         // Initialize list data structures
-        m_listData = new ArrayList<>();
-        m_listMac = new ArrayList<>();
-        m_listAdapter = new SimpleAdapter(requireContext(), m_listData,
-                R.layout.device_layout,
-                new String[]{"NAME", "MAC", "SIG"},
-                new int[]{R.id.tv_pair_name, R.id.tv_pair_mac, R.id.tv_pair_sig});
         if (m_lvList != null) {
+            m_listData = new ArrayList<>();
+            m_listMac = new ArrayList<>();
+            m_listAdapter = new SimpleAdapter(requireContext(), m_listData,
+                    R.layout.device_layout,
+                    new String[]{"NAME", "MAC", "SIG"},
+                    new int[]{R.id.tv_pair_name, R.id.tv_pair_mac, R.id.tv_pair_sig});
             m_lvList.setAdapter(m_listAdapter);
             m_lvList.setOnItemClickListener((parent, view1, position, id) -> {
                 HashMap<String, String> map = m_listData.get(position);
