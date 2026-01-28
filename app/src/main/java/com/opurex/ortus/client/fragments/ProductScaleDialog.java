@@ -34,6 +34,7 @@ import com.opurex.ortus.client.R;
 import com.opurex.ortus.client.models.Product;
 import com.opurex.ortus.client.utils.ScaleManager;
 import com.opurex.ortus.client.utils.scale.BatteryUtil;
+import com.opurex.ortus.client.utils.scale.BatteryUtilProductScaleDialog;
 import com.opurex.ortus.client.utils.scale.LogUtil;
 import com.opurex.ortus.client.utils.scale.SharePrefenceUtil;
 import com.opurex.ortus.client.utils.scale.UtilPermission;
@@ -368,11 +369,12 @@ public class ProductScaleDialog extends DialogFragment implements ScaleManager.S
                 closeWaitDlg(m_iWaitVal, 0);
 
                 // Send message to UI thread
+                final String finalMac = mac; // Make final for use in inner class
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            String message = (iRet == 0 ? "Connected" : "Connection failed") + ":" + mac;
+                            String message = (iRet == 0 ? "Connected" : "Connection failed") + ":" + finalMac;
                             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         }
                     });
