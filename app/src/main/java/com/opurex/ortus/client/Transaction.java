@@ -78,6 +78,7 @@ public class Transaction extends POSConnectedTrackedActivity
         CustomerInfoDialog.CustomerListener,
         DividerDialog.RequestResultListener, DividerDialog.ResultListener {
 
+
     // Activity Result code
     private static final int COMPOSITION = 1;
     private static final int CUSTOMER_SELECT = 2;
@@ -1006,7 +1007,7 @@ public class Transaction extends POSConnectedTrackedActivity
 
     void askForAScaledProduct(Product p, boolean isReturnProduct) {
         // If the product is scaled, asks the weight
-        ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct, scaleManager);
+        ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct);
         dial.setDialogListener(this);
         dial.show(getSupportFragmentManager(), ProductScaleDialog.TAG);
     }
