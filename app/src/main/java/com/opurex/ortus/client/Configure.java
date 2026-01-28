@@ -81,17 +81,17 @@ public class Configure extends PreferenceActivity
 //    private static final String DEMO_USER =  "prexra";; // set not null to enable demo
 //    private static final String DEMO_PASSWORD = "Prexra789?";
 //    private static final String DEMO_CASHREGISTER = "CashRegister";
-    private static final String DEFAULT_HOST = "demopos.ortuspos.com";
-    private static final String DEFAULT_USER = "DemoOrtusPOS";
-//    private static final String DEFAULT_PASSWORD = "DemoOrtusPOS2025?";
-    private static final String DEFAULT_PASSWORD = "admin2026?";
-//
-    private static final String DEFAULT_CASHREGISTER = "Grocery";
+//    private static final String DEFAULT_HOST = "demopos.ortuspos.com";
+//    private static final String DEFAULT_USER = "DemoOrtusPOS";
+////    private static final String DEFAULT_PASSWORD = "DemoOrtusPOS2025?";
+//    private static final String DEFAULT_PASSWORD = "admin2026?";
+////
+//    private static final String DEFAULT_CASHREGISTER = "Grocery";
 
-//    private static final String DEFAULT_HOST = "wambugumountainviewgroceries.ortuspos.com";
-//    private static final String DEFAULT_USER = "WambuguMountainViewGroceries";
-//    private static final String DEFAULT_PASSWORD = "#@?Wambugu?#MountainViewGroceries2025?>";
-//    private static final String DEFAULT_CASHREGISTER = "GroceryOpen";
+    private static final String DEFAULT_HOST = "wambugumountainviewgroceries.ortuspos.com";
+    private static final String DEFAULT_USER = "WambuguMountainViewGroceries";
+    private static final String DEFAULT_PASSWORD = "#@?Wambugu?#MountainViewGroceries2025?>";
+    private static final String DEFAULT_CASHREGISTER = "GroceryOpen";
     private static final int DEFAULT_PRINTER_CONNECT_TRY = 3;
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
