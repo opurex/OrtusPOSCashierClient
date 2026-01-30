@@ -384,6 +384,14 @@ public class TicketFragment extends ViewPageFragment implements
         mListener.onTFTicketChanged();
     }
 
+    /**
+     * Public method to update the ticket fragment with current session data
+     */
+    public void updateWithCurrentTicket() {
+        updateCurrentTicket();
+        updateViewNoSave();
+    }
+
     public void removePayment(Payment payment) {
         mTicketData.removePayment(payment);
     }
