@@ -267,11 +267,6 @@
 			android:title="Enable Virtual Scale"
 			android:summary="Allow using virtual scale for testing (default: disabled)" />
 
-		<Preference
-			android:key="select_bluetooth_scale"
-			android:title="Select Bluetooth Scale"
-			android:summary="Scan and select a Bluetooth scale from paired devices">
-		</Preference>
 
 		<EditTextPreference
 			android:defaultValue=""

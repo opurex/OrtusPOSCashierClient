@@ -1,82 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-   android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/ab_menu_printmain"
-        android:icon="@drawable/ic_menu_print_enabled"
-        android:title="@string/menu_print_main"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/ab_menu_scale_connect"
-        android:icon="@drawable/scale"
-        android:title="@string/connect_scale"
-        app:showAsAction="ifRoom|withText" />
-
-    <item
-        android:id="@+id/ab_menu_scale_disconnect"
-        android:icon="@drawable/scale"
-        android:title="@string/disconnect_scale"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/ab_menu_printaux1"
-        android:icon="@drawable/ic_menu_print_enabled"
-        android:title="@string/menu_print_aux1"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/ab_menu_printaux2"
-        android:icon="@drawable/ic_menu_print_enabled"
-        android:title="@string/menu_print_aux2"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/ab_menu_cashdrawer"
-        android:icon="@drawable/cash"
-        android:title="@string/menu_open_cashdrawer"
-        app:showAsAction="ifRoom" />
-
+    <!-- Following the exact order requested: SUB DIVIDE, MANUAL INPUT, PRINT MAIN, PRINT AUX1, PRINT AUX2 -->
     <item
         android:id="@+id/ab_menu_divider"
         android:icon="@drawable/ic_content_cut_white_24dp"
         android:title="@string/menu_divider"
         app:showAsAction="ifRoom|withText" />
-
     <item
         android:id="@+id/ab_menu_manual_input"
-        android:icon="@drawable/ic_menu_manual_input"
+        android:icon="@drawable/ic_edit"
         android:title="@string/menu_manual_input"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/ab_menu_printmain"
+        android:icon="@drawable/ic_print"
+        android:title="@string/menu_print_main"
+        app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/ab_menu_printaux1"
+        android:icon="@drawable/ic_print"
+        android:title="@string/menu_print_aux1"
+        app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/ab_menu_printaux2"
+        android:icon="@drawable/ic_print"
+        android:title="@string/menu_print_aux2"
+        app:showAsAction="ifRoom|withText" />
 
+    <!-- Customer options -->
     <item
         android:id="@+id/ab_menu_customer_list"
-        android:icon="@drawable/ic_menu_customer_list"
+        android:icon="@drawable/ic_list"
         android:title="@string/menu_assign_customer"
         app:showAsAction="ifRoom|withText" />
-
     <item
         android:id="@+id/ab_menu_customer_add"
-        android:icon="@drawable/ic_menu_customer_add"
+        android:icon="@drawable/ic_person_add"
         android:title="@string/menu_add_customer"
         app:showAsAction="ifRoom|withText" />
-
     <item
         android:id="@+id/ab_menu_calendar"
-        android:icon="@drawable/calendar"
+        android:icon="@drawable/ic_date_range"
         android:title="@string/open_calendar"
         app:showAsAction="ifRoom|withText" />
-
     <item
         android:id="@+id/ab_menu_past_ticket"
+        android:icon="@drawable/ic_history"
         android:title="@string/menu_edit_tickets"
         app:showAsAction="ifRoom|withText" />
-
     <item
         android:id="@+id/ab_menu_close_session"
-        android:icon="@drawable/power"
+        android:icon="@drawable/ic_power_settings_new"
         android:enabled="false"
         android:title="@string/menu_main_close"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/ab_menu_cashdrawer"
+        android:icon="@drawable/ic_money"
+        android:title="@string/menu_open_cashdrawer"
+        app:showAsAction="ifRoom|withText" />
+
+    <!-- Scale Connect/Disconnect items that will be managed by Java code -->
+    <item
+        android:id="@+id/ab_menu_scale_disconnect"
+        android:icon="@drawable/ic_scale_disconnect"
+        android:title="@string/disconnect_scale"
+        app:showAsAction="never" />
+
 </menu>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/graylight"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="5"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:paddingTop="@dimen/padding_small_x"
+            android:paddingLeft="@dimen/padding_normal"
+            android:id="@+id/tv_pair_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textSize="@dimen/text_size_normal_x"
+            android:text="PSX"
+            android:gravity="center_vertical|left"
+            android:layout_weight="1"/>
+        <TextView
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingBottom="@dimen/padding_small_x"
+            android:id="@+id/tv_pair_mac"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textSize="@dimen/text_size_normal_x"
+            android:gravity="center_vertical|left"
+            android:text="AB:CD:EF:00:12:34"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <TextView
+        android:paddingTop="@dimen/padding_small_x"
+        android:paddingBottom="@dimen/padding_small_x"
+        android:id="@+id/tv_pair_sig"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/text_size_normal_x"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="-45dp"/>
+
+</LinearLayout>

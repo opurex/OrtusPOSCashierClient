@@ -37,6 +37,24 @@ public class PaymentMainFragment extends Fragment {
                     .replace(R.id.container_payment, PaymentFragment.newInstance(2))
                     .commit();
         }
+
+        // Refresh the ticket data to ensure it shows current ticket
+        refreshTicketData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Ensure ticket data is current when fragment becomes visible
+        refreshTicketData();
+    }
+
+    private void refreshTicketData() {
+        TicketFragment ticketFragment = getTicketFragment();
+        if (ticketFragment != null) {
+            // Force the ticket fragment to update with current session data
+            ticketFragment.updateWithCurrentTicket();
+        }
     }
 
     public TicketFragment getTicketFragment() {

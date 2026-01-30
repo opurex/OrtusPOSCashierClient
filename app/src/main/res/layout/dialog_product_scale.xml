@@ -1,88 +1,304 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:importantForAccessibility="yes">
+    android:layout_height="match_parent"
+    android:background="#F5F5F7"
+    tools:context="">
+
+    <View
+        android:id="@+id/header_bg"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="#630330"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/brand_burgundy"
+        android:contentDescription="Back"
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toBottomOf="@id/header_bg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/header_bg"
+        app:tint="@color/white" />
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/scaled_products_info"
-        android:textSize="16sp"
-        android:layout_marginBottom="16dp"
-        android:importantForAccessibility="no" />
-
-    <TextView
-        android:id="@+id/scale_status_display"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="✗ Scale not connected"
-        android:textSize="14sp"
+        android:text="@string/title_main"
+        android:textColor="@color/white"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:textColor="@android:color/holo_red_dark"
-        android:contentDescription="Scale connection status" />
+        app:layout_constraintBottom_toBottomOf="@id/header_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/header_bg" />
 
-    <TextView
-        android:id="@+id/scale_weight_display"
-        android:layout_width="match_parent"
+    <!-- Card for pairing controls -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_bluetooth"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="Current weight reading from scale"
-        android:gravity="center"
-        android:textSize="14sp"
-        android:textStyle="italic" />
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_bg">
 
-    <EditText
-        android:id="@+id/scale_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter weight in kg"
-        android:inputType="numberDecimal"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="Manual weight input field" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_pair_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-    <TextView
-        android:id="@+id/scale_price_display"
-        android:layout_width="match_parent"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_pair"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundTint="#660A0A"
+                android:onClick="onClick"
+                android:text="@string/pair_scale"
+                android:textColor="#E9DEDE"
+                android:textColorHint="@color/dynamic_surface"
+                android:textColorLink="#EDE7E7"
+                app:backgroundTint="@color/accent1_pressed"
+                app:icon="@drawable/btn_scale_default"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btn_pair"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_dev_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Device Selected"
+                    android:textColor="#212121"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_dev_mac"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00:00:00:00"
+                    android:textColor="#757575"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Card for device list (shown when in pairing mode) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_device_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_bluetooth"
+        app:layout_constraintBottom_toTopOf="@id/ll_controls">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Available Devices"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <ListView
+                android:id="@+id/lv_Devicelist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#00000000"
+                android:dividerHeight="@dimen/divider_normal"
+                android:scrollbars="vertical" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_weight"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Enter weight to calculate price"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:contentDescription="Calculated price based on weight" />
+        android:layout_margin="16dp"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_bluetooth">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/scale_status_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FEEBEE"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="● Scale Disconnected"
+                android:textColor="#D32F2F"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/scale_weight_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="0.000 kg"
+                android:textColor="#630330"
+                android:textSize="48sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Manual Weight Entry (kg)">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/scale_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/scale_price_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="$ 0.00"
+                android:textColor="#2E7D32"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/ll_controls"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
-        android:importantForAccessibility="yes">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_weight">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/scale_zero_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Zero Scale"
+            android:layout_height="60dp"
             android:layout_marginEnd="8dp"
-            android:enabled="false"
-            android:contentDescription="Zero the scale to reset to zero weight" />
-
-        <Button
-            android:id="@+id/scale_tare_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tare Scale"
-            android:layout_marginStart="8dp"
-            android:enabled="false"
-            android:contentDescription="Tare the scale to remove container weight" />
+            android:text="ZERO" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/scale_tare_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="TARE" />
     </LinearLayout>
 
-</LinearLayout>
+    <!-- Action buttons -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/scale_cancel_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/scale_ok_button"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="@string/validate" />
+    </LinearLayout>
+
+    <!-- Version info -->
+    <LinearLayout
+        android:layout_width="201dp"
+        android:layout_height="62dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/scale_cancel_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/tv_ver_app"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/app_info"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/tv_ver_bt"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/bt_info"
+            android:textSize="@dimen/text_size_normal" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

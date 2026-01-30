@@ -39,7 +39,7 @@
     <string name="cash_closed">The cash is closed.</string>
     <string name="cash_open">Open cash</string>
     <string name="cash_amount">Cash amount</string>
-    <string name="expected_cash_amount">Expected cash</string>
+        <string name="expected_cash_amount">Expected Total</string>
 
     <string name="menu_cfg_import">Import</string>
     <string name="menu_cfg_debug">Debug</string>
@@ -47,9 +47,9 @@
     <string name="cfg_import_file_not_found">Configuration file not found</string>
     <string name="cfg_import_read_error">Unable to load configuration file</string>
 
-    <string name="menu_main_close">Close cash</string>
-    <string name="menu_new_ticket">New ticket</string>
-    <string name="menu_switch_ticket">Change ticket</string>
+    <string name="menu_main_close">Close Cash</string>
+    <string name="menu_new_ticket">New Ticket</string>
+    <string name="menu_switch_ticket">Change Ticket</string>
     <string name="menu_sync_ticket">Sync. ticket</string>
     <string name="menu_assign_customer">Customers</string>
     <string name="menu_add_customer">Add a\nCustomer</string>
@@ -57,10 +57,10 @@
     <string name="browser_bnp">Access to the BNP Website</string>
     <string name="open_calendar">Calendar</string>
     <string name="register">Sign Up</string>
-    <string name="menu_edit_tickets">Past tickets</string>
+    <string name="menu_edit_tickets">Past Tickets</string>
     <string name="menu_manual_input">Manual\ninput</string>
     <string name="menu_barcode">Barcode</string>
-    <string name="menu_open_cashdrawer">Open cash drawer</string>
+    <string name="menu_open_cashdrawer">Open Cash Drawer</string>
     <string name="menu_print_main">Print Main</string>
     <string name="menu_print_aux1">Print Aux1</string>
     <string name="menu_print_aux2">Print Aux2</string>
@@ -261,8 +261,8 @@
 
     <!-- About -->
     <string name="about_title">About</string>
-    <string name="about_licence">http://opurex.com/privacy</string>
-    <string name="about_source">Download the Application From Opurex Website / App Store</string>
+    <string name="about_licence">http://ortuspos.com/privacy</string>
+    <string name="about_source">Download the Application From Ortus POS Website / App Store</string>
 
     <!-- Add Customer -->
     <string name="nameCustomer">Name</string>
@@ -385,7 +385,36 @@
     <string name="none_found">No devices found</string>
     <string name="enter_amount">..</string>
 
-    <string name="connect_scale">Connect Scale</string>
-    <string name="disconnect_scale">Disconnect Scale</string>
+    <string name="connect_scale">Pair Scale</string>
+    <string name="disconnect_scale">Unpair Scale</string>
+
+
+    <string name="app_name">AclasBtScale</string>
+    <string name="title_main">PSX BT Pricing Scale App</string>
+    <string name="title_pair">Pairable Bluetooth Device</string>
+    <string name="pair_scale">Pair Scale</string>
+    <string name="dev_name">BT Name:</string>
+    <string name="dev_mac">Mac Address:</string>
+    <string name="weight">Weight</string>
+    <string name="price">Price</string>
+    <string name="total">Total</string>
+    <string name="tare">Tare</string>
+    <string name="dotare">Tare</string>
+    <string name="app_info">App Version:</string>
+    <string name="bt_info">BT Module Version:</string>
+    <string name="zero">Zero</string>
+    <string name="key">Key</string>
+    <string name="openfailed">Open failed.</string>
+    <string name="connect">Connect successfully</string>
+    <string name="unbind">Unbind</string>
+    <string name="success">Succeed</string>
+    <string name="failed">Fail</string>
+    <string name="unstable">Weight UnStable</string>
+    <string name="wait_connect">Waiting for connection!</string>
+
+    <!-- Navigation Header Strings -->
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_header_subtitle">Point of Sale System</string>
+
 
 </resources>

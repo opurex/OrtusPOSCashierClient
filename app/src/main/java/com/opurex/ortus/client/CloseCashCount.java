@@ -104,6 +104,14 @@ implements PaymentModeValueBtnItem.Listener, Handler.Callback
         ((GridView) this.findViewById(R.id.close_cash_values)).setAdapter(this.coinButtons);
         this.coinButtons.setListener(this);
         this.updateMatchingCount();
+
+        // Set up the back button click listener
+//        findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                finish(); // This will take the user back to the previous activity
+//            }
+//        });
     }
 
     @Override
