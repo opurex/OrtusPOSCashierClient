@@ -20,6 +20,7 @@ package com.opurex.ortus.client;
 import android.app.Activity;
 //import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import com.opurex.ortus.client.widgets.MaterialProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -58,7 +59,7 @@ public class CloseCash extends POSConnectedTrackedActivity {
 
     private ZTicket zTicket;
     private ListView stockList;
-    private ProgressDialog progressDialog;
+    private MaterialProgressDialog progressDialog;
     private AlertDialog alertDialog;
     private Double cashAmount;
     private boolean printQueued;
@@ -385,11 +386,7 @@ public class CloseCash extends POSConnectedTrackedActivity {
     }
 
     private void showProgressDialog() {
-        this.progressDialog = new ProgressDialog(this);
-        this.progressDialog.setIndeterminate(true);
-        this.progressDialog.setCancelable(false);
-        this.progressDialog.setMessage(this.getString(R.string.print_printing));
-        this.progressDialog.show();
+        this.progressDialog = MaterialProgressDialog.show(this, this.getString(R.string.print_printing), false);
         this.retryTimer.schedule(new TimerTask() {
             public void run() {
                 askReprintOrLeave(R.string.print_ask_retry);

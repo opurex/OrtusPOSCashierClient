@@ -19,6 +19,7 @@ package com.opurex.ortus.client;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import com.opurex.ortus.client.widgets.MaterialProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,7 +43,7 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
     public static final String TICKET_ID_KEY = "ticketId";
 
     private ListView list;
-    private ProgressDialog printing;
+    private MaterialProgressDialog printing;
     private AlertDialog alertDialog;
     private Receipt selectedReceipt;
 
@@ -108,10 +109,7 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
     private void showProgressDialog() {
         dismissPrintingProgressDialog();
         dismissAlertDialog();
-        this.printing = new ProgressDialog(this);
-        this.printing.setIndeterminate(true);
-        this.printing.setMessage(this.getString(R.string.print_printing));
-        this.printing.show();
+        this.printing = MaterialProgressDialog.show(this, this.getString(R.string.print_printing), false);
     }
 
     private void askReprint() {

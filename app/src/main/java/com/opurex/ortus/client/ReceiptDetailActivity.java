@@ -15,6 +15,7 @@ import com.opurex.ortus.client.models.Receipt;
 import com.opurex.ortus.client.models.Ticket;
 import com.opurex.ortus.client.models.TicketLine;
 import com.opurex.ortus.client.utils.StringUtils;
+import com.opurex.ortus.client.widgets.MaterialProgressDialog;
 
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
 
     private Receipt receipt;
-    private android.app.ProgressDialog progressDialog;
+    private MaterialProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -182,10 +183,7 @@ public class ReceiptDetailActivity extends POSConnectedTrackedActivity {
 
     private void showProgressDialog() {
         dismissProgressDialog();
-        progressDialog = new android.app.ProgressDialog(this);
-        progressDialog.setMessage("Printing receipt...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        progressDialog = MaterialProgressDialog.show(this, "Printing receipt...", false);
     }
 
     private void dismissProgressDialog() {
