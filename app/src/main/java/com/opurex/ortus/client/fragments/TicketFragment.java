@@ -304,10 +304,8 @@ public class TicketFragment extends ViewPageFragment implements
             mCustomer.setVisibility(View.VISIBLE);
             mCustomerImg.setVisibility(View.VISIBLE);
         } else {
-            // Show "Walk-in Customer" when no customer is selected
-            mCustomer.setText("Walk-in Customer");
-            mCustomer.setVisibility(View.VISIBLE);
-            mCustomerImg.setVisibility(View.VISIBLE);
+            mCustomer.setVisibility(View.GONE);
+            mCustomerImg.setVisibility(View.GONE);
         }
         // Update tariff area info
         if (mTicketData.getTariffArea() == null) {
@@ -434,7 +432,13 @@ public class TicketFragment extends ViewPageFragment implements
         Product p = l.getProduct();
         if (p.isScaled()) {
             ProductScaleDialog dial = ProductScaleDialog.newInstance(p, false);
-            dial.setTargetFragment(this, 0); // Set this fragment as the target
+            dial.setDialogListener(new ProductScaleDialog.Listener() {
+                @Override
+                public void onPsdPositiveClick(Product p, double weight, boolean ignored) {
+                    mTicketData.adjustScale(l, weight);
+                    updateView();
+                }
+            });
             dial.show(getParentFragmentManager(), ProductScaleDialog.TAG);
         }
     }

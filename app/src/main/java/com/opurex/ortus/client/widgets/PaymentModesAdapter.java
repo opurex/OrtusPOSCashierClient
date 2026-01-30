@@ -1,118 +1,80 @@
+/*
+    Opurex Android com.opurex.ortus.client
+    Copyright (C) Opurex contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package com.opurex.ortus.client.widgets;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.opurex.ortus.client.R;
 import com.opurex.ortus.client.models.PaymentMode;
 
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentModesAdapter extends RecyclerView.Adapter<PaymentModesAdapter.PaymentModeViewHolder> {
-    
-    private List<PaymentMode> paymentModes;
-    private Context context;
-    private int selectedIndex = -1; // Track selected item
-    private OnPaymentModeClickListener listener;
-    
-    public interface OnPaymentModeClickListener {
-        void onPaymentModeClick(PaymentMode mode, int position);
-    }
-    
-    public PaymentModesAdapter(Context context, List<PaymentMode> paymentModes) {
-        this.context = context;
-        this.paymentModes = paymentModes;
-    }
-    
-    public void setOnPaymentModeClickListener(OnPaymentModeClickListener listener) {
-        this.listener = listener;
-    }
-    
-    public void setSelectedIndex(int index) {
-        int oldSelectedIndex = this.selectedIndex;
-        this.selectedIndex = index;
-        if (oldSelectedIndex != -1) {
-            notifyItemChanged(oldSelectedIndex);
-        }
-        if (selectedIndex != -1) {
-            notifyItemChanged(selectedIndex);
-        }
-    }
-    
-    @NonNull
-    @Override
-    public PaymentModeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.payment_mode_item_material, parent, false);
-        return new PaymentModeViewHolder(view);
-    }
-    
-    @Override
-    public void onBindViewHolder(@NonNull PaymentModeViewHolder holder, int position) {
-        PaymentMode mode = paymentModes.get(position);
-        holder.bind(mode, position);
-        
-        // Highlight selected item
-        if (position == selectedIndex) {
-            holder.itemView.setBackgroundColor(context.getColor(R.color.colorPrimary));
-            holder.modeName.setTextColor(context.getColor(R.color.colorOnPrimary));
-        } else {
-            holder.itemView.setBackgroundColor(context.getColor(R.color.colorSurface));
-            holder.modeName.setTextColor(context.getColor(R.color.colorOnSurface));
-        }
-    }
-    
-    @Override
-    public int getItemCount() {
-        return paymentModes.size();
-    }
-    
-    public class PaymentModeViewHolder extends RecyclerView.ViewHolder {
-        ImageView modeIcon;
-        TextView modeName;
-        
-        public PaymentModeViewHolder(@NonNull View itemView) {
-            super(itemView);
-            modeIcon = itemView.findViewById(R.id.mode_icon);
-            modeName = itemView.findViewById(R.id.mode_name);
-            
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onPaymentModeClick(paymentModes.get(position), position);
-                    setSelectedIndex(position); // Update selection
-                }
-            });
-        }
-        
-        public void bind(PaymentMode mode, int position) {
-            modeName.setText(mode.getLabel());
+public class PaymentModesAdapter extends BaseAdapter {
 
-            // Load payment mode image if available
-            if (mode.hasImage()) {
-                try {
-                    android.graphics.Bitmap paymentImage = com.opurex.ortus.client.data.ImagesData.getPaymentModeImage(mode.getId());
-                    if (paymentImage != null) {
-                        modeIcon.setImageBitmap(paymentImage);
-                    } else {
-                        // Fallback to generic payment icon if image not found locally
-                        modeIcon.setImageResource(R.drawable.ic_payment);
-                    }
-                } catch (Exception e) {
-                    // Log the error and use fallback icon
-                    android.util.Log.e("PaymentModesAdapter", "Error loading payment mode image for mode ID: " + mode.getId(), e);
-                    modeIcon.setImageResource(R.drawable.ic_payment);
-                }
-            } else {
-                // Use generic payment icon if no image is associated with this payment mode
-                modeIcon.setImageResource(R.drawable.ic_payment);
+    List<PaymentMode> modes;
+
+    public PaymentModesAdapter(List<PaymentMode> modes) {
+        super();
+        // Remove inactive payment modes from list
+        List<PaymentMode> availableModes = new ArrayList<PaymentMode>();
+        for (PaymentMode pm : modes) {
+            if (pm.isActive()) {
+                availableModes.add(pm);
             }
+        }
+        this.modes = availableModes;
+    }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return false;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return this.modes.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return this.modes.size();
+    }
+    
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        PaymentMode mode = this.modes.get(position);
+        if (convertView != null && convertView instanceof PaymentModeItem) {
+            // Reuse the view
+            PaymentModeItem item = (PaymentModeItem) convertView;
+            item.reuse(mode, parent.getContext());
+            return item;
+        } else {
+            // Create the view
+            Context ctx = parent.getContext();
+            PaymentModeItem item = new PaymentModeItem(ctx, mode);
+            return item;
         }
     }
 }
