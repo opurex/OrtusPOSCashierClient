@@ -17,8 +17,7 @@
 */
 package com.opurex.ortus.client;
 
-import java.io.*;
-import java.util.Properties;
+import static org.apache.commons.io.IOUtils.copy;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,30 +38,36 @@ import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.opurex.ortus.client.activities.BluetoothPrinterSelectionActivity;
-import com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity;
 import com.opurex.ortus.client.data.CashArchive;
 import com.opurex.ortus.client.data.Data;
 import com.opurex.ortus.client.data.DataSavable.AbstractJsonDataSavable;
 import com.opurex.ortus.client.drivers.mpop.MPopEntries;
 import com.opurex.ortus.client.drivers.mpop.MPopPort;
-import com.opurex.ortus.client.utils.*;
+import com.opurex.ortus.client.utils.Compat;
+import com.opurex.ortus.client.utils.DatabaseExportUtil;
+import com.opurex.ortus.client.utils.OpurexConfiguration;
 import com.opurex.ortus.client.utils.file.ExternalFile;
 import com.opurex.ortus.client.utils.file.InternalFile;
-import com.opurex.ortus.client.utils.DatabaseExportUtil;
 
-import static org.apache.commons.io.IOUtils.copy;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 //Deprecation concerns the PreferenceFragment
 @SuppressWarnings("deprecation")
 public class Configure extends PreferenceActivity
-        implements Preference.OnPreferenceChangeListener
-{
+        implements Preference.OnPreferenceChangeListener {
 
     public static final int STATUS_ACCOUNT = 0;
     public static final int STATUS_DEMO = 1;
     public static final int STATUS_NONE = 2;
 
-    /** @deprecated Automatically switches to standard since v7. */
+    /**
+     * @deprecated Automatically switches to standard since v7.
+     */
     @Deprecated
     public static final int SIMPLE_MODE = 0;
     public static final int STANDARD_MODE = 1;
@@ -81,17 +86,17 @@ public class Configure extends PreferenceActivity
 //    private static final String DEMO_USER =  "prexra";; // set not null to enable demo
 //    private static final String DEMO_PASSWORD = "Prexra789?";
 //    private static final String DEMO_CASHREGISTER = "CashRegister";
-//    private static final String DEFAULT_HOST = "demopos.ortuspos.com";
-//    private static final String DEFAULT_USER = "DemoOrtusPOS";
-////    private static final String DEFAULT_PASSWORD = "DemoOrtusPOS2025?";
-//    private static final String DEFAULT_PASSWORD = "admin2026?";
-////
-//    private static final String DEFAULT_CASHREGISTER = "Grocery";
+    private static final String DEFAULT_HOST = "demopos.ortuspos.com";
+    private static final String DEFAULT_USER = "DemoOrtusPOS";
+//    private static final String DEFAULT_PASSWORD = "DemoOrtusPOS2025?";
+    private static final String DEFAULT_PASSWORD = "admin2026?";
 
-    private static final String DEFAULT_HOST = "wambugumountainviewgroceries.ortuspos.com";
-    private static final String DEFAULT_USER = "WambuguMountainViewGroceries";
-    private static final String DEFAULT_PASSWORD = "#@?Wambugu?#MountainViewGroceries2025?>";
-    private static final String DEFAULT_CASHREGISTER = "GroceryOpen";
+    private static final String DEFAULT_CASHREGISTER = "Grocery";
+
+//    private static final String DEFAULT_HOST = "wambugumountainviewgroceries.ortuspos.com";
+//    private static final String DEFAULT_USER = "WambuguMountainViewGroceries";
+//    private static final String DEFAULT_PASSWORD = "#@?Wambugu?#MountainViewGroceries2025?>";
+//    private static final String DEFAULT_CASHREGISTER = "GroceryOpen";
     private static final int DEFAULT_PRINTER_CONNECT_TRY = 3;
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
@@ -122,7 +127,7 @@ public class Configure extends PreferenceActivity
         this.printerModels = (ListPreference) this.findPreference("printer_model");
         this.auxPrinterModels1 = (ListPreference) this.findPreference("printer_model1");
         this.auxPrinterModels2 = (ListPreference) this.findPreference("printer_model2");
-        
+
         // Add click listeners for Bluetooth printer selection
         Preference selectBluetoothPrinter = this.findPreference("select_bluetooth_printer");
         if (selectBluetoothPrinter != null) {
@@ -134,7 +139,7 @@ public class Configure extends PreferenceActivity
                 }
             });
         }
-        
+
         Preference selectBluetoothPrinter1 = this.findPreference("select_bluetooth_printer1");
         if (selectBluetoothPrinter1 != null) {
             selectBluetoothPrinter1.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -145,7 +150,7 @@ public class Configure extends PreferenceActivity
                 }
             });
         }
-        
+
         Preference selectBluetoothPrinter2 = this.findPreference("select_bluetooth_printer2");
         if (selectBluetoothPrinter2 != null) {
             selectBluetoothPrinter2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -156,19 +161,10 @@ public class Configure extends PreferenceActivity
                 }
             });
         }
-        
+
         // Add click listener for Bluetooth scale selection
-        Preference selectBluetoothScale = this.findPreference("select_bluetooth_scale");
-        if (selectBluetoothScale != null) {
-            selectBluetoothScale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    launchBluetoothScaleSelection();
-                    return true;
-                }
-            });
-        }
-        
+        // Removed Bluetooth scale selection functionality - now only accessible from Transaction activity
+
         this.printerDrivers.setOnPreferenceChangeListener(this);
         this.auxPrinterDrivers1.setOnPreferenceChangeListener(this);
         this.auxPrinterDrivers2.setOnPreferenceChangeListener(this);
@@ -420,8 +416,10 @@ public class Configure extends PreferenceActivity
     public static int getTicketsMode(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         int mode = Integer.parseInt(prefs.getString("tickets_mode",
-                        String.valueOf(STANDARD_MODE)));
-        if (mode == SIMPLE_MODE) { mode = STANDARD_MODE; } // Legacy compat.
+                String.valueOf(STANDARD_MODE)));
+        if (mode == SIMPLE_MODE) {
+            mode = STANDARD_MODE;
+        } // Legacy compat.
         return mode;
     }
 
@@ -571,22 +569,22 @@ public class Configure extends PreferenceActivity
         String[] options = {"Export Configuration Only", "Export Database Only", "Export Both"};
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle("Export Options")
-               .setItems(options, (dialog, which) -> {
-                   switch (which) {
-                       case 0: // Export Configuration Only
-                           exportConfiguration();
-                           break;
-                       case 1: // Export Database Only
-                           exportDatabaseWithPermissionCheck();
-                           break;
-                       case 2: // Export Both
-                           exportConfiguration();
-                           exportDatabaseWithPermissionCheck();
-                           break;
-                   }
-               })
-               .setNegativeButton("Cancel", null)
-               .show();
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0: // Export Configuration Only
+                            exportConfiguration();
+                            break;
+                        case 1: // Export Database Only
+                            exportDatabaseWithPermissionCheck();
+                            break;
+                        case 2: // Export Both
+                            exportConfiguration();
+                            exportDatabaseWithPermissionCheck();
+                            break;
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     /**
@@ -604,8 +602,8 @@ public class Configure extends PreferenceActivity
             Toast.makeText(this, "Configuration exported successfully", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error exporting configuration: " + e.getMessage(), 
-                Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error exporting configuration: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -636,8 +634,8 @@ public class Configure extends PreferenceActivity
                     DatabaseExportUtil.exportDatabase(this);
                 } else {
                     // Permission denied, show message
-                    Toast.makeText(this, "Storage permission is required to export database", 
-                        Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Storage permission is required to export database",
+                            Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -678,10 +676,12 @@ public class Configure extends PreferenceActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("mpesa_passkey", "JDdezTK+b/jDYcy1/5h5Wy8FBWHAkWFu/fyLWGAYGH53ALR3OiHhp0DSW34ywFrqijFsutK+5PXtT9fdqkk+b5K05p3kzGbT02bVRTvtLiM4GJ4InOWQpvfU+IQ4RQkMvjlgST1yg1eAoItGflNS05YzFiV+DnoXl8RNTOQqCNvZhhxhd4HWS2wW1j1d9+kixsapy6GU6yYoKZY/M3wcOkr++Y1UWDjsTkytmNoIoLlkaSask2jyWgJZtKyQfWTBbHGNlAMAWT/0G/B4+N55IOwch5ugdmY1E8BaZEim2JNlby2SY5K6xwDxuoYqKKSYfRABWyUmBf8X/rEQ0kM7qA==");
     }
+
     public static String getMpesaConsumerKey(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("mpesa_consumerkey", "NsIk4bAdJIqXxkrWyKhoX3VFSiMVgD4KGa4XRAIeLFk5YY4J");
     }
+
     public static String getMpesaConsumerSecretKey(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("mpesa_consumer_secretkey", "ftvA43V5ROdjC3w32TjTigLglQG5qPPCj4A4haS4Oci5OsGvWNX8OxN4HAUnMLxx");
@@ -715,15 +715,14 @@ public class Configure extends PreferenceActivity
                 .putString(label, String.valueOf(value))
                 .apply();
     }
-    
+
     // Bluetooth printer selection
     private static final int REQUEST_SELECT_BLUETOOTH_PRINTER = 1001;
     private static final int REQUEST_SELECT_BLUETOOTH_PRINTER1 = 1002;
     private static final int REQUEST_SELECT_BLUETOOTH_PRINTER2 = 1003;
-    private static final int REQUEST_SELECT_BLUETOOTH_SCALE = 1004;
-    
+
     private int currentPrinterIndex = 0;
-    
+
     private void launchBluetoothPrinterSelection(int printerIndex) {
         currentPrinterIndex = printerIndex;
         Intent intent = new Intent(this, BluetoothPrinterSelectionActivity.class);
@@ -742,148 +741,129 @@ public class Configure extends PreferenceActivity
         }
         startActivityForResult(intent, requestCode);
     }
-    
-    private void launchBluetoothScaleSelection() {
-        Intent intent = new Intent(this, com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.class);
-        startActivityForResult(intent, REQUEST_SELECT_BLUETOOTH_SCALE);
-    }
-    
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        
+
         if (resultCode == RESULT_OK && data != null) {
-            if (requestCode == REQUEST_SELECT_BLUETOOTH_SCALE) {
-                String scaleAddress = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_ADDRESS);
-                String scaleName = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
-                
-                if (scaleAddress != null && !scaleAddress.isEmpty()) {
-                    // Update the scale address preference
-                    Preference scaleAddressPref = findPreference("scale_address");
-                    if (scaleAddressPref instanceof EditTextPreference) {
-                        ((EditTextPreference) scaleAddressPref).setText(scaleAddress);
-                    }
-                    
-                    // Show a confirmation message
-                    Toast.makeText(this, "Selected scale: " + (scaleName != null ? scaleName : scaleAddress), 
-                        Toast.LENGTH_SHORT).show();
+            String printerAddress = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_ADDRESS);
+            String printerName = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_NAME);
+
+            if (printerAddress != null && !printerAddress.isEmpty()) {
+                // Update the printer address preference
+                String preferenceKey;
+                switch (currentPrinterIndex) {
+                    case 1:
+                        preferenceKey = "printer_address1";
+                        break;
+                    case 2:
+                        preferenceKey = "printer_address2";
+                        break;
+                    case 0:
+                    default:
+                        preferenceKey = "printer_address";
+                        break;
                 }
-            } else {
-                String printerAddress = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_ADDRESS);
-                String printerName = data.getStringExtra(BluetoothPrinterSelectionActivity.EXTRA_PRINTER_NAME);
-                
-                if (printerAddress != null && !printerAddress.isEmpty()) {
-                    // Update the printer address preference
-                    String preferenceKey;
-                    switch (currentPrinterIndex) {
-                        case 1:
-                            preferenceKey = "printer_address1";
-                            break;
-                        case 2:
-                            preferenceKey = "printer_address2";
-                            break;
-                        case 0:
-                        default:
-                            preferenceKey = "printer_address";
-                            break;
-                    }
-                    
-                    Preference printerAddressPref = findPreference(preferenceKey);
-                    if (printerAddressPref instanceof EditTextPreference) {
-                        ((EditTextPreference) printerAddressPref).setText(printerAddress);
-                    }
-                    
-                    // Show a confirmation message
-                    Toast.makeText(this, "Selected printer: " + (printerName != null ? printerName : printerAddress), 
-                        Toast.LENGTH_SHORT).show();
+
+                Preference printerAddressPref = findPreference(preferenceKey);
+                if (printerAddressPref instanceof EditTextPreference) {
+                    ((EditTextPreference) printerAddressPref).setText(printerAddress);
                 }
+
+                // Show a confirmation message
+                Toast.makeText(this, "Selected printer: " + (printerName != null ? printerName : printerAddress),
+                        Toast.LENGTH_SHORT).show();
             }
         }
-        
+
         currentPrinterIndex = 0;
     }
 
-    public static void setHost(Context ctx, String host) {
-        Configure.set(ctx, "host", host);
-    }
-
-    public static void setUser(Context ctx, String user) {
-        Configure.set(ctx, "user", user);
-    }
-
-    public static void setPassword(Context ctx, String psswd) {
-        Configure.set(ctx, "password", psswd);
-    }
-
-    public static void setCashRegister(Context ctx, String cash) {
-        Configure.set(ctx, "machine_name", cash);
-    }
-
-    public static void setStatus(Context ctx, int status) {
-        Configure.set(ctx, LABEL_STATUS, status);
-    }
-
-    public static int getStatus(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getInt(LABEL_STATUS, Configure.STATUS_NONE);
-    }
-
-    public static boolean canDemo() {
-        return DEMO_USER != null;
-    }
-
-    public static void setDemo(Context ctx) {
-        if (canDemo()) {
-            Configure.setAccount(ctx,
-                    DEMO_HOST, DEMO_USER, DEMO_PASSWORD, DEMO_CASHREGISTER,
-                    true);
+        public static void setHost (Context ctx, String host){
+            Configure.set(ctx, "host", host);
         }
-    }
 
-private static void setAccount(Context ctx, String host, String user, String pwd, String cash, boolean isDemo) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putString("host", host);
-        edit.putString("password", pwd);
-        edit.putString("user", user);
-        edit.putString("machine_name", cash);
-        if (canDemo() && isDemo) {
-            edit.putInt(LABEL_STATUS, STATUS_DEMO);
-        } else {
-            edit.putInt(LABEL_STATUS, STATUS_ACCOUNT);
+        public static void setUser (Context ctx, String user){
+            Configure.set(ctx, "user", user);
         }
-        edit.apply();
-    }
 
-    public static void setAccount(Context ctx, String host, String user, String passwd, String cash) {
-        Configure.setAccount(ctx, host, user, passwd, cash, false);
-    }
+        public static void setPassword (Context ctx, String psswd){
+            Configure.set(ctx, "password", psswd);
+        }
 
-    public static void invalidateAccount(Context ctx) {
-        setHost(ctx, DEFAULT_HOST);
-        setUser(ctx, DEFAULT_USER);
-        setPassword(ctx, DEFAULT_PASSWORD);
-        setStatus(ctx, STATUS_NONE);
-    }
+        public static void setCashRegister (Context ctx, String cash){
+            Configure.set(ctx, "machine_name", cash);
+        }
 
-    /**
-     * Very important function!
-     * Start.removeLocalData rely on this on
-     *
-     * @param ctx the application's context
-     * @return <code>true</code> if the current account is a demo
-     */
-    public static boolean isDemo(Context ctx) {
-        return getStatus(ctx) == STATUS_DEMO;
-    }
+        public static void setStatus (Context ctx,int status){
+            Configure.set(ctx, LABEL_STATUS, status);
+        }
 
-    public static boolean noAccount(Context ctx) {
-        return getStatus(ctx) == STATUS_NONE;
-    }
+        public static int getStatus (Context ctx){
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            return prefs.getInt(LABEL_STATUS, Configure.STATUS_NONE);
+        }
 
-    public static boolean isAccount(Context ctx) {
-        return getStatus(ctx) == STATUS_ACCOUNT;
-    }
+        public static boolean canDemo () {
+            return DEMO_USER != null;
+        }
+
+        public static void setDemo (Context ctx){
+            if (canDemo()) {
+                Configure.setAccount(ctx,
+                        DEMO_HOST, DEMO_USER, DEMO_PASSWORD, DEMO_CASHREGISTER,
+                        true);
+            }
+        }
+
+        private static void setAccount (Context ctx, String host, String user, String pwd, String
+        cash,boolean isDemo){
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putString("host", host);
+            edit.putString("password", pwd);
+            edit.putString("user", user);
+            edit.putString("machine_name", cash);
+            if (canDemo() && isDemo) {
+                edit.putInt(LABEL_STATUS, STATUS_DEMO);
+            } else {
+                edit.putInt(LABEL_STATUS, STATUS_ACCOUNT);
+            }
+            edit.apply();
+        }
+
+        public static void setAccount (Context ctx, String host, String user, String passwd, String
+        cash){
+            Configure.setAccount(ctx, host, user, passwd, cash, false);
+        }
+
+        public static void invalidateAccount (Context ctx){
+            setHost(ctx, DEFAULT_HOST);
+            setUser(ctx, DEFAULT_USER);
+            setPassword(ctx, DEFAULT_PASSWORD);
+            setStatus(ctx, STATUS_NONE);
+        }
+
+        /**
+         * Very important function!
+         * Start.removeLocalData rely on this on
+         *
+         * @param ctx the application's context
+         * @return <code>true</code> if the current account is a demo
+         */
+        public static boolean isDemo (Context ctx){
+            return getStatus(ctx) == STATUS_DEMO;
+        }
+
+        public static boolean noAccount (Context ctx){
+            return getStatus(ctx) == STATUS_NONE;
+        }
+
+        public static boolean isAccount (Context ctx){
+            return getStatus(ctx) == STATUS_ACCOUNT;
+        }
 
 /*
 
@@ -896,4 +876,4 @@ private static void setAccount(Context ctx, String host, String user, String pwd
 //        boolean payleven = prefs.getBoolean("payleven", defaultVal);
 //        return payleven;
     }*/
-}
+    }

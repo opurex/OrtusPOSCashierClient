@@ -30,6 +30,8 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
+import com.google.android.material.card.MaterialCardView;
+
 public class ReceiptItem extends RelativeLayout {
 
     private Receipt receipt;
@@ -42,11 +44,13 @@ public class ReceiptItem extends RelativeLayout {
     private TextView amount;
     private TextView user;
     private TextView content;
+    private MaterialCardView cardView;
 
     public ReceiptItem(Context context, Receipt r) {
         super(context);
-        LayoutInflater.from(context).inflate(R.layout.receipt_item,
+        LayoutInflater.from(context).inflate(R.layout.receipt_item_material,
                 this, true);
+        this.cardView = (MaterialCardView) this.findViewById(R.id.receipt_card);
         this.label = (TextView) this.findViewById(R.id.receipt_label);
         this.date = (TextView) this.findViewById(R.id.receipt_date);
         this.time = (TextView) this.findViewById(R.id.receipt_time);

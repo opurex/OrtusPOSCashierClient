@@ -16,18 +16,30 @@
         android:usesPermissionFlags="neverForLocation"
         tools:targetApi="s" />
 
-    <!-- Needed only if your app looks for Bluetooth devices.
-         If your app doesn't use Bluetooth scan results to derive physical
-         location information, you can strongly assert that your app
-         doesn't derive physical location. -->
+    <!-- Needed for Bluetooth device discovery -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
         android:maxSdkVersion="30" />
+
+    <!-- For Android 30+ (Android 11+) -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <!-- Android 12+ specific -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
 
+    <!-- Foreground service for Bluetooth operations -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+
+    <!-- For Redmi devices and Android 15 compatibility -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
     <uses-feature
         android:name="android.hardware.bluetooth"
+        android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
 
@@ -77,6 +89,7 @@
         <activity android:name="TariffAreaSelect"/>
         <activity android:name="ReceiptSelect"/>
         <activity android:name="ZSelect"/>
+        <activity android:name="ReceiptDetailActivity"/>
         <activity android:name="CloseCash"/>
         <activity android:name="CloseCashCount"/>
         <activity
@@ -103,7 +116,7 @@
         <activity android:name=".activities.BluetoothPrinterSelectionActivity"
             android:exported="false"
             android:label="Select Bluetooth Printer" />
-        <activity android:name=".activities.BluetoothScaleSelectionActivity"
+        <activity android:name="com.aclas.ortus.BluetoothScaleSelectionActivity"
             android:exported="false"
             android:label="Select Bluetooth Scale" />
         <activity android:name=".activities.DeviceListActivity"
@@ -117,11 +130,15 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ScaleMainActivity"
-            android:exported="false"
-            android:label="Scale Measurement"
-            android:theme="@style/POSTechTheme"/>
+
         <service android:name=".drivers.DeviceService"/>
+
+        <!-- Foreground service for Bluetooth operations -->
+        <service
+            android:name=".services.BluetoothForegroundService"
+            android:foregroundServiceType="connectedDevice"
+            android:enabled="true"
+            android:exported="false" />
 
         <!-- M-Pesa Callback Receiver -->
         <receiver android:name=".receivers.MpesaCallbackReceiver"

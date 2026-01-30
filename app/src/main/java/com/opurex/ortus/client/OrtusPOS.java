@@ -13,6 +13,11 @@ public class OrtusPOS extends Application {
 
     public static final String TAG = "Ortus:";
     private static Context context;
+    private static OrtusPOS ortusPOS;
+
+    public static OrtusPOS getInstance(){
+        return ortusPOS;
+    }
 
     public static float getRestaurantMapWidth() {
         return 635f;
@@ -25,6 +30,10 @@ public class OrtusPOS extends Application {
     public void onCreate() {
         super.onCreate();
         OrtusPOS.context = getApplicationContext();
+        OrtusPOS.ortusPOS = this;
+
+        // Initialize file logger
+        com.opurex.ortus.client.utils.FileLogger.getInstance(this);
     }
 
     public static Context getAppContext() {
@@ -107,19 +116,31 @@ public class OrtusPOS extends Application {
         }
 
         public static void w(String message) {
-            android.util.Log.w(getUniversalLog(), message);
+            String tag = getUniversalLog();
+            android.util.Log.w(tag, message);
+            // Also log to file
+            com.opurex.ortus.client.utils.FileLogger.getInstance(OrtusPOS.getAppContext()).w(tag, message);
         }
 
         public static void w(String message, Throwable e) {
-            android.util.Log.w(getUniversalLog(), message, e);
+            String tag = getUniversalLog();
+            android.util.Log.w(tag, message, e);
+            // Also log to file
+            com.opurex.ortus.client.utils.FileLogger.getInstance(OrtusPOS.getAppContext()).w(tag, message + " - Exception: " + e.getMessage());
         }
 
         public static void d(String message) {
-            android.util.Log.d(getUniversalLog(), message);
+            String tag = getUniversalLog();
+            android.util.Log.d(tag, message);
+            // Also log to file
+            com.opurex.ortus.client.utils.FileLogger.getInstance(OrtusPOS.getAppContext()).d(tag, message);
         }
 
         public static void d(String message, Throwable e) {
-            android.util.Log.d(getUniversalLog(), message, e);
+            String tag = getUniversalLog();
+            android.util.Log.d(tag, message, e);
+            // Also log to file
+            com.opurex.ortus.client.utils.FileLogger.getInstance(OrtusPOS.getAppContext()).d(tag, message + " - Exception: " + e.getMessage());
         }
     }
 

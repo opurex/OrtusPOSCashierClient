@@ -9,7 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.text.Editable;
 import android.widget.*;
+import com.google.android.material.textfield.TextInputEditText;
 import com.opurex.ortus.client.activities.TrackedActivity;
 import com.opurex.ortus.client.utils.Error;
 
@@ -33,7 +35,7 @@ public class LoginActivity extends TrackedActivity {
     public static final int ERROR_LOGIN = 5;
     private EditText mHost;
     private EditText mLogin;
-    private EditText mPassword;
+    private TextInputEditText mPassword;
     private EditText mMachineName;
 
     @Override
@@ -50,7 +52,7 @@ public class LoginActivity extends TrackedActivity {
         }
         mHost = (EditText) findViewById(R.id.host);
         mLogin = (EditText) findViewById(R.id.login);
-        mPassword = (EditText) findViewById(R.id.password);
+        mPassword = (TextInputEditText) findViewById(R.id.password);
         mPassword.setOnEditorActionListener(new PasswordEditorAction());
         mMachineName = (EditText) findViewById(R.id.cashregister);
         findViewById(R.id.show_password).setOnClickListener(new ShowPasswordClickListener());
@@ -150,7 +152,7 @@ public class LoginActivity extends TrackedActivity {
     }
 
     private String getPassword() {
-        return mPassword.getText().toString();
+        return mPassword.getText() != null ? mPassword.getText().toString() : "";
     }
 
     private String getMachineName() {
@@ -184,8 +186,9 @@ public class LoginActivity extends TrackedActivity {
     }
 
     private boolean checkInput() {
-        return mPassword.getText().length() != 0 && mLogin.getText().length() != 0
-                && mMachineName.getText().length() != 0;
+        return (mPassword.getText() != null && mPassword.getText().length() != 0) &&
+               mLogin.getText().length() != 0 &&
+               mMachineName.getText().length() != 0;
     }
 
     protected class DemoClickListener implements View.OnClickListener {
@@ -224,10 +227,14 @@ public class LoginActivity extends TrackedActivity {
         public void onClick(View view) {
             if (((CheckBox) view).isChecked()) {
                 mPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                mPassword.setSelection(mPassword.getText().length());
+                if (mPassword.getText() != null) {
+                    mPassword.setSelection(mPassword.getText().length());
+                }
             } else {
                 mPassword.setInputType(129);
-                mPassword.setSelection(mPassword.getText().length());
+                if (mPassword.getText() != null) {
+                    mPassword.setSelection(mPassword.getText().length());
+                }
             }
         }
     }

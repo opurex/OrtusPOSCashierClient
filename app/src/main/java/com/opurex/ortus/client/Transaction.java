@@ -23,6 +23,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
+import com.aclas.ortus.BluetoothScaleSelectionActivity;
 import com.opurex.ortus.client.activities.POSConnectedTrackedActivity;
 import com.opurex.ortus.client.data.Data;
 import com.opurex.ortus.client.drivers.POSDeviceManager;
@@ -58,7 +59,6 @@ import com.opurex.ortus.client.utils.BarcodeCheck;
 import com.opurex.ortus.client.utils.Error;
 import com.opurex.ortus.client.utils.OpurexConfiguration;
 import com.opurex.ortus.client.utils.ScaleManager;
-import com.opurex.ortus.client.utils.BluetoothScaleHelper;
 import com.opurex.ortus.client.utils.exception.NotFoundException;
 
 import java.io.IOError;
@@ -77,6 +77,7 @@ public class Transaction extends POSConnectedTrackedActivity
         CustomerSelectDialog.Listener,
         CustomerInfoDialog.CustomerListener,
         DividerDialog.RequestResultListener, DividerDialog.ResultListener {
+
 
     // Activity Result code
     private static final int COMPOSITION = 1;
@@ -255,29 +256,29 @@ public class Transaction extends POSConnectedTrackedActivity
                 break;
             case SCALE_SELECT:
                 if (resultCode == Activity.RESULT_OK) {
-                    scaleMacAddress = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_ADDRESS);
-                    String scaleName = data.getStringExtra(com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
+//                    scaleMacAddress = data.getStringExtra(BluetoothScaleSelectionActivity.);
+//                    String scaleName = data.getStringExtra(BluetoothScaleSelectionActivity.EXTRA_SCALE_NAME);
 
-                    if (scaleManager != null && scaleMacAddress != null) {
-                        // Check if this is a virtual scale connection
-                        if (scaleMacAddress.equals("VIRTUAL:AC:LAS:SC:AL:E0")) {
-                            // Initialize virtual scale testing
-                            scaleManager.initializeVirtualScaleTesting();
-                            // Connect to virtual scale
-                            boolean connected = scaleManager.connectToVirtualScale();
-
-                            if (connected) {
-                                Log.d("Transaction", "Connected to virtual scale");
-                                Toast.makeText(this, "Connected to virtual scale", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Log.e("Transaction", "Failed to connect to virtual scale");
-                                Toast.makeText(this, "Failed to connect to virtual scale", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // Regular Bluetooth scale connection
-                            scaleManager.connectToScale(scaleMacAddress);
-                        }
-                    }
+//                    if (scaleManager != null && scaleMacAddress != null) {
+//                        // Check if this is a virtual scale connection
+//                        if (scaleMacAddress.equals("VIRTUAL:AC:LAS:SC:AL:E0")) {
+//                            // Initialize virtual scale testing
+//                          //  scaleManager.initializeVirtualScaleTesting();
+//                            // Connect to virtual scale
+//                         //   boolean connected = scaleManager.connectToVirtualScale();
+//
+//                            if (connected) {
+//                                Log.d("Transaction", "Connected to virtual scale");
+//                                Toast.makeText(this, "Connected to virtual scale", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Log.e("Transaction", "Failed to connect to virtual scale");
+//                                Toast.makeText(this, "Failed to connect to virtual scale", Toast.LENGTH_SHORT).show();
+//                            }
+//                        } else {
+//                            // Regular Bluetooth scale connection
+//                       //     scaleManager.connectToScale(scaleMacAddress);
+//                        }
+//                    }
                 }
                 break;
             default:
@@ -395,12 +396,18 @@ public class Transaction extends POSConnectedTrackedActivity
 
     @Override
     public void onPsdPositiveClick(Product p, double weight, boolean isProductReturned) {
+        Log.i("Transaction", "onPsdPositiveClick called - Product: " + p.getLabel() + 
+                ", Weight: " + weight + ", IsReturn: " + isProductReturned);
+        
         if (weight > 0) {
+            Log.i("Transaction", "Adding scaled product to ticket - Weight: " + weight);
             if (isProductReturned) {
                 addAScaledProductReturnToTicket(p, weight);
             } else {
                 addAScaledProductToTicket(p, weight);
             }
+        } else {
+            Log.e("Transaction", "ERROR: Weight is zero or negative: " + weight);
         }
     }
 
@@ -563,7 +570,7 @@ public class Transaction extends POSConnectedTrackedActivity
                     t.setState(TicketFragment.CHECKOUT_STATE);
                     t.updatePageState();
                     updatePaymentFragment(t, null);
-//                    disposeTicketFragment(t);
+                   // disposeTicketFragment(t);
                     invalidateOptionsMenu();
                     setActionBarTitleVisibility(false);
                     break;
@@ -744,14 +751,14 @@ public class Transaction extends POSConnectedTrackedActivity
         }
 
         MenuItem connectItem = menu.findItem(R.id.ab_menu_scale_connect);
-        MenuItem disconnectItem = menu.findItem(R.id.ab_menu_scale_disconnect);
-        if (scaleManager != null && scaleManager.isConnected()) {
-            connectItem.setVisible(false);
-            disconnectItem.setVisible(true);
-        } else {
-            connectItem.setVisible(true);
-            disconnectItem.setVisible(false);
-        }
+//        MenuItem disconnectItem = menu.findItem(R.id.ab_menu_scale_disconnect);
+//        if (scaleManager != null && scaleManager.isConnected()) {
+//            connectItem.setVisible(false);
+//            disconnectItem.setVisible(true);
+//        } else {
+//            connectItem.setVisible(true);
+//            disconnectItem.setVisible(false);
+//        }
 
         return true;
     }
@@ -902,14 +909,11 @@ public class Transaction extends POSConnectedTrackedActivity
                 CloseCash.close(this);
                 break;
             case R.id.ab_menu_scale_connect:
-                Intent intent = new Intent(this, com.opurex.ortus.client.activities.BluetoothScaleSelectionActivity.class);
+                Intent intent = new Intent(this,BluetoothScaleSelectionActivity.class);
                 startActivityForResult(intent, SCALE_SELECT);
                 return true;
-            case R.id.ab_menu_scale_disconnect:
-                if (scaleManager != null) {
-                    scaleManager.disconnect();
-                }
-                return true;
+
+//                return true;
             default:
                 return false;
 
@@ -1001,7 +1005,7 @@ public class Transaction extends POSConnectedTrackedActivity
 
     void askForAScaledProduct(Product p, boolean isReturnProduct) {
         // If the product is scaled, asks the weight
-        ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct, scaleManager);
+        ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct);
         dial.setDialogListener(this);
         dial.show(getSupportFragmentManager(), ProductScaleDialog.TAG);
     }
@@ -1334,10 +1338,10 @@ public class Transaction extends POSConnectedTrackedActivity
         }
         
         // Clean up the scale manager
-        if (scaleManager != null) {
-            scaleManager.cleanup();
-            scaleManager = null;
-        }
+//        if (scaleManager != null) {
+//            scaleManager.cleanup();
+//            scaleManager = null;
+//        }
     }
 
 
