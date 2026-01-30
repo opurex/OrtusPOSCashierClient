@@ -347,9 +347,8 @@ public class Transaction extends POSConnectedTrackedActivity
     }
 
     private boolean returnToCatalogueView() {
-        CatalogFragment catalogFragment = getCatalogFragment();
-        if (catalogFragment != null && catalogFragment.displayProducts()) {
-            catalogFragment.setCategoriesVisible();
+        if (getCatalogFragment().displayProducts()) {
+            getCatalogFragment().setCategoriesVisible();
             return true;
         }
         return false;
@@ -420,9 +419,7 @@ public class Transaction extends POSConnectedTrackedActivity
     @Override
     public void onMidProductPick(Product product) {
         CatalogFragment cat = getCatalogFragment();
-        if (cat != null) {
-            registerAProduct(product, cat.getCatalogData());
-        }
+        registerAProduct(product, cat.getCatalogData());
 //        disposeCatalogFragment(cat);
     }
 
@@ -556,13 +553,11 @@ public class Transaction extends POSConnectedTrackedActivity
             switch (position) {
                 case CATALOG_FRAG: {
                     TicketFragment ticket = getTicketFragment();
-                    if (ticket != null) { // Add null check here
-                        ticket.setState(TicketFragment.CHECKIN_STATE);
-                        ticket.updatePageState();
-                        if (mPendingTicket != null) {
-                            ticket.switchTicket(mPendingTicket);
-                            mPendingTicket = null;
-                        }
+                    ticket.setState(TicketFragment.CHECKIN_STATE);
+                    ticket.updatePageState();
+                    if (mPendingTicket != null) {
+                        ticket.switchTicket(mPendingTicket);
+                        mPendingTicket = null;
                     }
 //                    disposeTicketFragment(ticket);
                     invalidateOptionsMenu();
@@ -575,7 +570,7 @@ public class Transaction extends POSConnectedTrackedActivity
                     t.setState(TicketFragment.CHECKOUT_STATE);
                     t.updatePageState();
                     updatePaymentFragment(t, null);
-//                    disposeTicketFragment(t);
+                   // disposeTicketFragment(t);
                     invalidateOptionsMenu();
                     setActionBarTitleVisibility(false);
                     break;
@@ -676,12 +671,9 @@ public class Transaction extends POSConnectedTrackedActivity
     }
 
     private String getCurrentCategoryTitle() {
-        CatalogFragment catalogFragment = getCatalogFragment();
-        if (catalogFragment != null) {
-            Category category = catalogFragment.getCurrentCategory();
-            if (category != null) {
-                return category.getLabel();
-            }
+        Category category = getCatalogFragment().getCurrentCategory();
+        if (category != null) {
+            return category.getLabel();
         }
         return getString(R.string.catalog);
     }
@@ -759,7 +751,7 @@ public class Transaction extends POSConnectedTrackedActivity
         }
 
         MenuItem connectItem = menu.findItem(R.id.ab_menu_scale_connect);
-        MenuItem disconnectItem = menu.findItem(R.id.ab_menu_scale_disconnect);
+//        MenuItem disconnectItem = menu.findItem(R.id.ab_menu_scale_disconnect);
 //        if (scaleManager != null && scaleManager.isConnected()) {
 //            connectItem.setVisible(false);
 //            disconnectItem.setVisible(true);
@@ -1091,9 +1083,7 @@ public class Transaction extends POSConnectedTrackedActivity
         Product p = cat.getProductByBarcode(code);
         if (p != null) {
             CatalogFragment catFrag = getCatalogFragment();
-            if (catFrag != null) {
-                registerAProduct(p, catFrag.getCatalogData());
-            }
+            registerAProduct(p, catFrag.getCatalogData());
 //            disposeCatalogFragment(catFrag);
             String text = getString(R.string.barcode_found, p.getLabel());
             Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();

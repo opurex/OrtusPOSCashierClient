@@ -15,17 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Gallery;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.opurex.ortus.client.data.Data;
@@ -90,8 +85,7 @@ public class PaymentFragment extends ViewPageFragment
     private Customer mCustomer;
     private double mTicketPrepaid;
     // Views
-    private RecyclerView mPaymentModes; // Keep for now as we may still need it for other purposes
-    private com.google.android.material.button.MaterialButtonToggleGroup mPaymentModesToggleGroup;
+    private Gallery mPaymentModes;
     private EditText mInput;
     private NumKeyboard mNumberPad;
     private ListView mPaymentsList;
@@ -101,7 +95,7 @@ public class PaymentFragment extends ViewPageFragment
     private TextView mCusPrepaid;
     private TextView mCusDebt;
     private TextView mCusDebtMax;
-    private MaterialButton mPrintBtn;
+    private ToggleButton mPrintBtn;
     private PaymentProcessor mCurrentProcessor;
 
     @SuppressWarnings("unused") // Used via class reflection
@@ -136,66 +130,11 @@ public class PaymentFragment extends ViewPageFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.payment_zone_material, container, false);
-        mPaymentModesToggleGroup = layout.findViewById(R.id.payment_modes_toggle_group);
-
+        View layout = inflater.inflate(R.layout.payment_zone, container, false);
+        mPaymentModes = (Gallery) layout.findViewById(R.id.payment_modes);
         List<PaymentMode> modes = Data.PaymentMode.paymentModes(mContext);
-
-        // Clear any existing buttons
-        mPaymentModesToggleGroup.removeAllViews();
-
-        // Add payment mode buttons dynamically
-        for (int i = 0; i < modes.size(); i++) {
-            PaymentMode mode = modes.get(i);
-
-            com.google.android.material.button.MaterialButton button =
-                new com.google.android.material.button.MaterialButton(mContext);
-            button.setText(mode.getLabel());
-            button.setId(View.generateViewId()); // Generate unique ID
-
-            // Set icon if payment mode has an image
-            if (mode.hasImage()) {
-                try {
-                    android.graphics.Bitmap paymentImage = com.opurex.ortus.client.data.ImagesData.getPaymentModeImage(mode.getId());
-                    if (paymentImage != null) {
-                        // Convert bitmap to drawable and set as icon
-                        android.graphics.drawable.BitmapDrawable drawable =
-                            new android.graphics.drawable.BitmapDrawable(mContext.getResources(), paymentImage);
-                        // Set the icon with a reasonable size
-                        button.setIcon(drawable);
-                    } else {
-                        // Fallback to generic payment icon if image not found locally
-                        button.setIconResource(R.drawable.ic_payment);
-                    }
-                } catch (Exception e) {
-                    // Log the error and use fallback icon
-                    android.util.Log.e("PaymentFragment", "Error loading payment mode image for mode ID: " + mode.getId(), e);
-                    button.setIconResource(R.drawable.ic_payment);
-                }
-            } else {
-                // Use generic payment icon if no image is associated with this payment mode
-                button.setIconResource(R.drawable.ic_payment);
-            }
-
-            // MaterialButtonToggleGroup will handle the styling automatically
-
-            // Add to the toggle group
-            mPaymentModesToggleGroup.addView(button);
-
-            final int position = i;
-            final PaymentMode currentMode = mode;
-
-            button.setOnClickListener(v -> {
-                mCurrentMode = currentMode;
-                PaymentFragment.this.updateView();
-            });
-        }
-
-        // Set the first payment mode as selected initially
-        if (!modes.isEmpty()) {
-            mCurrentMode = modes.get(0);
-            // The toggle group will automatically handle selection
-        }
+        mPaymentModes.setAdapter(new PaymentModesAdapter(modes));
+        mPaymentModes.setOnItemSelectedListener(new PaymentModeItemSelectedListener());
 
         mInput = (EditText) layout.findViewById(R.id.input);
         mInput.setInputType(InputType.TYPE_NULL); // Should be TextView.
@@ -203,8 +142,8 @@ public class PaymentFragment extends ViewPageFragment
         mNumberPad.setKeyHandler(new Handler(this));
 
         mPaymentsList = (ListView) layout.findViewById(R.id.payments_list);
-        PaymentsAdapter paymentsAdapter = new PaymentsAdapter(mPaymentsListContent, this);
-        mPaymentsList.setAdapter(paymentsAdapter);
+        adapter = new PaymentsAdapter(mPaymentsListContent, this);
+        mPaymentsList.setAdapter(adapter);
 
         mRemaining = (TextView) layout.findViewById(R.id.ticket_remaining);
         mGiveBack = (TextView) layout.findViewById(R.id.give_back);
@@ -215,7 +154,7 @@ public class PaymentFragment extends ViewPageFragment
         mCusDebtMax = (TextView) layout.findViewById(R.id.mountMax);
 
         // Print button, visible only if a printer is configured.
-        mPrintBtn =  layout.findViewById(R.id.print_ticket);
+        mPrintBtn = (ToggleButton) layout.findViewById(R.id.print_ticket);
         OpurexConfiguration config = OrtusPOS.getConfiguration();
         boolean hasPrinter = !(OpurexConfiguration.PrinterDriver.NONE.equals(config.getPrinterDriver()));
         mPrintBtn.setChecked(hasPrinter);
@@ -225,22 +164,8 @@ public class PaymentFragment extends ViewPageFragment
             mPrintBtn.setChecked(config.getPrintTicketByDefault());
         }
 
-//        if (!hasPrinter) {
-//            mPrintBtn.setVisibility(View.GONE);
-//        } else {
-//            mPrintBtn.setChecked(config.getPrintTicketByDefault());
-//        }
-
-// Optional: listen for toggle changes
-        mPrintBtn.addOnCheckedChangeListener((button, isChecked) -> {
-            Log.d(LOG_TAG, "Print button checked: " + isChecked);
-        });
-
-        // Set the first payment mode as selected initially
-        if (!modes.isEmpty()) {
-            mCurrentMode = modes.get(0);
-            // The toggle group will automatically handle selection
-        }
+        mPaymentModes.setSelection(0, false);
+        mCurrentMode = modes.get(0);
 
         LinearLayout customerList = (LinearLayout) layout.findViewById(R.id.customers_list);
         customerList.setOnClickListener(new View.OnClickListener() {
@@ -577,8 +502,7 @@ public class PaymentFragment extends ViewPageFragment
                 return false;
         }
         this.registerPayment(p);
-        // For RecyclerView, we don't use setSelection. Instead, we can scroll to position if needed
-        // this.mPaymentModes.scrollToPosition(0); // Uncomment if needed to scroll to first item
+        this.mPaymentModes.setSelection(0);
         return true;
     }
 
