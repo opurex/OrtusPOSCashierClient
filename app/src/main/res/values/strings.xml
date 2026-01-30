@@ -412,5 +412,9 @@
     <string name="unstable">Weight UnStable</string>
     <string name="wait_connect">Waiting for connection!</string>
 
+    <!-- Navigation Header Strings -->
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_header_subtitle">Point of Sale System</string>
+
 
 </resources>
