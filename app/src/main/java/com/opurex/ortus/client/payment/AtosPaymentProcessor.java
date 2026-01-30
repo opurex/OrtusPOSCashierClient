@@ -15,6 +15,7 @@ import net.atos.sdk.tpe.terminalmethods.XengoTerminalMethod;
 import net.atos.sdk.tpe.terminalmethods.YomaniNetworkTerminalMethod;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import com.opurex.ortus.client.widgets.MaterialProgressDialog;
 import android.content.Intent;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -84,10 +85,10 @@ public class AtosPaymentProcessor extends FlavorPaymentProcessor {
 	private class WorldlineTPEResultHandler implements PaymentAsyncTaskActions {
 
 		private Payment payment;
-		private ProgressDialog paymentDialog;
+		private MaterialProgressDialog paymentDialog;
 
 		public WorldlineTPEResultHandler(Payment p) {
-			this.paymentDialog = new ProgressDialog(AtosPaymentProcessor.this.parentActivity);
+			this.paymentDialog = MaterialProgressDialog.show(AtosPaymentProcessor.this.parentActivity, "Processing payment...", false);
 			this.payment = p;
 		}
 
