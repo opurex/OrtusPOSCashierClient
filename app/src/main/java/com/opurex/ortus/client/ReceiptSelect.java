@@ -51,7 +51,16 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
     public void onCreate(Bundle state) {
         super.onCreate(state);
         // Set views
-        setContentView(R.layout.receipt_select);
+        setContentView(R.layout.receipt_select_material);
+
+        // Setup toolbar with back button
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         this.list = (ListView) this.findViewById(R.id.receipts_list);
         this.list.setAdapter(new ReceiptsAdapter(Data.Receipt.getReceipts(this)));
         this.list.setOnItemClickListener(this);
@@ -167,5 +176,14 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
             this.printing.dismiss();
             this.printing = null;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
