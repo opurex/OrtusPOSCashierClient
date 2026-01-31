@@ -100,7 +100,7 @@ public class AtosPaymentProcessor extends FlavorPaymentProcessor {
 		public void onPrePayment() {
 			Activity parentActivity = AtosPaymentProcessor.this.parentActivity;
 			if (paymentDialog == null) {
-				paymentDialog = new ProgressDialog(parentActivity);
+				paymentDialog = new MaterialProgressDialog(parentActivity);
 			}
 			paymentDialog.setCancelable(false);
 			paymentDialog.setMessage(parentActivity.getString(R.string.card_payment_startup));
