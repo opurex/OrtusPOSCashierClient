@@ -118,8 +118,8 @@
     <string name="close_type_period">Month</string>
     <string name="close_type_simple">Day</string>
     <string name="close_running_ticket_message">Some tickets are currently active. Closing cash will dismiss them.</string>
-    <string name="close_cash">Close cash</string>
-    <string name="close_z_title">Z ticket</string>
+    <string name="close_cash">Close Cash</string>
+    <string name="close_z_title">Z Ticket</string>
     <string name="close_stock_title">Remaining stock</string>
 
     <string name="z_payments">Payments</string>
