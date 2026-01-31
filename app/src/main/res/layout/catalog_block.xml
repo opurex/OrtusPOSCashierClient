@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Catalog grid -->
+    <!--catalog grid -->
     <GridView
         android:id="@+id/productsGrid"
         android:layout_width="match_parent"
