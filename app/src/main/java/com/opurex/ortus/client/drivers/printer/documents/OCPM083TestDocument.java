@@ -68,7 +68,7 @@ public class OCPM083TestDocument implements PrintableDocument {
             
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print stack trace for emulator visibility
             return false;
         }
     }

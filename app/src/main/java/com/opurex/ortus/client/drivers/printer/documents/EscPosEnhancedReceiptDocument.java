@@ -151,7 +151,7 @@ public class EscPosEnhancedReceiptDocument implements PrintableDocument {
             printer.flush();
             
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print stack trace for emulator visibility
             return false;
         }
 

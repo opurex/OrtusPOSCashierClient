@@ -38,7 +38,7 @@ ext {
             "wcr"    : [packageName    : "com.opurex.ortus.client.wcr",
                         applicationName: "wcr"],
             "vanilla": [packageName    : "com.opurex.ortus.client.vanilla",
-                        applicationName: "OrtusPOSScaleApp"]
+                        applicationName: "OrtusPOS"]
     ]
 }
 
@@ -70,7 +70,7 @@ android {
     android.applicationVariants.all {
         variant ->
             variant.outputs.all {
-                outputFileName "OrtusPOSScaleApp.apk"
+                outputFileName "OrtusPOS.apk"
             }
     }
 
