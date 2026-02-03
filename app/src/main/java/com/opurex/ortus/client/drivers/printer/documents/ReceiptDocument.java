@@ -172,7 +172,8 @@ public class ReceiptDocument implements PrintableDocument {
                     buffer.getLines(),
                     r.getTicketNumber()
             );
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace(); // Print stack trace for emulator visibility
         }
 
         return true;
