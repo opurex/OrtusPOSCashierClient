@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.aclas.ortus.BluetoothScaleSelectionActivity">
 
+    <!-- Guidelines for layout -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_v0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.05" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_v1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_h0"
         android:layout_width="wrap_content"
@@ -32,6 +32,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.98"/>
+
+    <!-- Top title bar -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -41,6 +43,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:background="@color/black">
+
         <LinearLayout
             android:visibility="invisible"
             android:id="@+id/btn_back"
@@ -60,6 +63,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/back"/>
         </LinearLayout>
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
@@ -70,6 +74,8 @@
             android:textSize="@dimen/text_size_normal"
             android:text="@string/title_main"/>
     </LinearLayout>
+
+    <!-- Main scale page -->
     <LinearLayout
         android:visibility="visible"
         android:id="@+id/lt_main"
@@ -303,60 +309,62 @@
                     android:textSize="@dimen/text_size_big"/>
             </LinearLayout>
             <LinearLayout
+                android:layout_marginTop="@dimen/margin_normal"
+                android:id="@+id/lt_main_info"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_ver_app"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/text_size_normal"
+                    android:text="@string/app_info"/>
+                <TextView
+                    android:id="@+id/tv_ver_bt"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/text_size_normal"
+                    android:text="@string/bt_info"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
                 android:layout_marginTop="@dimen/margin_small"
                 android:layout_marginBottom="@dimen/margin_small_x"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.4"
+                android:layout_weight="0.02"
                 android:orientation="horizontal">
-                <Button
-                    android:id="@+id/btn_zero"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/text_size_big"
-                    android:textColor="@color/black"
-                    android:onClick="onClick"
-                    android:text="@string/zero"/>
-                <Button
-                    android:id="@+id/btn_tare"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_big"
-                    android:onClick="onClick"
-                    android:text="@string/dotare"/>
+                <!--                <Button-->
+                <!--                    android:id="@+id/btn_zero"-->
+                <!--                    android:layout_marginLeft="@dimen/margin_normal"-->
+                <!--                    android:layout_marginRight="@dimen/margin_normal"-->
+                <!--                    android:layout_marginTop="@dimen/margin_normal"-->
+                <!--                    android:layout_width="0dp"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:textSize="@dimen/text_size_big"-->
+                <!--                    android:textColor="@color/black"-->
+                <!--                    android:onClick="onClick"-->
+                <!--                    android:text="@string/zero"/>-->
+                <!--                <Button-->
+                <!--                    android:id="@+id/btn_tare"-->
+                <!--                    android:layout_marginLeft="@dimen/margin_normal"-->
+                <!--                    android:layout_marginRight="@dimen/margin_normal"-->
+                <!--                    android:layout_marginTop="@dimen/margin_normal"-->
+                <!--                    android:layout_width="0dp"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:textColor="@color/black"-->
+                <!--                    android:textSize="@dimen/text_size_big"-->
+                <!--                    android:onClick="onClick"-->
+                <!--                    android:text="@string/dotare"/>-->
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_marginTop="@dimen/margin_normal"
-            android:id="@+id/lt_main_info"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/tv_ver_app"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textSize="@dimen/text_size_normal"
-                android:text="@string/app_info"/>
-            <TextView
-                android:id="@+id/tv_ver_bt"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textSize="@dimen/text_size_normal"
-                android:text="@string/bt_info"/>
-        </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:visibility="gone"
@@ -380,33 +388,32 @@
             android:clickable="true"/>
     </LinearLayout>
 
-    <!-- Action buttons for confirming/canceling the weight -->
+    <!-- Validate / Cancel buttons (main page only) -->
     <LinearLayout
+        android:id="@+id/ll_buttons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/scale_cancel_button"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="@string/cancel" />
+            android:text="@string/cancel"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/scale_ok_button"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="@string/validate" />
+            android:text="@string/validate"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

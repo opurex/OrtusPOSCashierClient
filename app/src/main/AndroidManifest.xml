@@ -13,7 +13,6 @@
     <!-- Request Bluetooth permissions for Android 12 and newer -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-        android:usesPermissionFlags="neverForLocation"
         tools:targetApi="s" />
 
     <!-- Needed for Bluetooth device discovery -->
