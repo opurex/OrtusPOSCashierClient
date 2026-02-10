@@ -107,7 +107,6 @@
             <category android:name="android.intent.category.DEFAULT"/>
           </intent-filter>
         </activity>
-        <service android:name=".drivers.DeviceService"/>
 
         <activity android:name=".activities.test.MpesaTestActivity"
             />
@@ -129,6 +128,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
 
         <service android:name=".drivers.DeviceService"/>
 
