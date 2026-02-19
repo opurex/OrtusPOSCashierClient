@@ -34,6 +34,9 @@ public class OrtusPOS extends Application {
 
         // Initialize file logger
         com.opurex.ortus.client.utils.FileLogger.getInstance(this);
+
+        // Start Transaction Receiver Service
+        startService(new android.content.Intent(this, com.opurex.ortus.client.services.TransactionReceiverService.class));
     }
 
     public static Context getAppContext() {
