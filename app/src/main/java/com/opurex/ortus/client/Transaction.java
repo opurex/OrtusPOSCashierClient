@@ -41,6 +41,15 @@ import com.opurex.ortus.client.fragments.ProductScaleDialog;
 import com.opurex.ortus.client.fragments.TicketFragment;
 import com.opurex.ortus.client.fragments.TicketLineEditDialog;
 import com.opurex.ortus.client.fragments.TransactionMainFragment;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import com.opurex.ortus.client.services.P2PPaymentService;
 import com.opurex.ortus.client.models.Barcode;
 import com.opurex.ortus.client.models.Catalog;
 import com.opurex.ortus.client.models.Category;
@@ -169,6 +178,21 @@ public class Transaction extends POSConnectedTrackedActivity
 
 
     //  FUNCTIONS
+    private final BroadcastReceiver p2pReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (P2PPaymentService.ACTION_TICKET_RECEIVED.equals(intent.getAction())) {
+                runOnUiThread(() -> {
+                    Toast.makeText(Transaction.this, "New ticket received via P2P", Toast.LENGTH_SHORT).show();
+                    TicketFragment ticketFragment = getTicketFragment();
+                    if (ticketFragment != null) {
+                        ticketFragment.updateView();
+                    }
+                });
+            }
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,6 +217,8 @@ public class Transaction extends POSConnectedTrackedActivity
         // Initialize the scale manager
         initializeScaleManager();
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(p2pReceiver,
+                new IntentFilter(P2PPaymentService.ACTION_TICKET_RECEIVED));
     }
 
 
@@ -912,7 +938,9 @@ public class Transaction extends POSConnectedTrackedActivity
                 Intent intent = new Intent(this,BluetoothScaleSelectionActivity.class);
                 startActivityForResult(intent, SCALE_SELECT);
                 return true;
-
+            case R.id.ab_menu_send_p2p:
+                this.sendTicketToMaster();
+                return true;
 //                return true;
             default:
                 return false;
@@ -924,6 +952,33 @@ public class Transaction extends POSConnectedTrackedActivity
             */
         }
         return true;
+    }
+
+    private void sendTicketToMaster() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String devices = prefs.getString("p2p_devices", "");
+        if (devices.isEmpty()) {
+            Toast.makeText(this, "No master device added. Please scan and add a device first.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String[] addresses = devices.split(",");
+        String targetAddress = addresses[0]; // Send to first added device
+
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothDevice device = adapter.getRemoteDevice(targetAddress);
+
+        new Thread(() -> {
+            try {
+                BluetoothSocket socket = device.createRfcommSocketToServiceRecord(java.util.UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+                socket.connect();
+                P2PPaymentService.sendTicket(socket, Data.Session.currentSession().getCurrentTicket());
+                runOnUiThread(() -> Toast.makeText(this, "Ticket sent to " + targetAddress, Toast.LENGTH_SHORT).show());
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Error connecting to master device", e);
+                runOnUiThread(() -> Toast.makeText(this, "Failed to send ticket: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }).start();
     }
 
     private void startDivider() {
@@ -1333,6 +1388,7 @@ public class Transaction extends POSConnectedTrackedActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(p2pReceiver);
         if (mPager != null) {
             mPager.unregisterOnPageChangeCallback(pageChangeCallback);
         }
