@@ -15,9 +15,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
         tools:targetApi="s" />
 
-    <!-- Needed for Bluetooth device discovery -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="30" />
+    <!-- Needed for Bluetooth device discovery and Network Discovery -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- For Android 30+ (Android 11+) -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
@@ -46,8 +45,12 @@
 
 
     <uses-permission android:name="android.permission.INTERNET"/>
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <supports-screens
@@ -146,6 +149,11 @@
                 <action android:name="com.opurex.ortus.client.MPESA_CALLBACK"/>
             </intent-filter>
         </receiver>
+
+        <!-- Transaction Receiver Service -->
+        <service android:name=".services.TransactionReceiverService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 
