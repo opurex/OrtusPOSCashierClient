@@ -34,10 +34,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import android.widget.Toast;
 
+import com.opurex.ortus.client.activities.DeviceListActivity;
+import com.opurex.ortus.client.services.P2PPaymentService;
 import com.opurex.ortus.client.data.*;
 import com.opurex.ortus.client.models.*;
 import com.opurex.ortus.client.sync.SendProcess;
@@ -53,6 +60,19 @@ import com.opurex.ortus.client.widgets.UsersBtnAdapter;
 public class Start extends TrackedActivity implements Handler.Callback {
 
     private static final String LOG_TAG = "Opurex/Start";
+    public static final int REQUEST_SCAN_DEVICES = 10;
+
+    private final BroadcastReceiver p2pReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (P2PPaymentService.ACTION_TICKET_RECEIVED.equals(intent.getAction())) {
+                runOnUiThread(() -> {
+                    Toast.makeText(Start.this, "New ticket received via P2P", Toast.LENGTH_SHORT).show();
+                    refreshUsers(); // Or some other UI update
+                });
+            }
+        }
+    };
 
     private GridView logins;
     private TextView status;
@@ -84,6 +104,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
         this.button = this.findViewById(R.id.connectButton);
         this.button.setOnClickListener(new ConnectClickListener());
+        this.findViewById(R.id.scanDevicesButton).setOnClickListener(new ScanDevicesClickListener());
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
         this.logins.setOnItemClickListener(new UserClickListener());
         this.status = (TextView) findViewById(R.id.status);
@@ -98,6 +119,9 @@ public class Start extends TrackedActivity implements Handler.Callback {
             this.syncPopup = new ProgressPopup(this);
             SendProcess.bind(this.syncPopup, this, new Handler(this));
         }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(p2pReceiver,
+                new IntentFilter(P2PPaymentService.ACTION_TICKET_RECEIVED));
     }
 
 
@@ -130,6 +154,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(p2pReceiver);
         UpdateProcess.unbind();
         SendProcess.unbind();
     }
@@ -203,11 +228,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void displayFirstConnect(boolean shouldBeFirstConnect) {
+        View buttonContainer = this.findViewById(R.id.buttonContainer);
         if (shouldBeFirstConnect) {
-            this.button.setVisibility(View.VISIBLE);
+            buttonContainer.setVisibility(View.VISIBLE);
             this.logins.setVisibility(View.INVISIBLE);
         } else {
-            this.button.setVisibility(View.INVISIBLE);
+            buttonContainer.setVisibility(View.INVISIBLE);
             this.logins.setVisibility(View.VISIBLE);
         }
     }
@@ -313,6 +339,28 @@ public class Start extends TrackedActivity implements Handler.Callback {
                         this.enterApp(user);
                         break;
                 }
+                break;
+            case REQUEST_SCAN_DEVICES:
+                if (resultCode == Activity.RESULT_OK) {
+                    String address = data.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    this.addP2PDevice(address);
+                }
+                break;
+        }
+    }
+
+    private void addP2PDevice(String address) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String devices = prefs.getString("p2p_devices", "");
+        if (!devices.contains(address)) {
+            if (!devices.isEmpty()) {
+                devices += ",";
+            }
+            devices += address;
+            prefs.edit().putString("p2p_devices", devices).apply();
+            Toast.makeText(this, "Device added: " + address, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Device already added", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -321,6 +369,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
      */
     private void enterApp(User user) {
         Data.Session.currentSession(Start.this).setUser(user);
+        startP2PService();
         Cash c = Data.Cash.currentCash(Start.this);
         if (c != null && !c.isOpened()) {
             // Cash is not opened
@@ -342,6 +391,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
     /**
      * Open ticket edition
      */
+    private void startP2PService() {
+        Intent serviceIntent = new Intent(this, P2PPaymentService.class);
+        startService(serviceIntent);
+    }
+
     private void goOn() {
         int mode = Configure.getTicketsMode(Start.this);
         switch (mode) {
@@ -530,6 +584,14 @@ public class Start extends TrackedActivity implements Handler.Callback {
         @Override
         public void onClick(View view) {
             Start.this.startUpdateProcess();
+        }
+    }
+
+    private class ScanDevicesClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(Start.this, DeviceListActivity.class);
+            Start.this.startActivityForResult(intent, REQUEST_SCAN_DEVICES);
         }
     }
 }

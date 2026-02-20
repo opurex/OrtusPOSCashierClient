@@ -134,6 +134,9 @@
 
 
         <service android:name=".drivers.DeviceService"/>
+        <service android:name=".services.P2PPaymentService"
+            android:enabled="true"
+            android:exported="false" />
 
         <!-- Foreground service for Bluetooth operations -->
         <service

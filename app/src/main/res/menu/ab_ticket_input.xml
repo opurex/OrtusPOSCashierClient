@@ -69,4 +69,9 @@
         android:title="@string/disconnect_scale"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/ab_menu_send_p2p"
+        android:title="@string/menu_send_p2p"
+        app:showAsAction="never" />
+
 </menu>
